@@ -1,4 +1,4 @@
-*la reto que pretende resolver este proyecto es: Iniciar una escena de código en vivo en medellín*
+*la reto que pretende resolver este proyecto es: __Iniciar una escena de código en vivo en medellín__*
 
 - Emocionómetro
 - banda sonora de un transplante de corazón
