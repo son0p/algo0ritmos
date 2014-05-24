@@ -4,3 +4,6 @@
 - videos en youtube con capturas de la pantalla
 - documental de codigo en vivo 
 - proyectar en una fachada como invazion
+- 
+
+algorritmos callejeros  (para pararse y sentarse)
