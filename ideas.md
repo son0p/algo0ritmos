@@ -10,4 +10,4 @@
 - conferencia perfromance
 - grafitti code
 - oneliners
-- 
+
