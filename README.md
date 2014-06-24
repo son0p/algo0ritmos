@@ -14,7 +14,7 @@ Inspirados (casi copiado de) en [Algorave](http://algorave.com/)
 
 #### ¿Aún no escribes código?
 - puedes aprender [(ejemplos)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#ejemplos-) -- [(tutoriales)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#tutoriales)
-- puedes asistír y si alguno te gusta bailar a tu estilo
+- puedes asistír y si algo de lo que escuchas te gusta, bailar a tu estilo
 - puedes ayudarnos a difundir (nota sobre la publicidad masiva)
 
 #### ¿Escribes código?
