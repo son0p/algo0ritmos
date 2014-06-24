@@ -1,5 +1,5 @@
 
-![flyer](https://github.com/son0p/algorritmoCallejero/blob/master/imagenes/algoRitmoCallejeroFlyer.png)
+![flyer](https://raw.githubusercontent.com/son0p/algorritmoCallejero/master/imagenes/algoRitmoCallejeroFlyer.png)
 
 
 algo-ritmo callejero
