@@ -1,4 +1,8 @@
-Algo'ritmo Callejero
+
+![flyer](https://github.com/son0p/algorritmoCallejero/blob/master/imagenes/algoRitmoCallejeroFlyer.png)
+
+
+algo-ritmo callejero
 ===============
 (para pararse y sentarse)
 
