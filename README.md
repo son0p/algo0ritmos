@@ -27,11 +27,12 @@ ___Límites:___
 ---
 ### Ejemplos :
 
+Tidal/Haskell Alex McLean http://youtu.be/FenTeBMkAsQ   
+
 ChucK livecoding.  http://youtu.be/ezmpolryqUE
 
 ChucK livecoding 01 - 18/04/2009 http://youtu.be/IkbjktiF52k
 
-Haskel Alex McLean http://youtu.be/FenTeBMkAsQ   
 
 SuperCollider cappelnord http://youtu.be/wNWFSIadAH8
 
