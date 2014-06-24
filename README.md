@@ -33,6 +33,7 @@ ___Límites:___
 
 Tidal/Haskell Alex McLean http://youtu.be/FenTeBMkAsQ   
 
+
 ChucK livecoding.  http://youtu.be/ezmpolryqUE
 
 ChucK livecoding 01 - 18/04/2009 http://youtu.be/IkbjktiF52k
@@ -42,6 +43,9 @@ SuperCollider cappelnord http://youtu.be/wNWFSIadAH8
 
 ### Tutoriales
 Tidal(Haskell) http://yaxu.org/demonstrating-tidal/
+
+### Algorave videos
+Renick Bell http://youtu.be/mLMiTyIQbMY
 
 
 
