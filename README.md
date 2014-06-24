@@ -13,7 +13,7 @@ Inspirados (casi copiado de) en [Algorave](http://algorave.com/)
 ### ¿Cómo participar?
 
 #### ¿Aún no escribes código?
-- puedes aprender [(ejemplos)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#ejemplos-) -- [(tutoriales)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#tutoriales-)
+- puedes aprender [(ejemplos)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#ejemplos-) -- [(tutoriales)](https://github.com/son0p/algorritmoCallejero/blob/master/README.md#tutoriales)
 - puedes asistír y si alguno te gusta bailar a tu estilo
 - puedes ayudarnos a difundir (nota sobre la publicidad masiva)
 
