@@ -41,6 +41,11 @@ ChucK livecoding 01 - 18/04/2009 http://youtu.be/IkbjktiF52k
 
 SuperCollider cappelnord http://youtu.be/wNWFSIadAH8
 
+### Herramientas
+Algunas clases y funciones para facilitar el trabajo con patrones rítmicos en ChucK [liveCodeEnvironmentChucK](https://github.com/son0p/liveCodeEvironmentChucK) 
+
+Paper de Alex McLean sobre la aproximación al código en vivo basado en patrones rítmicos [http://2013.xcoax.org/pdf/xcoax2013-mclean.pdf](http://2013.xcoax.org/pdf/xcoax2013-mclean.pdf)
+
 ### Tutoriales
 Tidal(Haskell) http://yaxu.org/demonstrating-tidal/
 
