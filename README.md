@@ -1,18 +1,18 @@
 
 ![flyer](https://raw.githubusercontent.com/son0p/algorritmoCallejero/master/imagenes/algoRitmoCallejeroFlyer.png)
 
-Codigo??? que es codigo, todos sabesmos que es codigo??? todos sabemos a que nos referimos??? 
+¿Código? ¿Qué es código, todos sabemos que es código? ¿todos sabemos a que nos referimos?
 
 
 Algo-Ritmo callejero
 ===============
 (para sentarse y pararse)
 
-Ciclo de tres meses en los que se compartiran experiencias de programación con dos fines principales, "Sentarse" a escribir codigo y a adquirir las herramientas necesarias para codificar en vivo y "Pararse" a bailar como si nadie te estuviera mirando.
+Ciclo de tres meses en los que se compartirán experiencias de programación con dos fines principales, "Sentarse" a escribir código y a adquirir las herramientas necesarias para codificar en vivo y "Pararse" a bailar como si nadie te estuviera mirando.
 
-Durante los tres meses se realizarán (2, 3 ,4 ???) fiestas (???) de codigo en vivo donde pondremos a prueba las destrezas de nuestros CJ's (code jockey) y su habilidad de escribir codigo pero sobretodo su habilidad para poner a bailar a los asistentes.
+Durante los tres meses se realizarán (2, 3 ,4 ???) fiestas (???) de código en vivo donde pondremos a prueba las destrezas de nuestros CJ's (code jockey) y su habilidad de escribir código pero sobretodo su habilidad para poner a bailar a los asistentes.
 
-Todos los interesados ( ¿Escribes codigo?, ¿Aún no escribes codigo? ) nos reuniremos durante una hora todos los viernes al atardecer, donde tendremos una live session de veinte minutos preparada por un CJ de nuestro equipo, esta live session tendra un tinte muy pedagójico y didáctico, explicando la síntesis de sonido, los ciclos lógicos y cualquier otra cosa que código tenga dentro de su estructura, luego repetiremos la experiencia con algun invitado externo o alguno de nuestros CJ amigos!!!
+Todos los interesados ( ¿Escribes código?, ¿Aún no escribes código? ) nos reuniremos durante una hora todos los viernes al atardecer, donde tendremos una live session de veinte minutos preparada por un CJ de nuestro equipo, esta live session tendrá un tinte muy pedagógico y didáctico, explicando la síntesis de sonido, los ciclos lógicos y cualquier otra cosa que el código tenga dentro de su estructura, luego sera el turno de aprender de los visitantes y conocer  la experiencia con algún invitado externo o alguno de nuestros CJ amigos!!!
 
 
 ----
