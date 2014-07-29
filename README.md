@@ -1,7 +1,7 @@
 
-![flyer](https://raw.githubusercontent.com/son0p/algorritmoCallejero/master/imagenes/algoRitmoCallejeroFlyer.png)
 
-¿Código? ¿Qué es código, todos sabemos que es código? ¿todos sabemos a que nos referimos?
+
+## ¿Código? ¿Qué es código, todos sabemos que es código? ¿todos sabemos a que nos referimos?
 
 
 Algo-Ritmo callejero
