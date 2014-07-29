@@ -1,12 +1,9 @@
 
-
-
-## ¿Código? ¿Qué es código, todos sabemos que es código? ¿todos sabemos a que nos referimos?
-
-
 Algo-Ritmo callejero
 ===============
 (para sentarse y pararse)
+
+Un semillero de curiosos por la programación, la música y el ritmo.
 
 Ciclo de tres meses en los que se compartirán experiencias de programación con dos fines principales, "Sentarse" a escribir código y a adquirir las herramientas necesarias para codificar en vivo y "Pararse" a bailar como si nadie te estuviera mirando.
 
