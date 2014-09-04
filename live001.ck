@@ -3,7 +3,7 @@ dur bit;
 60.0/(tempo) => float SPB;
 SPB::second => bit;
 
-35 => int root;
+31 => int root;
 //80.0 => float root;
 
 
@@ -61,21 +61,25 @@ fun void bs()
 
 	while(true)
 	{
-		bit => now;
-		Std.mtof(root) => bass.freq;
+		
+		Std.mtof( root ) => bass.freq;
+		e.keyOn();
+		bit/2 => now; //
+		e.keyOff();
+		Std.mtof( root + 12 ) => bass.freq;
 		e.keyOn();
 		bit/2 => now;
 		e.keyOff();
-		Std.mtof(root)+12 => bass.freq;
+		Std.mtof( root ) => bass.freq;
 		e.keyOn();
-		bit/4 => now;
+		bit/2 => now;
 		e.keyOff();
 		//float seed;
 		[0, 3,3,7] @=> int opt[];
-		Math.random2(0, opt.cap()-1) => int sel;
-		Std.mtof(root*opt[sel]) => bass.freq;
+		Math.random2( 0, opt.cap()-1 ) => int sel;
+		Std.mtof( root + opt[sel] ) => bass.freq;
 		e.keyOn();
-		bit/4 => now;
+		bit/2 => now;
 		e.keyOff();
 	}
 }
@@ -91,13 +95,13 @@ fun void ml()
 		//float seed;
 		[0,0,0, 3, 7 ] @=> int opt[]; // opciones de distancias de la nota raiz en semitonos
 		Math.random2(0, opt.cap()-1) => int sel;
-		Std.mtof(root+opt[sel]) => mel.freq;
+		Std.mtof((root+opt[sel]) * 2 ) => mel.freq;
 		eMel.keyOn();
-		[1,1,1,2,2,4,3] @=> int optBit[];
+		[1,2,2,4,3] @=> int optBit[];
 		Math.random2(0, optBit.cap()-1) => int selBit;
-		bit/4 => now;
+		bit/selBit => now;
 		eMel.keyOff();
-		<<< mel.freq()>>>;
+		
 	}
 
 
@@ -110,7 +114,7 @@ spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
-spork~ ml();
+//spork~ ml();
 	
 
 
