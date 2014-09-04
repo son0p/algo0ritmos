@@ -3,7 +3,7 @@ dur bit;
 60.0/(tempo) => float SPB;
 SPB::second => bit;
 
-31 => int root;
+29 => int root;
 //80.0 => float root;
 
 
@@ -22,7 +22,7 @@ SawOsc bass => Envelope e => dac;
 0.3 => bass.gain;
 TriOsc mel => Envelope eMel => NRev rMel => dac;
 0.3 => mel.gain;
-0.2 => rMel.mix;
+0.1 => rMel.mix;
 
 fun void kk()
 {
@@ -62,46 +62,43 @@ fun void bs()
 	while(true)
 	{
 		
-		Std.mtof( root ) => bass.freq;
-		e.keyOn();
-		bit/2 => now; //
-		e.keyOff();
-		Std.mtof( root + 12 ) => bass.freq;
-		e.keyOn();
-		bit/2 => now;
-		e.keyOff();
-		Std.mtof( root ) => bass.freq;
-		e.keyOn();
-		bit/2 => now;
-		e.keyOff();
+		Std.mtof( root -2) => bass.freq;e.keyOn(); bit/2 => now; 	e.keyOff();
+		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+		Std.mtof( root -2) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+		0 => int i;
+		until ( i == 6 )
+		{
+			Std.mtof( root ) => bass.freq;e.keyOn(); bit/2 => now; 	e.keyOff();
+			Std.mtof( root + 12 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+			i++;
+		}
+		
 		//float seed;
-		[0, 3,3,7] @=> int opt[];
-		Math.random2( 0, opt.cap()-1 ) => int sel;
-		Std.mtof( root + opt[sel] ) => bass.freq;
-		e.keyOn();
-		bit/2 => now;
-		e.keyOff();
+		// [0, 3,3,7] @=> int opt[];
+		// Math.random2( 0, opt.cap()-1 ) => int sel;
+		// Std.mtof( root + opt[sel] ) => bass.freq;
+		// e.keyOn();
+		// bit/2 => now;
+		// e.keyOff();
 	}
 }
 
 // melody
 fun void ml()
 {
-
+	0=> int i;
+	// opciones de distancias de la nota raiz en semitonos
+	[67,62,0, 60,62,0,65, 0,62,0, 60,62,0, 57,0,62,0, 57,0,62,0, 57,0,62,0,60,62,0] @=> int opt[]; 
+	[ 2, 4,4,  4, 4,4, 2, 4, 4,4,  4, 4,2,  4,4, 4,4,  4,4, 2,4,  4,4, 4,4, 4, 2] @=> int optBit[];
 
 	while(true)
 	{
-	
-		//float seed;
-		[0,0,0, 3, 7 ] @=> int opt[]; // opciones de distancias de la nota raiz en semitonos
-		Math.random2(0, opt.cap()-1) => int sel;
-		Std.mtof((root+opt[sel]) * 2 ) => mel.freq;
+		Std.mtof(opt[i]) => mel.freq;
 		eMel.keyOn();
-		[1,2,2,4,3] @=> int optBit[];
-		Math.random2(0, optBit.cap()-1) => int selBit;
-		bit/selBit => now;
+		bit/optBit[i] => now;
 		eMel.keyOff();
-		
+	i++;	
 	}
 
 
@@ -114,7 +111,7 @@ spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
-//spork~ ml();
+spork~ ml();
 	
 
 
