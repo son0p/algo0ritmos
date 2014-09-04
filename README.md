@@ -1,5 +1,5 @@
 
-Algo-Ritmo Bailable
+Algo-Ritmos
 ===============
 (para sentarse y pararse)
 
