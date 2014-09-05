@@ -4,8 +4,6 @@ dur bit;
 SPB::second => bit;
 
 29 => int root;
-//80.0 => float root;
-
 
 Impulse kick =>TwoPole kp => dac;
 50.0 => kp.freq; 0.99 => kp.radius; 1 => kp.gain;
@@ -73,14 +71,6 @@ fun void bs()
 			Std.mtof( root + 12 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
 			i++;
 		}
-		
-		//float seed;
-		// [0, 3,3,7] @=> int opt[];
-		// Math.random2( 0, opt.cap()-1 ) => int sel;
-		// Std.mtof( root + opt[sel] ) => bass.freq;
-		// e.keyOn();
-		// bit/2 => now;
-		// e.keyOff();
 	}
 }
 
@@ -100,21 +90,13 @@ fun void ml()
 		eMel.keyOff();
 	i++;	
 	}
-
-
-	
 }
-
-
 
 spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
 spork~ ml();
-	
-
-
 
 while(true)
 {
