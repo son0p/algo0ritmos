@@ -1,25 +1,27 @@
+// determinamos una duración para lo que va a ser nuestro beat
 500::ms => dur bit;
-
+// definimos la nota raiz
 29 => int root;
-
+// hacemos un bombo filtrando un Impuslo
 Impulse kick =>TwoPole kp => dac;
 50.0 => kp.freq; 0.99 => kp.radius; 1 => kp.gain;
-
+// hacemos un redoblante filtrando un Noise
 Noise n => ADSR snare => TwoPole sp  => dac;
 800.0 => sp.freq; 0.9 => sp.radius; 0.1 => sp.gain;
 snare.set(0.001,0.1,0.0,0.1);
-
+// hacemos un charles filtrando un Noise
 Noise h => ADSR hihat => TwoPole hsp => dac;
 5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 hihat.set(0.001,0.1,0.0,0.1);
-
+// hacemos un bajo y le asingamos una ganancia (volumen)
 SawOsc bass => Envelope e => dac;
 0.3 => bass.gain;
-
+// hacemos un sonido para melodía y la pasamos por una reverb
 TriOsc mel => Envelope eMel => NRev rMel => dac;
 0.5 => mel.gain;
 0.1 => rMel.mix;
 
+// una función que suena un bombo cada beat
 fun void kk()
 {
 	while(true)
@@ -29,6 +31,7 @@ fun void kk()
 	}
 }
 
+// una función que ejecuta un redoblante dejando una negra en silencio 
 fun void sn()
 {
 	while(true)
@@ -40,6 +43,7 @@ fun void sn()
 	}
 }
 
+// una función que ejecuta el hihat dejando un silencio de corchea
 fun void hh()
 {
 	while(true)
@@ -51,13 +55,11 @@ fun void hh()
 	}
 }
 
-
+// un bajo que se ejecuta en corcheas (bit/2) y variando la distancia de la nota raiz (root -2)(root + 10)etc., la última parte de la ejecución que es igual 6 veces se hace con un ciclo lógico "until"
 fun void bs()
 {
-
 	while(true)
 	{
-		
 		Std.mtof( root -2) => bass.freq;e.keyOn(); bit/2 => now; 	e.keyOff();
 		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
 		Std.mtof( root -2) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
@@ -72,7 +74,7 @@ fun void bs()
 	}
 }
 
-// melody
+// función para la melodia
 fun void ml()
 {
 	while(true)
@@ -138,12 +140,14 @@ fun void ml()
 	}
 }
 
+// se llaman todas las funciones 
 spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
 spork~ ml();
 
+// un ciclo para mantener vivos los llamados a las funciones
 while(true)
 {
 	bit => now;
