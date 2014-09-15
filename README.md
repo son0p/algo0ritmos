@@ -9,14 +9,20 @@ Ciclo de tres meses en los que se compartirán experiencias de programación con
 
 Durante los tres meses se realizarán  fiestas  de código en vivo donde pondremos a prueba las destrezas de nuestros CJ's (code jockey) y su habilidad para escribir código, para poner a bailar a los asistentes, y sobre todo para mantenerlos bailando.
 
-Todos los interesados (¿Escribes código?, ¿Aún no escribes código?) nos reuniremos durante unas horas  los viernes al atardecer (2 a 6pm) en la sala TIC del Parque Explora, donde tendremos una live session de veinte minutos preparada por un CJ de nuestro equipo, esta live session tendrá un tinte muy pedagógico y didáctico, explicando la síntesis de sonido, los ciclos lógicos y cualquier otra cosa que el código tenga dentro de su estructura, luego sera el turno de aprender de los visitantes y conocer  la experiencia con algún invitado externo o alguno de nuestros CJ amigos!!!
+Todos los interesados nos reuniremos durante unas horas  los **viernes al atardecer (2 a 6pm) en la sala TIC del Parque Explora**, donde tendremos una live session de veinte minutos preparada por un CJ de nuestro equipo, esta live session tendrá un tinte muy pedagógico y didáctico, explicando la síntesis de sonido, los ciclos lógicos y cualquier otra cosa que el código tenga dentro de su estructura, luego sera el turno de aprender de los visitantes y conocer  la experiencia con algún invitado externo o alguno de nuestros CJ amigos!!!
 
 
 ----
 #### Llamado a escribir código en vivo para mover el cuerpo.
-Fecha y sitio por confirmar.
+Clases : Todos los viernes de 2pm a 4pm en Sala TIC del Parque Explora
 
-Inspirados (casi copiado de) en [Algorave](http://algorave.com/)
+Evento: Nov 7, parque de los deseos. 
+
+Créditos:
+* Inspirados (casi copiado de) en [Algorave](http://algorave.com/)
+* Orientado por profesores de la **Casa de Experimentos** de [Medellín Vive La Música](http://www.medellinvivelamusica.com)
+* Logítica y apoyo de MOVA — Centro de Innovación del Maestro
+* Hospedados en Sala TIC del Parque Explora
 
 ----
 ### ¿Cómo participar?
