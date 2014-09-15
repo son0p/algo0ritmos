@@ -1,3 +1,9 @@
+// * Para correr este archivo de manera
+// * infinita, edite y ejecute looper.ck
+// * En looper.ck edite de la siguiente manera
+// * Machine.add(me.dir()+"/201melodiasAleatorias.ck") => int fileID;
+// * Luego ejecute looper.ck
+
 // Determinamos una duración para lo que
 // va a ser nuestro beat.
 500::ms => dur bit;
@@ -148,14 +154,13 @@ fun void ml()
 		// [1, 2, 2, 2, 2, 2, 2, 2, 3] @=> int div[];
 		// for (0 => int i; i < options.cap(); i++)
 		// {
-		// 	Math.random2(0, options.cap()-1) => int select;
-		// 	Std.mtof(options[select]) => mel.freq;
-		// 	eMel.keyOn();
-		// 	Math.random2(0, div.cap()-1) => int divBit; 
-		// 	bit/div[divBit] => now;
-		// 	eMel.keyOff();
+		//  	Math.random2(0, options.cap()-1) => int select;
+		//  	Std.mtof(options[select]) => mel.freq;
+		//  	eMel.keyOn();
+		//  	Math.random2(0, div.cap()-1) => int divBit; 
+		//  	bit/div[divBit] => now;
+		//  	eMel.keyOff();
 		// }
-	
 	}
 }
 
@@ -164,7 +169,7 @@ spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
-spork~ ml();
+//spork~ ml();
 
 // Un ciclo infinito para mantener vivos los llamados a las funciones.
 while(true)

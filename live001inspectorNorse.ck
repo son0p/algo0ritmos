@@ -1,23 +1,21 @@
-120 => int tempo;
-dur bit;
-60.0/(tempo) => float SPB;
-SPB::second => bit;
+500::ms => dur bit;
 
 29 => int root;
 
 Impulse kick =>TwoPole kp => dac;
 50.0 => kp.freq; 0.99 => kp.radius; 1 => kp.gain;
 
-Noise n => ADSR snare => TwoPole sp => Delay sdel => dac;
+Noise n => ADSR snare => TwoPole sp  => dac;
 800.0 => sp.freq; 0.9 => sp.radius; 0.1 => sp.gain;
 snare.set(0.001,0.1,0.0,0.1);
 
-Noise h => ADSR hihat => TwoPole hsp => Delay hdel => dac;
+Noise h => ADSR hihat => TwoPole hsp => dac;
 5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 hihat.set(0.001,0.1,0.0,0.1);
 
 SawOsc bass => Envelope e => dac;
 0.3 => bass.gain;
+
 TriOsc mel => Envelope eMel => NRev rMel => dac;
 0.3 => mel.gain;
 0.1 => rMel.mix;
@@ -77,18 +75,19 @@ fun void bs()
 // melody
 fun void ml()
 {
-	0=> int i;
+	0=> int iter;
 	// opciones de distancias de la nota raiz en semitonos
 	[67,62,0, 60,62,0,65, 0,62,0, 60,62,0, 57,0,62,0, 57,0,62,0, 57,0,62,0,60,62,0] @=> int opt[]; 
-	[ 2, 4,4,  4, 4,4, 2, 4, 4,4,  4, 4,2,  4,4, 4,4,  4,4, 2,4,  4,4, 4,4, 4, 2] @=> int optBit[];
+	[ 2, 4,4,  4, 4,4, 2, 4, 4,4,  4, 4,2,  4,4, 4,4,  4,4, 2,4,  4,4, 4,4, 4, 4,4] @=> int optBit[];
 
 	while(true)
 	{
+		iter%opt.cap() => int i;
 		Std.mtof(opt[i]) => mel.freq;
 		eMel.keyOn();
 		bit/optBit[i] => now;
 		eMel.keyOff();
-	i++;	
+	iter++;	
 	}
 }
 

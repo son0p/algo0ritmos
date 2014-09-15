@@ -5,7 +5,7 @@ SPB::second => bit;
 
 while( true )
 {
-	Machine.add(me.dir()+"/live001t.ck") => int fileID;
+	Machine.add(me.dir()+"/300densidad.ck") => int fileID;
 	8*bit => now;
 	Machine.remove( fileID );
 }
