@@ -11,21 +11,34 @@
 // Definimos la nota raiz.
 29 => int root;
 
-
-
 // Hacemos un bajo y le asingamos
 // una ganancia (volumen).
 SawOsc bass => Envelope e => dac;
 0.3 => bass.gain;
 
-// Iniciamos varios instrumentos
+// Intervalos que se usarán para los acordes,
+// Puede poner tantos elementos como quiera
+// en el array.
 [0, 3, 7, 12, 14] @=> int notes[];
-//[0, 5, 0, 5 ] @=> int notes[];
+
+// Se crean tantos instrumentos como elementos
+// del array.
 SawOsc chord[notes.cap()];
- Gain master => Envelope eChord => NRev rCh => Pan2 p => dac;
+
+// Se hace que todos los instrumentos
+// pasen por un Gain, Envelope, Nrev, y Pan.
+Gain master => Envelope eChord => NRev rCh => Pan2 p => dac;
+
+// Se inicializa la cantidad de Reverb
 0.1 => rCh.mix; 
+
+// Se inicializa una ganancia que sera
+// variada aleatoriamente en el ciclo
+// infinito.
 0.3 => float initGain;
 
+// Se pasan todos los instrumentos por
+// la cadena de audio del master.
 for( 0 => int i; i < chord.cap(); i++ )
 {
  	chord[i] => master;
@@ -105,7 +118,7 @@ fun void ml(int div)
 
 //spork~ bs();
 
-//Drummer dr; //produce segmentation fault
+//Drummer dr; // aun falta .. produce segmentation fault
 spork~ ch(root+36, notes, 12, 4);
 spork~ ml(2);
 
