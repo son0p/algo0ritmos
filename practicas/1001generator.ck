@@ -91,22 +91,31 @@ fun void ch( int root, int notes[], int div1, int div2)
 }
 
 // Función para la melodia.
-fun void ml(int div1, int div2)
+fun void ml(int size, int div1, int div2)
 {
 	while(true)
 	{
-		[24, 26, 0, 26] @=> int opciones[];
-		[ 4,  2,  4, 2] @=> int dura[];
-		for (0 => int i; i < opciones.cap(); i++)
+		// Notas opcionales en una Pentatonica
+		[0, 2, 5, 7, 9, 12, 14] @=> int optNotes[];
+		// Divisiones del beat opcionales
+		[ 1,  2,  3,  4] @=> int optDiv[];
+		int notes[10];
+		// Llena un array de manera aleatoria
+		for ( 0 => int i; i < size; i++ )
 		{
-	
+			Math.random2(0, size-1) => notes[i];
+		}
+		
+//		Ejecuta la melodía.
+		for (0 => int i; i < size; i++)
+		{
 			eMel.keyOn();
-			Std.mtof(root+ 12+ opciones[i]) => mel.freq;
-			bit/dura[i] => now;
+			Std.mtof( root + 12 + notes[i]) => mel.freq;
+			bit/optDiv[i] => now;
 			eMel.keyOff();
 		//	[1,1,1,1,1,2,2,2,4,4,4,8] @=> int seed[];
 		//	bit/seed[(Math.random2(0, seed.cap()-1))] => now;
-			bit/dura[i] => now;
+			bit/optDiv[i] => now;
 		}
 	}
 }
@@ -124,7 +133,7 @@ spork~ bs();
 spork~ ch(root+36, notes, 12, 4);
 
 // Melodía
-spork~ ml(4, 4);
+spork~ ml(8, 4, 4);
 
 // Un ciclo infinito para mantener vivos los llamados a las funciones.
 while(true)
