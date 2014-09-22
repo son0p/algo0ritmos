@@ -33,7 +33,7 @@ SawOsc chord[notes.cap()];
 Gain master => Envelope eChord => NRev rCh => Pan2 p => dac;
 
 // ------Mixer-------
-0.1 => mel.gain;
+0.5 => mel.gain;
 0.1 => rMel.mix;
 0.2 => bass.gain;
 // Ganancia acordes.
@@ -99,23 +99,26 @@ fun void ml(int size, int div1, int div2)
 		[0, 2, 5, 7, 9, 12, 14] @=> int optNotes[];
 		// Divisiones del beat opcionales
 		[ 1,  2,  3,  4] @=> int optDiv[];
-		int notes[10];
-		// Llena un array de manera aleatoria
+
+		int notes[size];
+		int div[size];
+
+		// Llena un array de notas de manera aleatoria
 		for ( 0 => int i; i < size; i++ )
 		{
-			Math.random2(0, size-1) => notes[i];
+			optNotes[(Math.random2(0, optNotes.cap()-1))] => notes[i];
+			optDiv[(Math.random2(0, optDiv.cap()-1))] => div[i];
 		}
-		
+				
 //		Ejecuta la melodía.
 		for (0 => int i; i < size; i++)
 		{
 			eMel.keyOn();
-			Std.mtof( root + 12 + notes[i]) => mel.freq;
-			bit/optDiv[i] => now;
+			Std.mtof( root + 24 + notes[i]) => mel.freq;
+			bit/div[i] => now;
 			eMel.keyOff();
-		//	[1,1,1,1,1,2,2,2,4,4,4,8] @=> int seed[];
-		//	bit/seed[(Math.random2(0, seed.cap()-1))] => now;
-			bit/optDiv[i] => now;
+			bit/div[i] => now;
+		
 		}
 	}
 }
