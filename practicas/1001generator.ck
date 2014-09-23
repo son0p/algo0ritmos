@@ -2,7 +2,7 @@
 // * Para correr este archivo de manera
 // * infinita, edite y ejecute looper.ck
 // * En looper.ck edite de la siguiente manera
-// * Machine.add(me.dir()+"/300densidad.ck") => int fileID;
+// * Machine.add(me.dir()+"/1001generator.ck") => int fileID;
 // * Luego ejecute looper.ck
 
 // Determinamos una duración para lo que
