@@ -1,3 +1,4 @@
+// ==================================================
 // * Para correr este archivo de manera
 // * infinita, edite y ejecute looper.ck
 // * En looper.ck edite de la siguiente manera
@@ -93,31 +94,26 @@ fun void ch( int root, int notes[], int div1, int div2)
 // Función para la melodia.
 fun void ml(int size, int div1, int div2)
 {
+	MelodyGenerator melody;
 	while(true)
 	{
-		// Notas opcionales en una Pentatonica
-		[0, 2, 5, 7, 9, 12, 14] @=> int optNotes[];
-		// Divisiones del beat opcionales
-		[ 1,  2,  3,  4] @=> int optDiv[];
-
-		int notes[size];
-		int div[size];
-
-		// Llena un array de notas de manera aleatoria
-		for ( 0 => int i; i < size; i++ )
-		{
-			optNotes[(Math.random2(0, optNotes.cap()-1))] => notes[i];
-			optDiv[(Math.random2(0, optDiv.cap()-1))] => div[i];
-		}
+		melody.generateMelody(root, 2) @=> int notes[];
+		//melody.generateDuration
 				
 //		Ejecuta la melodía.
 		for (0 => int i; i < size; i++)
 		{
 			eMel.keyOn();
-			Std.mtof( root + 24 + notes[i]) => mel.freq;
-			bit/div[i] => now;
+			Std.mtof( notes[i] + 24 ) => mel.freq;
+			// Traigo la duración llamando una función
+			// de la clase.
+			bit/melody.generateDuration() => now;
 			eMel.keyOff();
-			bit/div[i] => now;
+
+			// Otra llamada a la funciön para obtener
+			// una división diferente.
+			melody.generateDuration() => int div2;
+			bit/div2 => now;
 		
 		}
 	}
