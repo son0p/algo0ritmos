@@ -33,26 +33,35 @@ public class Drummer
 	5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 	hihat.set(0.001,0.1,0.0,0.1);
 
-	fun void kk(int div)
+	
+	fun void kk(int div, int density)
 	{
 		0 => int i;
-		while(true)
+		if( density == 0 )
 		{
-			i % 8 => int loop8;
-			if( loop8 < 7)
-			{ 
-				1.0 => kick.next;
-				0 => kks.pos;	
-				bit/div => now;
-			}
-			else
+			0 => kks.pos;
+			8*bit => now;
+		}
+		else
+		{
+			while(true)
 			{
-				[1, 1, 1, 1,  2, 4] @=> int seed[];
-				1.0 => kick.next;
-				kks.samples() => kks.pos;	
-				bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+				i % 8 => int loop8;
+				if( loop8 < 7)
+				{ 
+					1.0 => kick.next;
+					0 => kks.pos;	
+					bit/div => now;
+				}
+				else
+				{
+					[1, 1, 1, 1,  2, 4] @=> int seed[];
+					1.0 => kick.next;
+					kks.samples() => kks.pos;	
+					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+				}
+				i++;
 			}
-			i++;
 		}
 	}
 	
