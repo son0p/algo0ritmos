@@ -34,7 +34,7 @@ SawOsc chord[notes.cap()];
 Gain master => Envelope eChord => NRev rCh => Pan2 p => dac;
 
 // ------Mixer-------
-0.5 => mel.gain;
+0.3 => mel.gain;
 0.1 => rMel.mix;
 0.2 => bass.gain;
 // Ganancia acordes.
@@ -98,7 +98,16 @@ fun void ml(int size, int div1, int div2)
 	while(true)
 	{
 		melody.generateMelody(root, 2) @=> int notes[];
+
+		// Imprime la notas escogidas
+		for( 0 => int i; i < notes.cap(); i++)
+		{
+			<<< notes[i]+"," >>>;
+		}
+		<<<"---------------">>>;
+
 		//melody.generateDuration
+
 				
 //		Ejecuta la melodía.
 		for (0 => int i; i < size; i++)
@@ -121,7 +130,7 @@ fun void ml(int size, int div1, int div2)
 
 // Se llaman todas las funciones. 
 Drummer dr;
-spork~ dr.kk(1);
+spork~ dr.kk(1, 1);
 spork~ dr.sn();
 spork~ dr.hh();
 
@@ -132,7 +141,7 @@ spork~ bs();
 spork~ ch(root+36, notes, 12, 4);
 
 // Melodía
-spork~ ml(8, 4, 4);
+spork~ ml(2, 4, 4);
 
 // Un ciclo infinito para mantener vivos los llamados a las funciones.
 while(true)

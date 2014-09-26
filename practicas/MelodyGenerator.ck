@@ -50,6 +50,7 @@ public class MelodyGenerator
 				pushNote =>  melody[i];
 			}
 		}
+		
 		return melody;
 	}
 	

@@ -10,7 +10,7 @@ Machine.add(me.dir()+"/MelodyGenerator.ck");
 
 while( true )
 {
-	Machine.add(me.dir()+"/1001generator.ck") => int fileID;
+	Machine.add(me.dir()+"/1005live.ck") => int fileID;
 	16*bit => now;
 	Machine.remove( fileID );
 }
