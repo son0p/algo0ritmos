@@ -7,5 +7,5 @@ while( true )
 {
 	Machine.add(me.dir()+"/live001t.ck") => int fileID;
 	8*bit => now;
-	Machine.remove( fileID );
+	Machine.replace( fileID , "/live001t.ck"); // virtual machine doesn't stop if you fuck it up 
 }
