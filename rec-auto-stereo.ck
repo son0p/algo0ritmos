@@ -1,29 +1,30 @@
-// chuck this with other shreds to record to file
-// example> chuck foo.ck bar.ck rec (see also rec2.ck)
+// Usalo poniendolo al final de la cadena de los archivos que usas
+// ejemplo> chuck miArchivo.ck rec-auto-stereo.ck
 
-// pull samples from the dac
-// WvOut2 -> stereo operation
+// saca muestras de la salida dac 
+// las pasa por WvOut2 para grabarlas en stereo
 dac => WvOut2 w => blackhole;
 
-// set the prefix, which will prepended to the filename
+// ajusta el prefijo que se pone al inicio del nombre del archivo
 // do this if you want the file to appear automatically
 // in another directory.  if this isn't set, the file
 // should appear in the directory you run chuck from
 // with only the date and time.
 "chuck-session" => w.autoPrefix;
 
-// this is the output file name
+// Aquí ajustas el nombre del archivo
 "special:auto" => w.wavFilename;
 
-// print it out
+// Lo muestras en la terminal
 <<<"writing to file: ", w.filename()>>>;
 
-// any gain you want for the output
+// Ganancia de la salida.
 .5 => w.fileGain;
 
-// temporary workaround to automatically close file on remove-shred
+// Arreglo temporal para matar el spork
 null @=> w;
 
-// infinite time loop...
-// ctrl-c will stop it, or modify to desired duration
+// Cilco infinito de tiempo
+// ctrl-c interrumpe el proceso, 
+// o podría aca poner una duración determinada
 while( true ) 1::second => now;
