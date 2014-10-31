@@ -12,13 +12,13 @@ transient.set(0.001,0.05,0.0,0.1);
 // Usamos una onda sinosoidal para el tono 
 SinOsc s => ADSR boom => dac;
 boom.set(0.001,0.1,0.0,0.1);
-60 => s.freq;
+60 => s.freq; // definimos 60hz 
 0.7 => s.gain;
 
 while( true )
 {
 	// filtramos de manera aleatoria la frecuencia
-	// del transiente
+	// de la transiente
 	Math.random2f(200, 5000) => float varFreq;
 	sp.set(varFreq, 1);
 	transient.keyOn();
