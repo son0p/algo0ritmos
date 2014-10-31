@@ -1,11 +1,12 @@
 
 // Usamos un ruido para la transiente
 Noise n => ADSR transient => BPF sp  => dac;
-// Envolvente, altere el segundo valor para tener
-// la duración del transiente
+
+// Configuramos la Envolvente,
+// altere el segundo valor para variar
+// la duración de la transiente
 transient.set(0.001,0.05,0.0,0.1);
-2000 => float varFreq;
-sp.set(varFreq, 1);
+
 0.3 => n.gain;
 
 // Usamos una onda sinosoidal para el tono 
@@ -18,7 +19,7 @@ while( true )
 {
 	// filtramos de manera aleatoria la frecuencia
 	// del transiente
-	Math.random2f(200, 5000) => varFreq;
+	Math.random2f(200, 5000) => float varFreq;
 	sp.set(varFreq, 1);
 	transient.keyOn();
 	boom.keyOn();
