@@ -51,11 +51,14 @@ public class Drummer
 	fun void kk(int div, int density)
 	{
 		0 => int i;
+		// Un golpe cada 16 beats, usable para cortes.
 		if( density == 0 )
 		{
 			0 => kks.pos;
 			8*bit => now;
 		}
+		// Golpes estables y variación leve
+		// al final del compás.
 		if( density == 1 )
 		{
 			while(true)
@@ -77,6 +80,8 @@ public class Drummer
 				i++;
 			}
 		}
+		// Golpes estables y variación 
+		// al final del compás.
 		if( density == 2)
 		{
 			while(true)
@@ -98,6 +103,7 @@ public class Drummer
 				i++;
 			}
 		}
+		// A partir de 4 beats selección aleatoria de divisiones.
 		if( density > 2)
 		{
 			while(true)
@@ -184,7 +190,7 @@ public class Drummer
 			
 		}
 	}
-
+	// Función para manejar sonidos de 8bit.
 	fun void bi(int div, int density)
 	{
 		0 => int i;
