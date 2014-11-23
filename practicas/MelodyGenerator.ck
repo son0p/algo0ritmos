@@ -41,8 +41,7 @@ public class MelodyGenerator
 	{
 		// Ask for notes to  Mode class
 		generateMode(root, modeInput) @=> int notes[];
-		// <<< "Mode: ", modeInput >>>;
-
+		
 		// Go over Mode array to pushing notes that obey the rules 
 		for	(0 => int i; i < melody.cap(); i++)
 		{
@@ -51,13 +50,13 @@ public class MelodyGenerator
 
 			// Rule: Intervals of max 6 tones
 			noteSelector => int newNote;
-			if(newNote < (oldNote + 4))
+			if(newNote < (oldNote + 6))
 			{
 				notes[noteSelector] => int pushNote;
 				// Fill the array with selected notes
 				pushNote =>  melody[i];
 			}
-			if(newNote < (oldNote - 4))
+			if(newNote < (oldNote - 6))
 			{
 				notes[noteSelector] => int pushNote;
 				// Fill the array with selected notes
@@ -85,16 +84,17 @@ public class MelodyGenerator
 		MelodyGenerator m;
 		m.generateMelody((root+24), mode) @=> int notes[];
 		0 => int i;
+
 		while( true )
 		{
-			Math.random2f(20,2000) => filter.freq;
-			//Math.random2f(0, 1) => filter.Q;
-			1 => filter.Q;
-			seeds[ Math.random2( 0, seeds.cap()-1 )] => int div;
+			Math.random2f(200,1500) => filter.freq;
+			Math.random2f(0.1, 0.9) => filter.Q;
+			//1 => filter.Q;
+			seeds[ Math.random2( 0, seeds.cap()-1 ) ] => int div;
 			i % 8 => int i8;
 			if( notes[i8] > 0 )
 			{
-				Std.mtof(notes[i8]) => mel.freq; e.keyOn(); beat/div => now; e.keyOff();
+				Std.mtof( notes[i8] ) => mel.freq; e.keyOn(); beat/div => now; e.keyOff();
 			}
 			if( notes[i8] <= 0 )
 			{
@@ -111,7 +111,7 @@ public class MelodyGenerator
 			
 		}
 	}
-		fun void playMelody(int root, int octave,  int notes[][])
+		fun void playMelody( int root, int octave,  int notes[][] )
 		{
 			// Dependiendo de la octava se ajusta el valor para
 			// sumarlo a la nota seleccionada.
@@ -126,32 +126,32 @@ public class MelodyGenerator
 				i % 8 => int i8;
 				//Math.random2f(40,4000) => filter.freq;
 				100 => filter.Q;
-				if ( notes [i8][0] != 0)
+				if ( notes [i8][0] != 0 )
 				{
-					Std.mtof(root + notes[i8][0] + octave) => mel.freq; e.keyOn(); beat/(notes[i8][1]) => now; e.keyOff();
+					Std.mtof( root + notes[i8][0] + octave ) => mel.freq; e.keyOn(); beat/( notes[i8][1] ) => now; e.keyOff();
 					
 			}
-				if ( notes [i8][0] == 0)
+				if ( notes [i8][0] == 0 )
 				{
-					beat/(notes[i8][1]) => now; e.keyOff();
+					beat/( notes[i8][1] ) => now; e.keyOff();
 				}
 				i++;
 			}
 		}
 	}
 
-	fun int[] generateMode(int root, int modeInput)
+	fun int[] generateMode( int root, int modeInput )
 	{
 		int notes[];
 		// Ionian
-		if (modeInput == 1)
+		if ( modeInput == 1 )
 		{
 			[(root),(root + 2),(root + 4),(root + 5),(root + 7), (root + 9),
 			(root + 11), (root + 12)] @=> int notes[];
 			return notes;
 		}
 		// Dorian
-		if (modeInput == 2)
+		if ( modeInput == 2 )
 		{
 			[(root),(root + 2),(root + 3),(root + 5),(root + 7), (root + 9),
 			(root + 10), (root + 12)] @=> int notes[];

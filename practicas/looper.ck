@@ -7,7 +7,8 @@ SPB::second => bit;
 Machine.add(me.dir()+"/Drummer.ck");
 Machine.add(me.dir()+"/Mode.ck");
 Machine.add(me.dir()+"/MelodyGenerator.ck");
-
+Machine.add(me.dir()+"/MySynthLead.ck");
+Machine.add(me.dir()+"/Player.ck");
 
 while( true )
 {
