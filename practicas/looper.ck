@@ -15,6 +15,8 @@ while( true )
     // quede en loop, al salvar se actualiza con cada 16 beats.
 	Machine.add(me.dir()+"/1005live.ck") => int fileID;
 	16*bit => now;
-	Machine.replace( fileID, "/1005live.ck"); 
-	Machine.remove( fileID );
+	if(Machine.replace( fileID, "/1005live.ck"))
+	{
+	    Machine.remove( fileID );
+	}
 }
