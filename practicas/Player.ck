@@ -13,7 +13,7 @@
 
 public class Player
 {
-	fun void playMelody( int root, int octave,  int notes[][] )
+	fun void playMelody( int soundType, int root, int octave,  int notes[][] )
 	{
 		MySynthLead lead;
 	
@@ -33,7 +33,7 @@ public class Player
 				<<< notes [i8][0] >>>;
 				beat/( notes[i8][1]) => dur duration;
 				// actually play thru MySynthLead class
-				lead.playNote(root, octave, notes[i8][0], duration);
+				lead.playNote(soundType, root, octave, notes[i8][0], duration);
 				beat/( notes[i8][1] ) => now;
 				
 			}

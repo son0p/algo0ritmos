@@ -11,45 +11,103 @@
 500::ms => dur beat;
 public class MySynthLead
 {
-	KBHit kb;
-	SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
-	0.05 => mel.gain;
-	0.1 => r.mix;
-	20000 => LPFilter.freq;
 	
-//	static int root;
-//	int number;
+ 	KBHit kb;
 
-//	int notes[];
-	fun void test()
+	fun void playNote( int soundType, int root, int octave,  int note, dur duration )
 	{
-	<<< "test ok" >>>;	
+		Std.mtof( root + note + octave ) => float freq;
+		if( soundType == 1)
+		{
+			one(freq, duration);
+		}
+		if( soundType == 2)
+		{
+			two(freq, duration);
+		}
+		if( soundType == 3)
+		{
+			three(freq, duration);
+		}
+		if( soundType == 4)
+		{
+			four(freq, duration);
+		}
+		if( soundType == 5)
+		{
+			five(freq, duration);
+		}
+	
 	}
 	
-	fun void playNote( int root, int octave,  int note, dur duration )
+	// Filter lead synth sounType 1
+	fun void one(float freq, dur duration)
 	{
-		// Dependiendo de la octava se ajusta el valor para
-		// sumarlo a la nota seleccionada.
-		if( octave == 1) octave + 11 => octave;
-		if( octave == 2) octave + 22 => octave;
-		if( octave == 3) octave + 33 => octave;
-		if( octave == 4) octave + 44 => octave;
-		if( octave == 5) octave + 55 => octave;
-		0 => int i;
-	
-			Math.random2f(104,4000) => HPfilter.freq;
-			0.5 => HPfilter.Q;
-			Std.mtof( root + note + octave ) => mel.freq;
-			e.keyOn();
-			duration => now;
-			e.keyOff();
-		}
+		SinOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.2 => mel.gain;
+		0.2 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(100,200) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		duration => now;
+		e.keyOff();
+	}
+	fun void two(float freq, dur duration)
+	{
+		SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.05 => mel.gain;
+		0.2 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(104,4000) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		duration => now;
+		e.keyOff();
+	}
+	fun void three(float freq, dur duration)
+	{
+		SawOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.05 => mel.gain;
+		0.2 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(104,4000) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		duration => now;
+		e.keyOff();
+	}
+	fun void four(float freq, dur duration)
+	{
+		TriOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.05 => mel.gain;
+		0.2 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(104,4000) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		duration => now;
+		e.keyOff();
+	}
+	fun void five(float freq, dur duration)
+	{
+		SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.05 => mel.gain;
+		0.2 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(104,4000) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		duration => now;
+		e.keyOff();
+	}
+
 }
-	
-
-
-
-	
 	
 	
 
