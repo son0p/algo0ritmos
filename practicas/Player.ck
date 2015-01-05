@@ -28,7 +28,7 @@ public class Player
 		while( true )
 		{
 			i % 8 => int i8;
-			if ( notes [i8][0] != 0 )
+			if ( notes [i8][0] != -88 )
 			{
 				<<< notes [i8][0] >>>;
 				beat/( notes[i8][1]) => dur duration;
@@ -37,7 +37,7 @@ public class Player
 				beat/( notes[i8][1] ) => now;
 				
 			}
-			if ( notes [i8][0] == 0 )
+			if ( notes [i8][0] == -88 )
 			{
 				beat/( notes[i8][1] ) => now;
 			}

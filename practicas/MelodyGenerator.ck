@@ -24,26 +24,24 @@ public class MelodyGenerator
 	int number;
 
 	int notes[];
-
+	int durations[32];
 	// TODO: This must be :
 	// int melody[notes.cap()];
 	// but produces NullPointerException
 	int melody[8];
-
-	[2,2,2,2,2,4,4,4,4,8,16] @=> int durations[];
 
 	// initialize new note to be compared in rules
 	root => int oldNote;
 	int pushNote;
 	int motive[7];
 
-	fun int[] generateMelody(int root, int modeInput)
+	fun int[] generateMelody(int root, int modeInput, int beats)
 	{
 		// Ask for notes to  Mode class
 		generateMode(root, modeInput) @=> int notes[];
 		
 		// Go over Mode array to pushing notes that obey the rules 
-		for	(0 => int i; i < melody.cap(); i++)
+		for	(0 => int i; i < beats; i++)
 		{
 			// Random choose for a note.
 			Math.random2(1, notes.cap())-1 => int noteSelector;
@@ -68,21 +66,24 @@ public class MelodyGenerator
 	}
 	
 	// TODO : duration must fill a measure
-	fun int generateDuration()
+	fun int[] generateDuration( int beats)
 	{
-		durations[(Math.random2(1, durations.cap())-1)] => int pushDuration;
-		return pushDuration;
+		[1,1,1,2] @=> int seedDuration[]; 
+		for( 0 => int i; i < (beats-1); i++)
+		{
+			seedDuration[(Math.random2(1, seedDuration.cap())-1)] => int pushDuration ;
+			pushDuration => durations[i];
+		}
+			return durations;
 	}
 	
-	fun void searchMelody(int root, int mode, int seed)
+	fun void searchMelody(int root, int mode, int seed, int beats)
 	{
-		// siembro candidatos para la selección aleatoria,
-		// con mayor probabilidad en el argumento seed que
-		// paso en la función
-		[seed, seed, seed, seed, seed, seed, seed, seed, seed, seed, seed, 1, 2, 4] @=> int seeds[];
-		
 		MelodyGenerator m;
-		m.generateMelody((root+24), mode) @=> int notes[];
+		m.generateMelody((root+24), mode, beats) @=> int notes[];
+//		m.generateDuration(beats) @=> int div[];
+		[1,1,1,1] @=> int div[];
+		
 		0 => int i;
 
 		while( true )
@@ -90,24 +91,22 @@ public class MelodyGenerator
 			Math.random2f(200,1500) => filter.freq;
 			Math.random2f(0.1, 0.9) => filter.Q;
 			//1 => filter.Q;
-			seeds[ Math.random2( 0, seeds.cap()-1 ) ] => int div;
-			i % 8 => int i8;
-			if( notes[i8] > 0 )
+
+			i % 8 => int iLoop;
+
+			//div[i] => int div;
+			
+			if( notes[iLoop] > 0 )
 			{
-				Std.mtof( notes[i8] ) => mel.freq; e.keyOn(); beat/div => now; e.keyOff();
+				Std.mtof( notes[iLoop] ) => mel.freq; e.keyOn(); beat/beats => now; e.keyOff();
 			}
-			if( notes[i8] <= 0 )
+			if( notes[iLoop] <= 0 )
 			{
 				e.keyOff();
-				beat/div => now; 
+				beat/beats => now; 
 			}
 			i++;
-			<<< ((notes[i8]) - root), div >>>;
-
-			if( kb.getchar() != 0 )
-			{
-				<<< "HHHHHHHHHHHHHHHHHHHHHHHHHHHHH" >>>;
-				}
+			<<< ((notes[iLoop]) - root), i, notes.cap() >>>;
 			
 		}
 	}

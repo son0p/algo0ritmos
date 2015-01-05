@@ -10,17 +10,15 @@ Machine.add(me.dir()+"/MelodyGenerator.ck");
 Machine.add(me.dir()+"/MySynthLead.ck");
 Machine.add(me.dir()+"/Player.ck");
 
-Machine.add(me.dir()+"/1005live.ck") => int fileID; //add before while loop
-
 
 while( true )
 {
     // Cambia dentro de las comillas el archivos que quieres que 
     // quede en loop, al salvar se actualiza con cada 16 beats.
-	16*bit => now; 
-	if(Machine.replace( fileID, "/1005live.ck") == true)
-	{
-	    Machine.remove( fileID );
-	    Machine.add(me.dir()+"/1005live.ck") => int fileID; // and problem solved
-	}
+
+	Machine.add(me.dir()+"/1005live.ck") => int fileID;
+	16*bit => now;
+	Machine.replace( fileID, "1005live.ck");
+	Machine.remove( fileID );
+
 }

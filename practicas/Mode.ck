@@ -20,52 +20,51 @@ public class Mode
 	fun int[] generateMode(int root, int modeInput)
 	{
 		// Ionian
-		if (modeInput == 1)
+		if ( modeInput == 1 )
 		{
-			[(root),(root + 2),(root + 4),(root + 5),(root + 7), (root + 9),
-			(root + 11), (root + 12)] @=> int notes[];
+			[0, 2, 4, 5, 7, 9, 11, 12] @=> int notes[];
 			return notes;
 		}
 		// Dorian
-		if (modeInput == 2)
+		if ( modeInput == 2 )
 		{
-			[(root),(root + 2),(root + 3),(root + 5),(root + 7), (root + 9),
-			(root + 10), (root + 12)] @=> int notes[];
+			[,  2,  3,  5,  7,   9,
+			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Phrygian
-		if (modeInput == 3)
+		if ( modeInput == 3 )
 		{
-			[(root),(root + 1),(root + 3),(root + 5),(root + 7), (root + 8),
-			(root + 10), (root + 12)] @=> int notes[];
+			[,  1,  3,  5,  7,   8,
+			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Lydian
-		if (modeInput == 4)
+		if ( modeInput == 4 )
 		{
-			[(root),(root + 2),(root + 4),(root + 6),(root + 7), (root + 9),
-			(root + 11), (root + 12)] @=> int notes[];
+			[,  2,  4,  6,  7,   9,
+			  11,   12] @=> int notes[];
 			return notes;
 		}
 		// Mixolidian
-		if (modeInput == 5)
+		if ( modeInput == 5 )
 		{
-			[(root),(root + 2),(root + 4),(root + 5),(root + 7), (root + 9),
-			(root + 10), (root + 12)] @=> int notes[];
+			[,  2,  4,  5,  7,   9,
+			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Aeolian
-		if (modeInput == 6)
+		if ( modeInput == 6 )
 		{
-			[(root),(root + 2),(root + 3),(root + 5),(root + 7), (root + 8),
-			(root + 10), (root + 12)] @=> int notes[];
+			[,  2,  3,  5,  7,   8,
+			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Locrian
-		if (modeInput == 7)
+		if ( modeInput == 7 )
 		{
-			[(root),(root + 1),(root + 3),(root + 5),(root + 6), (root + 8),
-			(root + 10), (root + 12)] @=> int notes[];
+			[,  1,  3,  5,  6,   8,
+			  10,    12] @=> int notes[];
 			return notes;
 		}
 		else

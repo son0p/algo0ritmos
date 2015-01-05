@@ -34,8 +34,6 @@ public class Drummer
 	// Hacemos un bombo, filtrando un Impuslo.
 	Impulse kick =>TwoPole kp => dac;
 	50.0 => kp.freq; 0.99 => kp.radius; 1 => kp.gain;
-
-	
 	
 	// Hacemos un redoblante, filtrando un Noise.
 	Noise n => ADSR snare => TwoPole sp  => dac;
