@@ -145,6 +145,6 @@ public class Synth
 // ==============================================================================
 // Test code
 
-Synth mySynth;
-[[60, 63, 66], [58, 55, 66]] @=> int test[][];
-mySynth.playChord(test, 1, 1);
+// Synth mySynth;
+// [[60, 63, 66], [58, 55, 66]] @=> int test[][];
+// mySynth.playChord(test, 1, 1);
