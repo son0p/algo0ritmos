@@ -106,7 +106,7 @@ public class MelodyGenerator
 				beat/beats => now; 
 			}
 			i++;
-			<<< ((notes[iLoop]) - root), i, notes.cap() >>>;
+		//	<<< ((notes[iLoop]) - root), i, notes.cap() >>>;
 			
 		}
 	}

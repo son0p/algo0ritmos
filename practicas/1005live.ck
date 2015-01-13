@@ -25,16 +25,25 @@ fun void mel()
 Drummer dr;
 MelodyGenerator ml;
 Player play;
+ProgressionGenerator prog;
+prog.genProg((root+24),1,0) @=> int test[][];
+Synth synth;
+
 spork~ dr.kk(1,1);
 spork~ dr.hh();
 spork~ dr.sn();
 // spork~ dr.bi(3, 4);
- spork~ bs();
+spork~ bs();
 
-
+spork~ play.chordPlayer(test,1);
+//spork~ synth.playChord([57,60,64], 1, 0);
+//spork~ play.chordPlayer([[57,60,64], [57,63,67], [80, 84, 88]]);
+//spork~ play.playMelody(1, root, 3, [[(test[0]),2],[test(1),1]]);
+//spork~ play.playMelody(1, root, 3, [[0,0],[3,0]]);
 //spork~ play.playMelody(1, root, 3, [[0,2],[4,1],[2,2],[0,1],[-88,1],[6,1],[-88,1]]);
-spork~ ml.searchMelody( root,3,4, 2);
+spork~ ml.searchMelody( root,6,4, 2);
 //spork~ ml.generateMelody(root, 2);
+
 
 
 

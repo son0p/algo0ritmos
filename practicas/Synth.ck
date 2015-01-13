@@ -9,9 +9,19 @@
 // ==============================================================================
 // This class takes an array of notes and play it
 500::ms => dur beat;
-
 public class Synth
 {
+	TriOsc chords[4]; // TODO > This must be dynamic
+	Gain master => Envelope e => NRev rev =>dac;
+	// Gain master => dac;
+	0.1 => master.gain;
+	0.05 => rev.mix;
+	for(0=> int i; i < chords.cap(); i++)
+		{
+			// use array to chuck unit genenrator to MASTER
+			chords[i] =>  master;
+		}
+	
 	
  	KBHit kb;
 
@@ -108,43 +118,28 @@ public class Synth
 		e.keyOff();
 	}
 
-	fun void playChord( int notes[][], int div, int voices)
+	fun void playChord( int notes[], int div, int voices)
 	{
-		
-		TriOsc chords[4]; // TODO > This must be dynamic
-		Gain master => dac;
-		
-		// Gain master => dac;
-		0.3 => master.gain;
-
-		for(0=> int i; i < chords.cap(); i++)
+		// play chord
+		for( 0 => int i; i < notes.cap(); i++)
 		{
-			// use array to chuck unit genenrator to MASTER
-			chords[i] => master;
+			Std.mtof(notes[i]) => chords[i].freq;
 		}
-		
-		// reset oscillator
+		e.keyOn();
+		beat/div => now;
+		e.keyOff();
+		// reset
 		for( 0=> int i; i < chords.cap(); i++)
 		{
 			0=> chords[i].freq;
 		}
-		while( true )
-		{
-			for( 0 => int i; i < notes.cap(); i++)
-			{
-				for( 0 => int ii; ii < notes.cap(); ii++ )
-				{
-					Std.mtof(notes[i][ii]) => chords[ii].freq;
-				}
-				beat/div => now; 
-			}
-		}
 	}
 }
+
 
 // ==============================================================================
 // Test code
 
 // Synth mySynth;
-// [[60, 63, 66], [58, 55, 66]] @=> int test[][];
+// [60, 63, 66] @=> int test[];
 // mySynth.playChord(test, 1, 1);

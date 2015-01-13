@@ -3,19 +3,22 @@
 // File        : Player.ck
 // Author      : son0p
 // Init Date   : 2014-Nov-23
-// Dependencies: MySinthLead.ck
+// Dependencies: Synth.ck
 // License     :
 // Git repo    : https://github.com/son0p/ChucK-classes-and-patches
 // ==============================================================================
 // This class takes an array of notes and send it to a synth
+
 500::ms => dur beat;
 //lead.test();
+
+
 
 public class Player
 {
 	fun void playMelody( int soundType, int root, int octave,  int notes[][] )
 	{
-		MySynthLead lead;
+		Synth lead;
 	
 		// Dependiendo de la octava se ajusta el valor para
 		// sumarlo a la nota seleccionada.
@@ -44,9 +47,32 @@ public class Player
 			i++;
 		}
 	}
+
+	fun void chordPlayer(int chords[][], int div)
+	{
+		Synth mySynth;
+	//	[57,60,65] @=> int chord[];
+
+		
+		while( true )
+		{
+			//mySynth.playChord(chord,1,1); // TODO Duration and preset dynamic
+			
+			for( 0 => int i; i < chords.cap(); i++)
+			{
+				mySynth.playChord(chords[i], 1, 3);
+				beat/div => now; 			// TODO Duration must be dynamic
+			}
+		
+		}
+	}
 }
 
 // ==============================================================================
 // Test code
+// pre-load Machine.add(me.dir()+"/Synth.ck");
 
+// Player player;
+//  [[57,60,64],[57,60,65]] @=> int chords[][];
+//  player.chordPlayer(chords);
 

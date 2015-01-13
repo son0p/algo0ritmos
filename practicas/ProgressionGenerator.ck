@@ -7,7 +7,7 @@
 // License     :
 // Git repo    : https://github.com/son0p/ChucK-classes-and-patches
 // ==============================================================================
-// This class takes root note, beats, and style and returns a chord progression
+// This class will take a root note, beats, and style and returns a chord progression
 // 0 = Trance
 
 500::ms => dur beat;
@@ -32,9 +32,12 @@ public class ProgressionGenerator
 		
 		// minnor
 		[root, root+3, root+7] @=> int chord3[];
+
+		// minnor
+		[root, root+3, root+7] @=> int chord4[];
 		
 		
-		return [chord1, chord2, chord3];
+		return [chord1, chord2, chord3, chord4];
 	}
 }	
 
