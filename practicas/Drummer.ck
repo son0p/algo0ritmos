@@ -1,7 +1,10 @@
+// x.arrayDrums(1,0) // el segundo valor no esta definido
+
 500::ms => dur bit;
+
 public class Drummer
 {
-
+	
 	SndBuf kks => dac;
 	SndBuf sns => dac;
 	SndBuf hhs => dac;
@@ -16,9 +19,10 @@ public class Drummer
 	me.dir() + "/audio/3049_starpause_k9dhhPulseKick.wav" => bit02.read;
 	me.dir() + "/audio/3047_starpause_k9dhhNotSnare.wav" => bit03.read;
 
-	0.3 => kks.gain;
-	0.3 => float globalHhsGain;
+	0.1 => kks.gain;
+	0.1 => float globalHhsGain;
 	globalHhsGain => hhs.gain;
+	0.1 => sns.gain;
 	0.1 => bit01.gain;
 	0.3 => bit02.gain;
 	0.1 => bit03.gain;
@@ -33,7 +37,7 @@ public class Drummer
 	
 	// Hacemos un bombo, filtrando un Impuslo.
 	Impulse kick =>TwoPole kp => dac;
-	50.0 => kp.freq; 0.99 => kp.radius; 1 => kp.gain;
+	50.0 => kp.freq; 0.99 => kp.radius; 0.001 => kp.gain;
 	
 	// Hacemos un redoblante, filtrando un Noise.
 	Noise n => ADSR snare => TwoPole sp  => dac;
@@ -45,6 +49,56 @@ public class Drummer
 	5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 	hihat.set(0.001,0.1,0.0,0.1);
 
+	fun void arrayDrums(int arrays[][] )
+	{
+		0 => int i;
+
+		// acá intercepto el array buscando inyectar
+		// aleatoriedad
+
+		//conformo los arrays de origen
+		arrays[0] @=> int sourceArray1[];
+
+		// creo arrays que contienen el resultado
+		// transformado
+		int transArray1[16];
+
+		// defino la manera en que forzaré la probabilidad
+		// dandole mas probabilidades a un valor
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
+
+		// recorro el array 
+		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
+		{
+			if( sourceArray1[ii] == 0 )
+			{
+				biasedToZero[(Math.random2(0, biasedToZero.cap()-1))] => transArray1[ii];
+			}
+			if( sourceArray1[ii] == 1 )
+			{
+				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray1[ii];
+			}
+			<<< transArray1[ii] >>>;
+			
+		}
+		
+		while(true)
+		{
+			i % 16 => int loop;
+			bit/4=> now; // quemado para seq de 16 pasos.
+			if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
+			if( transArray1[loop] == 1 ) 0 => kks.pos;
+			if( arrays[1][loop] == 0 ) sns.samples() => sns.pos;
+			if( arrays[1][loop] == 1 ) 0 => sns.pos;
+			if( arrays[2][loop] == 0 ) hhs.samples() => hhs.pos;
+			if( arrays[2][loop] == 1 ) 0 => hhs.pos;
+			
+			i++;
+		}
+	}
+		
+	//arrayDrums(0,0); // for debug
 	
 	fun void kk(int div, int density)
 	{
@@ -101,8 +155,8 @@ public class Drummer
 				i++;
 			}
 		}
-		// A partir de 4 beats selección aleatoria de divisiones.
-		if( density > 2)
+	
+		if( density == 3)
 		{
 			while(true)
 			{
@@ -123,6 +177,7 @@ public class Drummer
 				i++;
 			}
 		}
+		
 	}
 	
 	
@@ -271,3 +326,35 @@ public class Drummer
 	}
 		
 }
+
+
+// ======= TEST
+
+// [[
+// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+// [0,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
+// [1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0]
+// ],
+
+// [
+// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+// [1,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
+// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
+// ],
+
+// [
+// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+// [1,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
+// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
+// ],
+
+// [
+// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+// [0,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0],
+// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
+// ]
+
+// ]@=>  int fav1[][][];
+
+// Drummer dr;
+// dr.arrayDrums(fav1[0]);

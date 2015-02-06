@@ -49,21 +49,47 @@ public class ProgressionGenerator
 
 	fun int[][] readProg(int root, string character, int progression[])
 	{
+		
+		// Traerlas notas disponibles
+		// Detectar posicción del acorde en el array
+		// Genera el voicing y genera los acordes
+		// Organizar los acordes y retornar
+		
+	
 		Mode mode;
 		int chord1[3];
 		int chord2[3];
 		int chord3[3];
 		int chord4[3];
+
+		// armonizaciön de la escala
+		[[0,2,4],[1,3,5],[2,4,6],[3,5,0],[4,6,1],[5,1,2],[6,2,3]] @=> int harmo[][];
+
 		
+		// [0,2,4] @=> int I[];
+		// [1,3,5] @=> int II[];
+		// [2,4,6] @=> int III[];
+		// [3,5,0] @=> int IV[];
+		// [4,6,1] @=> int V[];
+		// [5,1,2] @=> int VI[];
+		// [6,2,3] @=> int VII[];
+
+		for( 0 => int i; i < progression.cap(); i++ )
+		{
+			harmo[progression[i]] @=> int test[]; // esto llena los cuatro arrays!! debo poner a sonarlos
+			<<< test[0], test[1], test[2] >>>;
+		}
 		
 		if(character == "M")
 		{
+			// Trae las notas disponibles TODO> más octavas
 			mode.generateMode(root, 1) @=> int notes[];
 			if( progression[0] == 4)
 			{
-				root + notes[4] =>  chord1[0];
-				root + notes[6] =>  chord1[1];
-				root + notes[0] =>  chord1[2];
+				// for( 0 => int i; i < chord1.cap(); i++)
+				// {			
+				// 	root + notes[I[i]] => chord1[i];
+				// }
 				
 			}
 			if( progression[1] == 5)
@@ -86,11 +112,11 @@ public class ProgressionGenerator
 			mode.generateMode(root, 6) @=> int notes[];
 			if( progression[0] == 7)
 			{
-				root + notes[7] =>  chord1[0];
-				root + notes[2] =>  chord1[1];
-				root + notes[4] =>  chord1[2];
-			//	<<< chord1[0], chord1[1], chord1[2]>>>;  //DEBUG
-				
+				// for( 0 => int i; i < chord1.cap(); i++)
+				// {			
+				// 	root + notes[VII[i]] => chord1[i];
+				// }
+				//	<<< root, chord1[0], chord1[1], chord1[2]>>>;//DEBUG
 			}
 			if( progression[1] == 6)
 			{
@@ -114,7 +140,8 @@ public class ProgressionGenerator
 		}
 		return[chord1, chord2, chord3, chord4];
 	}
-			
+
+	
 }	
 
 

@@ -28,42 +28,41 @@ public class Mode
 		// Dorian
 		if ( modeInput == 2 )
 		{
-			[,  2,  3,  5,  7,   9,
-			  10,   12] @=> int notes[];
+			[0, 2, 3, 5, 7, 9, 10, 12] @=> int notes[];
 			return notes;
 		}
 		// Phrygian
 		if ( modeInput == 3 )
 		{
-			[,  1,  3,  5,  7,   8,
+			[0,  1,  3,  5,  7,   8,
 			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Lydian
 		if ( modeInput == 4 )
 		{
-			[,  2,  4,  6,  7,   9,
+			[0,  2,  4,  6,  7,   9,
 			  11,   12] @=> int notes[];
 			return notes;
 		}
 		// Mixolidian
 		if ( modeInput == 5 )
 		{
-			[,  2,  4,  5,  7,   9,
+			[0,  2,  4,  5,  7,   9,
 			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Aeolian
 		if ( modeInput == 6 )
 		{
-			[,  2,  3,  5,  7,   8,
+			[0,  2,  3,  5,  7,   8,
 			  10,   12] @=> int notes[];
 			return notes;
 		}
 		// Locrian
 		if ( modeInput == 7 )
 		{
-			[,  1,  3,  5,  6,   8,
+			[0,  1,  3,  5,  6,   8,
 			  10,    12] @=> int notes[];
 			return notes;
 		}

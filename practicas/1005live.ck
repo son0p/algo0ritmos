@@ -1,9 +1,9 @@
 // 9:06 err> * * *
-500::ms => dur beat;
+714::ms => dur beat;
 28 => int root;
 
 SawOsc bass => Envelope e => NRev r =>   dac;
-0.1 => bass.gain;
+0.05 => bass.gain;
 0.03 => r.mix;
 
 fun void bs(){
@@ -26,22 +26,29 @@ Drummer dr;
 MelodyGenerator ml;
 Player play;
 ProgressionGenerator prog;
-prog.genProg((root+24),1,0) @=> int test[][];
+//prog.genProg((root+24),0) @=> int test[][];
+prog.readProg((root+24), "m", [6,5,0,0]) @=> int test[][];
 Synth synth;
 
-spork~ dr.kk(1,1);
-spork~ dr.hh();
-spork~ dr.sn();
-// spork~ dr.bi(3, 4);
-spork~ bs();
+FavoriteBeats favorites;
+favorites.clave[0] @=> int pattern1[][];
+	
+// vopy aca, no quiero poder actualizar los loops pero aun no lo logro
 
-spork~ play.chordPlayer(test,1);
+spork~ dr.arrayDrums(pattern1);
+//spork~ dr.hh();
+//spork~ dr.sn();
+// spork~ dr.bi(3, 4);
+//spork~ bs();
+
+
+//spork~ play.chordPlayer(test,1);
 //spork~ synth.playChord([57,60,64], 1, 0);
 //spork~ play.chordPlayer([[57,60,64], [57,63,67], [80, 84, 88]]);
 //spork~ play.playMelody(1, root, 3, [[(test[0]),2],[test(1),1]]);
 //spork~ play.playMelody(1, root, 3, [[0,0],[3,0]]);
 //spork~ play.playMelody(1, root, 3, [[0,2],[4,1],[2,2],[0,1],[-88,1],[6,1],[-88,1]]);
-spork~ ml.searchMelody( root,6,4, 2);
+//spork~ ml.searchMelody( root,6,4, 8);
 //spork~ ml.generateMelody(root, 2);
 
 
