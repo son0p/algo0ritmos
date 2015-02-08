@@ -4,7 +4,6 @@
 
 public class Drummer
 {
-	
 	SndBuf kks => dac;
 	SndBuf sns => dac;
 	SndBuf hhs => dac;
@@ -48,11 +47,13 @@ public class Drummer
 	5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 	hihat.set(0.001,0.1,0.0,0.1);
 
+	// Esta funcion toca un array multidimensonal que trae
+	// en este caso tres arrays uno de  kick, otro sn, y hh.
 	fun void arrayDrums( int arrays[][] )
 	{
 		0 => int i;
 
-		// acá intercepto el array buscando inyectar
+		// ---acá intercepto el array buscando inyectar
 		// aleatoriedad
 
 		//conformo los arrays de origen
@@ -67,7 +68,8 @@ public class Drummer
 		int transArray3[16];
 		// defino la manera en que forzaré la probabilidad
 		// dandole mas probabilidades a un valor
-		// la capacidad de transformación de esta posibilidad debería ser dinámica
+		// DO => la capacidad de transformación de esta posibilidad
+		// debería ser dinámica
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
 
@@ -84,8 +86,8 @@ public class Drummer
 				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray1[ii];
 			}
 			// <<< transArray1[ii] >>>; //DEBUG
-			
 		}
+		
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
 		{
 			if( sourceArray2[ii] == 0 )
@@ -108,9 +110,9 @@ public class Drummer
 				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray3[ii];
 			}
 		}
-		
 
-		
+		// Aquí sueno los arrays: 1 suena, 0 silencio, y hay acentos
+		// en los tiempos fuertes.
 		while(true)
 		{
 			i % 16 => int loop;
@@ -123,23 +125,21 @@ public class Drummer
 			if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
 			if( transArray3[loop] == 1 ) 0 => hhs.pos;
 			
-			// Dinamica de los samples, si esta en tiempos fuertes
+			// Acentos: si esta en tiempos fuertes
 			// la ganancia es normal, si esta en tiempos débiles la
 			// ganancia se reduce.
-			[0,0,0,0,4,0,0,0,8,0,0,0,12,0,0,0,0] @=> int hardBeats[]; // DO mejor solucion
+			[0,0,0,0,4,0,0,0,8,0,0,0,12,0,0,0,0] @=> int hardBeats[]; // DO => mejor solucion
 			if( loop == hardBeats[loop] )
 			{
 				globalKksGain => kks.gain;
 				globalSnsGain => sns.gain;
 				globalHhsGain => hhs.gain;
-				
 			}
 			if( loop != hardBeats[loop] )
 			{
 				globalKksGain/2.0 => kks.gain;
 				globalSnsGain/4.0 => sns.gain;
 				globalHhsGain/3.0 => hhs.gain;
-				
 			}
 			// <<< sns.gain(), i >>>; //DEBUG
 			i++;
@@ -147,7 +147,9 @@ public class Drummer
 	}
 		
 	//arrayDrums(0,0); // DEBUG
-	
+
+	// Se llaman estas funciones para ritmos fijos, los usaba para
+	// livecoding
 	fun void kk(int div, int density)
 	{
 		0 => int i;
