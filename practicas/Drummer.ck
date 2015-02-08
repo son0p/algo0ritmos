@@ -19,10 +19,9 @@ public class Drummer
 	me.dir() + "/audio/3049_starpause_k9dhhPulseKick.wav" => bit02.read;
 	me.dir() + "/audio/3047_starpause_k9dhhNotSnare.wav" => bit03.read;
 
-	0.1 => kks.gain;
-	0.1 => float globalHhsGain;
-	globalHhsGain => hhs.gain;
-	0.1 => sns.gain;
+	0.1 => float globalKksGain => kks.gain;
+	0.1 => float globalHhsGain => hhs.gain;
+	0.1 => float globalSnsGain => sns.gain;
 	0.1 => bit01.gain;
 	0.3 => bit02.gain;
 	0.1 => bit03.gain;
@@ -123,8 +122,16 @@ public class Drummer
 			if( transArray2[loop] == 1 ) 0 => sns.pos;
 			if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
 			if( transArray3[loop] == 1 ) 0 => hhs.pos;
-			// Dinamica de los samples
 			
+			// Dinamica de los samples, si esta en tiempos fuertes
+			// la ganancia es normal, si esta en tiempos débiles la
+			// ganancia se reduce.
+			if( i == 0 && 4 && 8 && 12 ){ globalHhsGain => hhs.gain; } 
+			if( i != 0 && 4 && 8 && 12 ){ globalHhsGain/2 => hhs.gain; }
+			if( i == 0 && 4 && 8 && 12 ){ globalKksGain => kks.gain; } 
+			if( i != 0 && 4 && 8 && 12 ){ globalKksGain/2 => kks.gain; }
+			if( i == 0 && 4 && 8 && 12 ){ globalSnsGain => sns.gain; } 
+			if( i != 0 && 4 && 8 && 12 ){ globalSnsGain/1.5 => sns.gain; }
 			i++;
 		}
 	}
