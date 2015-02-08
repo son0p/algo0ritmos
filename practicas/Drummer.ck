@@ -126,12 +126,22 @@ public class Drummer
 			// Dinamica de los samples, si esta en tiempos fuertes
 			// la ganancia es normal, si esta en tiempos débiles la
 			// ganancia se reduce.
-			if( i == 0 && 4 && 8 && 12 ){ globalHhsGain => hhs.gain; } 
-			if( i != 0 && 4 && 8 && 12 ){ globalHhsGain/2 => hhs.gain; }
-			if( i == 0 && 4 && 8 && 12 ){ globalKksGain => kks.gain; } 
-			if( i != 0 && 4 && 8 && 12 ){ globalKksGain/2 => kks.gain; }
-			if( i == 0 && 4 && 8 && 12 ){ globalSnsGain => sns.gain; } 
-			if( i != 0 && 4 && 8 && 12 ){ globalSnsGain/1.5 => sns.gain; }
+			[0,0,0,0,4,0,0,0,8,0,0,0,12,0,0,0,0] @=> int hardBeats[]; // DO mejor solucion
+			if( loop == hardBeats[loop] )
+			{
+				globalKksGain => kks.gain;
+				globalSnsGain => sns.gain;
+				globalHhsGain => hhs.gain;
+				
+			}
+			if( loop != hardBeats[loop] )
+			{
+				globalKksGain/2.0 => kks.gain;
+				globalSnsGain/4.0 => sns.gain;
+				globalHhsGain/3.0 => hhs.gain;
+				
+			}
+			// <<< sns.gain(), i >>>; //DEBUG
 			i++;
 		}
 	}
