@@ -31,7 +31,7 @@ prog.readProg((root+24), "m", [6,5,0,0]) @=> int test[][];
 Synth synth;
 
 FavoriteBeats favorites;
-favorites.clave[0] @=> int pattern1[][];
+favorites.fav1[0] @=> int pattern1[][];
 	
 // vopy aca, no quiero poder actualizar los loops pero aun no lo logro
 

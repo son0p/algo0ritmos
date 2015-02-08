@@ -77,7 +77,7 @@ public class ProgressionGenerator
 		for( 0 => int i; i < progression.cap(); i++ )
 		{
 			harmo[progression[i]] @=> int test[]; // esto llena los cuatro arrays!! debo poner a sonarlos
-			<<< test[0], test[1], test[2] >>>;
+		//	<<< test[0], test[1], test[2] >>>; // DEBUG
 		}
 		
 		if(character == "M")

@@ -49,7 +49,7 @@ public class Drummer
 	5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
 	hihat.set(0.001,0.1,0.0,0.1);
 
-	fun void arrayDrums(int arrays[][] )
+	fun void arrayDrums( int arrays[][] )
 	{
 		0 => int i;
 
@@ -57,18 +57,23 @@ public class Drummer
 		// aleatoriedad
 
 		//conformo los arrays de origen
-		arrays[0] @=> int sourceArray1[];
-
-		// creo arrays que contienen el resultado
+		// DO => hacerlo dinamico
+			arrays[0] @=> int sourceArray1[];
+			arrays[1] @=> int sourceArray2[];
+			arrays[2] @=> int sourceArray3[];
+		// creo arrays que van a contener el resultado
 		// transformado
 		int transArray1[16];
-
+		int transArray2[16];
+		int transArray3[16];
 		// defino la manera en que forzaré la probabilidad
 		// dandole mas probabilidades a un valor
+		// la capacidad de transformación de esta posibilidad debería ser dinámica
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
 
-		// recorro el array 
+		// recorro los array
+		// DO => reducir esto a una funciön
 		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
 		{
 			if( sourceArray1[ii] == 0 )
@@ -79,26 +84,52 @@ public class Drummer
 			{
 				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray1[ii];
 			}
-			<<< transArray1[ii] >>>;
+			// <<< transArray1[ii] >>>; //DEBUG
 			
 		}
+		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
+		{
+			if( sourceArray2[ii] == 0 )
+			{
+				biasedToZero[(Math.random2(0, biasedToZero.cap()-1))] => transArray2[ii];
+			}
+			if( sourceArray2[ii] == 1 )
+			{
+				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray2[ii];
+			}
+		}
+		for( 0 => int ii; ii < sourceArray3.cap(); ii++)
+		{
+			if( sourceArray3[ii] == 0 )
+			{
+				biasedToZero[(Math.random2(0, biasedToZero.cap()-1))] => transArray3[ii];
+			}
+			if( sourceArray3[ii] == 1 )
+			{
+				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray3[ii];
+			}
+		}
+		
+
 		
 		while(true)
 		{
 			i % 16 => int loop;
 			bit/4=> now; // quemado para seq de 16 pasos.
+			// Suenan los samples
 			if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
 			if( transArray1[loop] == 1 ) 0 => kks.pos;
-			if( arrays[1][loop] == 0 ) sns.samples() => sns.pos;
-			if( arrays[1][loop] == 1 ) 0 => sns.pos;
-			if( arrays[2][loop] == 0 ) hhs.samples() => hhs.pos;
-			if( arrays[2][loop] == 1 ) 0 => hhs.pos;
+			if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
+			if( transArray2[loop] == 1 ) 0 => sns.pos;
+			if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
+			if( transArray3[loop] == 1 ) 0 => hhs.pos;
+			// Dinamica de los samples
 			
 			i++;
 		}
 	}
 		
-	//arrayDrums(0,0); // for debug
+	//arrayDrums(0,0); // DEBUG
 	
 	fun void kk(int div, int density)
 	{
