@@ -34,18 +34,27 @@ public class Drummer
 	bit03.samples() => bit03.pos;
 	
 	// Hacemos un bombo, filtrando un Impuslo.
-	Impulse kick =>TwoPole kp => dac;
-	50.0 => kp.freq; 0.99 => kp.radius; 0.001 => kp.gain;
+	Impulse kick => TwoPole kp => dac;
+	50.0 => kp.freq; 0.99 => kp.radius;
+	0.01 => kp.gain => float globalKpGain;
+	SinOsc tone => ADSR toneKick => dac;
+	toneKick.set(0.001,0.2,0.0,0.1);
+	0.5 => tone.gain;
+	60 => tone.freq;
 	
 	// Hacemos un redoblante, filtrando un Noise.
 	Noise n => ADSR snare => TwoPole sp  => dac;
-	800.0 => sp.freq; 0.9 => sp.radius; 0.1 => sp.gain;
-	snare.set(0.001,0.1,0.0,0.1);
+	800.0 => sp.freq; 0.9 => sp.radius; 
+	snare.set(0.001,0.05,0.0,0.1);
+	0.05 => sp.gain => float globalSpGain;
 	
 	// Hacemos un charles, filtrando un Noise.
 	Noise h => ADSR hihat => TwoPole hsp => dac;
-	5000.0 => hsp.freq; 0.9 => hsp.radius; 0.1 => hsp.gain;
-	hihat.set(0.001,0.1,0.0,0.1);
+	10000.0 => hsp.freq; 0.9 => hsp.radius; 
+	hihat.set(0.001,0.05,0.0,0.1);
+    0.05 => hsp.gain => float globalHspGain;
+	
+	
 
 	// Esta funcion toca un array multidimensonal que trae
 	// en este caso tres arrays uno de  kick, otro sn, y hh.
@@ -70,8 +79,8 @@ public class Drummer
 		// dandole mas probabilidades a un valor
 		// DO => la capacidad de transformación de esta posibilidad
 		// debería ser dinámica
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
 
 		// recorro los array
 		// DO => reducir esto a una funciön
@@ -118,12 +127,20 @@ public class Drummer
 			i % 16 => int loop;
 			bit/4=> now; // quemado para seq de 16 pasos.
 			// Suenan los samples
-			if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
-			if( transArray1[loop] == 1 ) 0 => kks.pos;
-			if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
-			if( transArray2[loop] == 1 ) 0 => sns.pos;
-			if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
-			if( transArray3[loop] == 1 ) 0 => hhs.pos;
+			// if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
+			// if( transArray1[loop] == 1 ) 0 => kks.pos;
+			// if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
+			// if( transArray2[loop] == 1 ) 0 => sns.pos;
+			// if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
+			// if( transArray3[loop] == 1 ) 0 => hhs.pos;
+
+			// suenan los sonidos de drums de syntesis
+			if( transArray1[loop] == 0 ) toneKick.keyOff();
+			if( transArray1[loop] == 1 ){ toneKick.keyOn(); 1.0 => kick.next;}
+			if( transArray2[loop] == 0 ) snare.keyOff();
+			if( transArray2[loop] == 1 ) snare.keyOn();
+			if( transArray3[loop] == 0 ) hihat.keyOff();
+			if( transArray3[loop] == 1 ) hihat.keyOn();
 			
 			// Acentos: si esta en tiempos fuertes
 			// la ganancia es normal, si esta en tiempos débiles la
@@ -134,12 +151,18 @@ public class Drummer
 				globalKksGain => kks.gain;
 				globalSnsGain => sns.gain;
 				globalHhsGain => hhs.gain;
+				globalKpGain => kp.gain;
+				globalSpGain => sp.gain;
+				globalHspGain => hsp.gain;
 			}
 			if( loop != hardBeats[loop] )
 			{
 				globalKksGain/2.0 => kks.gain;
-				globalSnsGain/4.0 => sns.gain;
+				globalSnsGain/1.5 => sns.gain;
 				globalHhsGain/3.0 => hhs.gain;
+				globalKpGain/2.0 => kp.gain;
+				globalSpGain/4.0 => sp.gain;
+				globalHspGain/3.0 => hsp.gain;
 			}
 			// <<< sns.gain(), i >>>; //DEBUG
 			i++;
