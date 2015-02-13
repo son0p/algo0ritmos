@@ -67,20 +67,22 @@ public class Drummer
 
 		//conformo los arrays de origen
 		// DO => hacerlo dinamico
-			arrays[0] @=> int sourceArray1[];
-			arrays[1] @=> int sourceArray2[];
-			arrays[2] @=> int sourceArray3[];
+		arrays[0] @=> int sourceArray1[];
+		arrays[1] @=> int sourceArray2[];
+		arrays[2] @=> int sourceArray3[];
+
 		// creo arrays que van a contener el resultado
 		// transformado
 		int transArray1[16];
 		int transArray2[16];
 		int transArray3[16];
+
 		// defino la manera en que forzaré la probabilidad
 		// dandole mas probabilidades a un valor
 		// DO => la capacidad de transformación de esta posibilidad
 		// debería ser dinámica
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
+		[0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
+		[1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
 
 		// recorro los array
 		// DO => reducir esto a una funciön
