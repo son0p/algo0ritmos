@@ -35,24 +35,29 @@ public class Drummer
 	
 	// Hacemos un bombo, filtrando un Impuslo.
 	Impulse kick => TwoPole kp => dac;
-	50.0 => kp.freq; 0.99 => kp.radius;
-	0.01 => kp.gain => float globalKpGain;
+	5000.0 => kp.freq; 0.05 => kp.radius;
+	0.03 => kp.gain => float globalKpGain;
 	SinOsc tone => ADSR toneKick => dac;
 	toneKick.set(0.001,0.2,0.0,0.1);
 	0.5 => tone.gain;
-	60 => tone.freq;
+	51.9 => tone.freq;
+
+	// ojo RezonZ  
 	
 	// Hacemos un redoblante, filtrando un Noise.
-	Noise n => ADSR snare => TwoPole sp  => dac;
-	800.0 => sp.freq; 0.9 => sp.radius; 
-	snare.set(0.001,0.05,0.0,0.1);
-	0.05 => sp.gain => float globalSpGain;
+	Noise n => ADSR snare => TwoPole sp => NRev snRev => dac;
+	1000.0 => sp.freq; 0.9 => sp.radius;
+	0.05 => float snSustain;
+	snare.set(0.001,snSustain,0.0,0.1);
+	0.02 => sp.gain => float globalSpGain;
 	
 	// Hacemos un charles, filtrando un Noise.
-	Noise h => ADSR hihat => TwoPole hsp => dac;
-	10000.0 => hsp.freq; 0.9 => hsp.radius; 
-	hihat.set(0.001,0.05,0.0,0.1);
+	Noise h => ADSR hihat => TwoPole hsp => NRev hhRev => dac;
+	10000.0 => hsp.freq; 0.9 => hsp.radius;
+	0.05 => float hhSustain;
+	hihat.set(0.001,hhSustain,0.0,0.1);
     0.05 => hsp.gain => float globalHspGain;
+	
 	
 	
 
@@ -61,6 +66,9 @@ public class Drummer
 	fun void arrayDrums( int arrays[][] )
 	{
 		0 => int i;
+// presets cuando no hay transformaciones del sonido
+		0.005 => snRev.mix;
+		0.03 => hhRev.mix;
 
 		// ---acá intercepto el array buscando inyectar
 		// aleatoriedad
@@ -81,8 +89,8 @@ public class Drummer
 		// dandole mas probabilidades a un valor
 		// DO => la capacidad de transformación de esta posibilidad
 		// debería ser dinámica
-		[0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
-		[1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
 
 		// recorro los array
 		// DO => reducir esto a una funciön
@@ -170,7 +178,32 @@ public class Drummer
 			i++;
 		}
 	}
-		
+
+	// Cambios del sonido 
+	fun void soundTransformation()
+	{
+		[0.01, 0.01, 0.01, 0.05, 0.01, 0.001, 0.05, 0.05, 0.09, 0.14] @=> float hhSeeds[];
+		[0.01, 0.05, 0.05, 0.05, 0.09, 0.05, 0.03, 0.09] @=> float snSeeds[];
+		while(true)
+		{
+			hhSeeds[Math.random2(0,hhSeeds.cap()-1 )] => hhSustain;
+			hihat.set(0.001,hhSustain,0.0,0.1);
+			snSeeds[Math.random2(0,snSeeds.cap()-1 )] => snSustain;
+			snare.set(0.001,snSustain,0.0,0.1);
+			bit/16 => now;
+		}
+	}
+
+	fun void reverbTransformation(float beatDivision)
+	{
+		[0.01, 0.3, 0.4, 0.05, 0.09, 0.05, 0.03, 0.01, 0.01 ] @=> float seeds[];
+		while(true)
+		{
+			seeds[Math.random2(0,seeds.cap()-1 )]*2 => hhRev.mix;
+			(seeds[Math.random2(0,seeds.cap()-1 )])/4 => snRev.mix;
+			bit*beatDivision => now;
+		}
+	}
 	//arrayDrums(0,0); // DEBUG
 
 	// Se llaman estas funciones para ritmos fijos, los usaba para

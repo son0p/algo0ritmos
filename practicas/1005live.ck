@@ -34,7 +34,8 @@ FavoriteBeats favorites;
 favorites.clave[1] @=> int pattern1[][];
 	
 // vopy aca, no quiero poder actualizar los loops pero aun no lo logro
-
+spork~ dr.reverbTransformation(4);
+spork~ dr.soundTransformation();
 spork~ dr.arrayDrums(pattern1);
 //spork~ dr.hh();
 //spork~ dr.sn();
