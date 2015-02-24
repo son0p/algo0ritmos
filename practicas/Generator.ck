@@ -14,15 +14,18 @@ fun int percentChance( int percent, int value)
 		return selected;
 	}
 }
+//-------------------------------------
 // Test
 
-Generator myGenerator;
-while( true )
-{
-	// el primero argumento es el porcentaje,
-	// segundo el valor que queremos que retorne
-	// según ese porcentaje.
-	myGenerator.percentChance(90,5) => int selected;
-	<<< selected >>>;
-	100::ms => now;
-}
+// Descomenta este código para probar esta clase
+
+// Generator myGenerator;
+// while( true )
+// {
+// 	// el primero argumento es el porcentaje,
+// 	// segundo el valor que queremos que retorne
+// 	// según ese porcentaje.
+// 	myGenerator.percentChance(90,5) => int selected;
+// 	<<< selected >>>;
+// 	100::ms => now;
+// }
