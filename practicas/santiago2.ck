@@ -21,7 +21,7 @@ public class Prog
             // imprimame el valor de Y antes de entrar al while.
             <<<"Y =",y>>>;
             
-				// Este es el codicional de mientras C (= Contador) sea menor que 8 entonces haga
+			// Este es el codicional de mientras C (= Contador) sea menor que 8 entonces haga
 			while (C < 8)
 			{
            // el valor de X al entrar en el while es la nota raiz que se designa en "Test"
@@ -35,12 +35,12 @@ public class Prog
 				<<<"M[C]",M[C],"+",x,"x","=",Cj,"CJ",N[C],"= N">>>;
 				//La nota que se guardo llevela a X
 				Cj => x;
-				// retorne ope con el valor de X
-				return int ope;
 				// C sumele 1
 				<<< C >>>;
 				C++; 
-			}           
+			}
+			// retorne ope con el valor de X
+			return int ope;
 			// Lo de abajo es copy paste pero con las notas menores.
 		}     
    if (y == 0)
@@ -54,9 +54,9 @@ public class Prog
 		   m[C] + x => Cj => N[C];
 		   <<<"m[C]",m[C],"+",x,"x","=",Cj,"CJ",N[C],"= N">>>;
 		   Cj => x;
-		   return int ope;
 		   C++; 
        }
+	   return int ope;
    }
    
    /* for( 0 => int i; i < N.cap(); i++ )
