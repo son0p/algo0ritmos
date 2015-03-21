@@ -19,7 +19,7 @@ public class MelodyGenerator
 	SqrOsc mel => Envelope e =>  NRev r => HPF filter => dac;
 	0.05 => mel.gain;
 	0.1 => r.mix;
-	
+
 	static int root;
 	int number;
 
@@ -39,8 +39,8 @@ public class MelodyGenerator
 	{
 		// Ask for notes to  Mode class
 		generateMode(root, modeInput) @=> int notes[];
-		
-		// Go over Mode array to pushing notes that obey the rules 
+
+		// Go over Mode array to pushing notes that obey the rules
 		for	(0 => int i; i < beats; i++)
 		{
 			// Random choose for a note.
@@ -61,14 +61,13 @@ public class MelodyGenerator
 				pushNote =>  melody[i];
 			}
 		}
-			
 		return melody;
 	}
-	
+
 	// TODO : duration must fill a measure
 	fun int[] generateDuration( int beats)
 	{
-		[1,1,1,2] @=> int seedDuration[]; 
+		[1,1,1,2] @=> int seedDuration[];
 		for( 0 => int i; i < (beats-1); i++)
 		{
 			seedDuration[(Math.random2(1, seedDuration.cap())-1)] => int pushDuration ;
@@ -76,14 +75,14 @@ public class MelodyGenerator
 		}
 			return durations;
 	}
-	
+
 	fun void searchMelody(int root, int mode, int seed, int beats)
 	{
 		MelodyGenerator m;
 		m.generateMelody((root+24), mode, beats) @=> int notes[];
 //		m.generateDuration(beats) @=> int div[];
 		[1,1,1,1] @=> int div[];
-		
+
 		0 => int i;
 
 		while( true )
@@ -95,7 +94,7 @@ public class MelodyGenerator
 			i % 8 => int iLoop;
 
 			//div[i] => int div;
-			
+
 			if( notes[iLoop] > 0 )
 			{
 				Std.mtof( notes[iLoop] ) => mel.freq; e.keyOn(); beat/beats => now; e.keyOff();
@@ -103,11 +102,11 @@ public class MelodyGenerator
 			if( notes[iLoop] <= 0 )
 			{
 				e.keyOff();
-				beat/beats => now; 
+				beat/beats => now;
 			}
 			i++;
 		//	<<< ((notes[iLoop]) - root), i, notes.cap() >>>;
-			
+
 		}
 	}
 		fun void playMelody( int root, int octave,  int notes[][] )
@@ -128,7 +127,7 @@ public class MelodyGenerator
 				if ( notes [i8][0] != 0 )
 				{
 					Std.mtof( root + notes[i8][0] + octave ) => mel.freq; e.keyOn(); beat/( notes[i8][1] ) => now; e.keyOff();
-					
+
 			}
 				if ( notes [i8][0] == 0 )
 				{
@@ -195,14 +194,14 @@ public class MelodyGenerator
 		{
 			<<< "Please use modes between 1 - 7" >>>;
 		}
-		
+
 		return notes;
 	}
 
 
-	
-	
-	
+
+
+
 
 // ==============================================================================
 // Test code
@@ -216,7 +215,7 @@ beat/m.generateDuration(); => now;
 
 // se ponen es las distancias a la nota raiz, no las notas directamente, esto para poder modular más fácil
 //	playMelody(root, octave, multidimensional array [distancia de root, division del beat]
-	
+
 m.playMelody(root, [[0,4],[0,4],[7,2],[4,2],[0,2],[0,8],[0,8],[0,2]]);
 */
 //===============================================================================
@@ -226,4 +225,3 @@ m.playMelody(root, [[0,4],[0,4],[7,2],[4,2],[0,2],[0,8],[0,8],[0,2]]);
 	// - Notas debajo del root?
 	// - sumatoria del compas
 	// - cuadratura
-

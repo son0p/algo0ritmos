@@ -14,7 +14,6 @@ public class Generator
     // Selecciono un valor aleatorio del array que ya esta conformado
     // según el porcentaje
     percentArray[Math.random2( 0, percentArray.cap()-1 )] => int selected;
-  
     return selected;
   }
 }
