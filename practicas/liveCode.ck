@@ -1,6 +1,22 @@
 // 9:06 err> * * *
+
+//bpm.changeTempo(120) => dur beat;
+
 714::ms => dur beat;
+
+// Instanciar Clases
+//BPM bpm;
+// FIX: me asignar un valor arriba primero para que funcione
+// debería poderse asignar acá directament
+BPM.sync(80.00) => BPM.tempo => beat;
+Generator generator;
+Drummer dr;
+MelodyGenerator ml;
+Player play;
+ProgressionGenerator prog;
+
 28 => int root;
+
 
 SawOsc bass => Envelope e => NRev r =>   dac;
 0.05 => bass.gain;
@@ -21,13 +37,7 @@ fun void mel()
 {
 	beat => now;
 }
-// Instanciar Clases
-BPM bpm;
-Generator generator;
-Drummer dr;
-MelodyGenerator ml;
-Player play;
-ProgressionGenerator prog;
+
 
 
 //prog.genProg((root+24),0) @=> int test[][];
@@ -65,9 +75,7 @@ spork~ dr.arrayDrums(favorites.beyonce[1]);
 
 
 // DEBUG zone
-bpm.changeTempo(130.0);
-<<<bpm.tempo>>>;
 
-
-
-while( true ){ beat => now; }
+while( true ){
+    beat => now;
+}

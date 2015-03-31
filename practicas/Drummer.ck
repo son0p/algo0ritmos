@@ -39,8 +39,8 @@ public class Drummer
 
 	// Hacemos un bombo, filtrando un Impuslo.
 	Impulse kick => TwoPole kp => dac;
-	5000.0 => kp.freq; 0.05 => kp.radius;
-	0.03 => kp.gain => float globalKpGain;
+	5000.0 => kp.freq; 0.5 => kp.radius;
+	0.3 => kp.gain => float globalKpGain;
     static float toneSustain;
 	0.1 => static float toneRelease;
 	SinOsc tone => ADSR toneKick => dac;
