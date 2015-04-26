@@ -65,9 +65,6 @@ public class Drummer
 	hihat.set(0.001,hhSustain,0.0,0.1);
     0.05 => hsp.gain => float globalHspGain;
 
-
-
-
 	// Esta funcion toca un array multidimensonal que trae
 	// en este caso tres arrays uno de  kick, otro sn, y hh.
 	fun void arrayDrums( int arrays[][] )
@@ -88,16 +85,9 @@ public class Drummer
 
 		// creo arrays que van a contener el resultado
 		// transformado
-		int transArray1[16];
-		int transArray2[16];
-		int transArray3[16];
-
-		// defino la manera en que forzaré la probabilidad
-		// dandole mas probabilidades a un valor
-		// DO => la capacidad de transformación de esta posibilidad
-		// debería ser dinámica
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1] @=> int biasedToZero[];
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0] @=> int biasedToOne[];
+		int transArray1[arrays[0].cap()];
+		int transArray2[arrays[1].cap()];
+		int transArray3[arrays[2].cap()];
 
 		// recorro los array y son variados
 		// con una probabilidad de cambio
@@ -110,39 +100,39 @@ public class Drummer
 			}
 			if( sourceArray1[ii] == 1 )
 			{
-				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray1[ii];
+                generator.percentChance(100,1) => transArray1[ii];
 			}
-			// <<< transArray1[ii] >>>; //DEBUG
+			 <<< transArray1[ii] >>>; //DEBUG
 		}
 
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
 		{
 			if( sourceArray2[ii] == 0 )
 			{
-				biasedToZero[(Math.random2(0, biasedToZero.cap()-1))] => transArray2[ii];
+                generator.percentChance(1,1) => transArray2[ii];
 			}
 			if( sourceArray2[ii] == 1 )
 			{
-				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray2[ii];
+			    generator.percentChance(100,1) => transArray2[ii];
 			}
 		}
 		for( 0 => int ii; ii < sourceArray3.cap(); ii++)
 		{
 			if( sourceArray3[ii] == 0 )
 			{
-				biasedToZero[(Math.random2(0, biasedToZero.cap()-1))] => transArray3[ii];
+                generator.percentChance(5,1) => transArray3[ii];
 			}
 			if( sourceArray3[ii] == 1 )
 			{
-				biasedToOne[(Math.random2(0, biasedToOne.cap()-1))] => transArray3[ii];
-			}
+                generator.percentChance(100,1) => transArray3[ii];
+	        }
 		}
 
 		// Aquí sueno los arrays: 1 suena, 0 silencio, y hay acentos
 		// en los tiempos fuertes.
 		while(true)
 		{
-			i % 16 => int loop;
+			i % sourceArray1.cap() => int loop;
 			bit/4=> now; // quemado para seq de 16 pasos.
 			// Suenan los samples
 			// if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
@@ -154,11 +144,11 @@ public class Drummer
 
 			// suenan los sonidos de drums de syntesis
 			if( transArray1[loop] == 0 ) toneKick.keyOff();
-			if( transArray1[loop] == 1 ){ toneKick.keyOn(); 1.0 => kick.next;}
+			if( transArray1[loop] != 0 ){ toneKick.keyOn(); 1.0 => kick.next;}
 			if( transArray2[loop] == 0 ) snare.keyOff();
-			if( transArray2[loop] == 1 ) snare.keyOn();
+			if( transArray2[loop] != 0 ) snare.keyOn();
 			if( transArray3[loop] == 0 ) hihat.keyOff();
-			if( transArray3[loop] == 1 ) hihat.keyOn();
+			if( transArray3[loop] != 0 ) hihat.keyOn();
 
 			// Acentos: si esta en tiempos fuertes
 			// la ganancia es normal, si esta en tiempos débiles la
