@@ -1,12 +1,10 @@
-//500::ms => dur bit;
-
 public class PlayerBass
 {
     BPM.tempo => dur bit;
-    50 => int root;
+    BPM.root - 24 => int root;
 	// Instancio clases
 	Generator generator;
-    Synth synth;
+    SynthBass synthBass;
     Event event;
 
 	// ojo RezonZ
@@ -16,9 +14,6 @@ public class PlayerBass
 	fun void arrays( float arrays[][] )
 	{
 		0 => int i;
-		// ---acá intercepto el array buscando inyectar
-		// aleatoriedad
-
 		//conformo los arrays de origen
 		// DO => hacerlo dinamico
 		arrays[0] @=> float sourceArray1[];
@@ -77,7 +72,7 @@ public class PlayerBass
             i % sourceArray1.cap() => int loop;// TODO se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
             if (sourceArray3[loop] == BPM.metro4)
             {
-              synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+              synthBass.playNote(root + sourceArray1[loop], sourceArray2[loop] );
 		    }
             else
             {

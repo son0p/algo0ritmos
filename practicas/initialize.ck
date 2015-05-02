@@ -1,8 +1,8 @@
-// Agrega la clase Drummer.ck
 Machine.add(me.dir()+"/BPM.ck");
-Machine.add(me.dir()+"/CollectionBeats.ck") => int beatID;
-Machine.add(me.dir()+"/CollectionBasses.ck") => int bassID;
-Machine.add(me.dir()+"/CollectionMelodies.ck") => int melodyID;
+Machine.add(me.dir()+"/CollectionBeats.ck") =>  int beatID;
+Machine.add(me.dir()+"/CollectionBasses.ck") =>  int bassID;
+Machine.add(me.dir()+"/CollectionMelodies.ck") =>  int melodyID;
+Machine.add(me.dir()+"/SynthBass.ck");
 Machine.add(me.dir()+"/Synth.ck");
 Machine.add(me.dir()+"/Generator.ck");
 Machine.add(me.dir()+"/PlayerDrums.ck");

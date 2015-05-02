@@ -1,4 +1,5 @@
-BPM.sync(80.00) => BPM.tempo => dur beat;
+BPM.sync(120.00) => BPM.tempo => dur beat;
+16 => BPM.steps;
 Generator generator;
 PlayerDrums dr;
 PlayerMelodies melodier;
@@ -9,8 +10,9 @@ ProgressionGenerator prog;
 Synth synth;
 CollectionBeats beats;
 CollectionMelodies melodies;
+CollectionBasses basses;
 
-28 =>  BPM.root;
+50 =>  BPM.root;
 SawOsc bass => Envelope e => NRev r =>   dac;
 0.05 => bass.gain;
 0.03 => r.mix;
@@ -26,16 +28,29 @@ function void printMetro4()
 }
 0 => int counter;
 
+[[
+[0.0, 3, 5, 7, 10, 5, 7, 10],
+[.25,.25, .25, .25, .25, .25, .25, .25],
+[0.0, 2, 4, 6, 9, 10, 12, 14]
+]]@=> float liveMel[][][];
 
-//prog.genProg((root+24),0) @=> int test[][];
-//prog.readProg((root+24), "m", [6,5,0,0]) @=> int test[][];
+[[
+[0.0,  0,  0,   0,    0,   0,   0,   0],
+[.25, .25, .25, .25, .25, .25, .25, .25],
+[0.0,  2,  4,   6,    8,   10,   12, 14]
+]]@=> float liveBass[][][];
+
+
 
 spork~ printMetro4();
 //spork~ dr.reverbTransformation(1);
 spork~ dr.soundTransformation();
 //spork~ dr.fill(5, 0.125);
-spork~ dr.arrayDrums(beats.beyonce[0]);
-spork~ melodier.arrays(melodies.base[1]);
+spork~ dr.arrayDrums(beats.base[1]);
+//spork~ melodier.arrays(melodies.base[1]);
+spork~ melodier.arrays(liveMel[0]);
+//spork~ bassist.arrays(basses.base[0]);
+spork~ bassist.arrays(liveBass[0]);
 
 //spork~ play.chordPlayer(test,1);
 //spork~ synth.playChord([57,60,64], 1, 0);

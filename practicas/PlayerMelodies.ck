@@ -3,7 +3,7 @@
 public class PlayerMelodies
 {
     BPM.tempo => dur bit;
-    50 => int root;
+    BPM.root => int root;
 	// Instancio clases
 	Generator generator;
     Synth synth;
