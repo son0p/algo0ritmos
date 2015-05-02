@@ -9,17 +9,14 @@
 // ==============================================================================
 // This class takes an array of notes and send it to a synth
 
-500::ms => dur beat;
-//lead.test();
-
-
+BPM.tempo => dur beat;
 
 public class Player
 {
 	fun void playMelody( int soundType, int root, int octave,  int notes[][] )
 	{
 		Synth lead;
-	
+
 		// Dependiendo de la octava se ajusta el valor para
 		// sumarlo a la nota seleccionada.
 		if( octave == 1) octave + 11 => octave;
@@ -35,10 +32,10 @@ public class Player
 			{
 				<<< notes [i8][0] >>>;
 				beat/( notes[i8][1]) => dur duration;
-				// actually play thru MySynthLead class
-				lead.playNote(soundType, root, octave, notes[i8][0], duration);
+				// actually play thru Synth class
+			//	lead.playNote(soundType, root, octave, notes[i8][0], duration);
 				beat/( notes[i8][1] ) => now;
-				
+
 			}
 			if ( notes [i8][0] == -88 )
 			{
@@ -53,17 +50,17 @@ public class Player
 		Synth mySynth;
 	//	[57,60,65] @=> int chord[];
 
-		
+
 		while( true )
 		{
 			//mySynth.playChord(chord,1,1); // TODO Duration and preset dynamic
-			
+
 			for( 0 => int i; i < chords.cap(); i++)
 			{
 				mySynth.playChord(chords[i], 1, 3);
 				beat/div => now; 			// TODO Duration must be dynamic
 			}
-		
+
 		}
 	}
 }
@@ -75,4 +72,3 @@ public class Player
 // Player player;
 //  [[57,60,64],[57,60,65]] @=> int chords[][];
 //  player.chordPlayer(chords);
-

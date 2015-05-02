@@ -3,12 +3,12 @@
 // File        : MySynthLead.ck
 // Author      : son0p
 // Init Date   : 2014-Nov-23
-// Dependencies: 
+// Dependencies:
 // License     :
 // Git repo    : https://github.com/son0p/ChucK-classes-and-patches
 // ==============================================================================
 // This class takes an array of notes and play it
-500::ms => dur beat;
+BPM.tempo => dur beat;
 public class Synth
 {
 	TriOsc chords[4]; // TODO > This must be dynamic
@@ -17,17 +17,31 @@ public class Synth
 	0.1 => master.gain;
 	0.05 => rev.mix;
 	for(0=> int i; i < chords.cap(); i++)
-		{
-			// use array to chuck unit genenrator to MASTER
-			chords[i] =>  master;
-		}
-	
-	
+	{
+		// use array to chuck unit genenrator to MASTER
+		chords[i] =>  master;
+	}
+
  	KBHit kb;
 
-	fun void playNote( int soundType, int root, int octave,  int note, dur duration )
+	fun void playNote( float note, float duration )
 	{
-		Std.mtof( root + note + octave ) => float freq;
+		Std.mtof( note ) => float freq;
+		SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
+		freq => mel.freq;
+		0.05 => mel.gain;
+		0.03 => r.mix;
+		20000 => LPFilter.freq;
+		Math.random2f(104,4000) => HPfilter.freq;
+		0.5 => HPfilter.Q;
+		e.keyOn();
+		beat*duration => now;
+		e.keyOff();
+	}
+
+    	fun void playNote( int note, dur duration, int soundType )
+	{
+		Std.mtof( note ) => float freq;
 		if( soundType == 1)
 		{
 			one(freq, duration);
@@ -48,9 +62,9 @@ public class Synth
 		{
 			five(freq, duration);
 		}
-	
+
 	}
-	
+
 	// Filter lead synth soundType 1
 	fun void one(float freq, dur duration)
 	{
