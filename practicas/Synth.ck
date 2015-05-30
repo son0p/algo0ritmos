@@ -30,9 +30,9 @@ public class Synth
 		SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
 		freq => mel.freq;
 		0.05 => mel.gain;
-		0.03 => r.mix;
+		0.06 => r.mix;
 		20000 => LPFilter.freq;
-		Math.random2f(104,4000) => HPfilter.freq;
+	//	Math.random2f(104,4000) => HPfilter.freq;
 		0.5 => HPfilter.Q;
 		e.keyOn();
 		beat*duration => now;

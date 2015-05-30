@@ -1,4 +1,4 @@
-BPM.sync(120.00) => BPM.tempo => dur beat;
+BPM.sync(100.00) => BPM.tempo => dur beat;
 16 => BPM.steps;
 Generator generator;
 PlayerDrums dr;
@@ -13,44 +13,81 @@ CollectionMelodies melodies;
 CollectionBasses basses;
 
 50 =>  BPM.root;
-SawOsc bass => Envelope e => NRev r =>   dac;
-0.05 => bass.gain;
-0.03 => r.mix;
+
+
+[
+[
+[0.0,  5,   0,   3 ],
+[.25,.25, .25, .25 ],
+[0.0,  2,   6,   8]
+]
+]@=> float liveMel[][][];
+
+[
+[
+[0.0,  24,  0,   0,    0,   0,   12,   -2],
+[.25, .25, .25, .25, .25, .25, .25, .25],
+[0.0,  2,  4,   7,    8,   9,   11, 14]
+]
+]@=> float liveBass[][][];
 
 function void printMetro4()
 {
     while(true)
    {
        BPM.metro();
-       <<<BPM.metro4, "">>>;
+       //<<<BPM.metro4, "">>>;
        BPM.tempo/4 => now;
    }
 }
-0 => int counter;
 
-[[
-[0.0, 3, 5, 7, 10, 5, 7, 10],
-[.25,.25, .25, .25, .25, .25, .25, .25],
-[0.0, 2, 4, 6, 9, 10, 12, 14]
-]]@=> float liveMel[][][];
+function void bassIntegrated()
+{
+    while(true)
+    {
+        BPM.roundCounter % 32 => int bassPhrase;
+        if (bassPhrase == 0)
+        {
+            spork~ bassist.arrays(liveBass[0]);
+        }
+        if(bassPhrase == 16)
+        {
+            spork~ bassist.arrays(basses.funk[0]);
+        }
+        beat * 8  => now;
+    }
 
-[[
-[0.0,  0,  0,   0,    0,   0,   0,   0],
-[.25, .25, .25, .25, .25, .25, .25, .25],
-[0.0,  2,  4,   6,    8,   10,   12, 14]
-]]@=> float liveBass[][][];
+}
 
+function void melodyIntegrated()
+{
+    //[0,1]
+    while(true)
+    {
+        BPM.roundCounter % 32 => int phrase;
+        if (phrase == 0)
+        {
+            spork~ melodier.arrays(melodies.sara[0]);
+        }
+        if(phrase == 16)
+        {
+            spork~ melodier.arrays(melodies.sara[1]);
+        }
+        beat * 8  => now;
+    }
 
-
+}
+//spork~ melodyIntegrated();
+spork~ bassIntegrated();
 spork~ printMetro4();
 //spork~ dr.reverbTransformation(1);
 spork~ dr.soundTransformation();
 //spork~ dr.fill(5, 0.125);
-spork~ dr.arrayDrums(beats.base[1]);
+spork~ dr.arrayDrums(beats.fav1[0]);
 //spork~ melodier.arrays(melodies.base[1]);
-spork~ melodier.arrays(liveMel[0]);
+//spork~ melodier.arrays(liveMel[0]);
 //spork~ bassist.arrays(basses.base[0]);
-spork~ bassist.arrays(liveBass[0]);
+
 
 //spork~ play.chordPlayer(test,1);
 //spork~ synth.playChord([57,60,64], 1, 0);
