@@ -9,14 +9,14 @@ public class BPM
 
     function static dur sync(float tempo)
 	{
-	    60.0/(tempo) => float SPB; // seconds per beat
+        60.0/(tempo) => float SPB; // seconds per beat
         SPB :: second => dur tempo;
         // inicializa la cantidad de steps que tiene
         // el secuenciador pero puede ser sobre
         // escrita desde liveCode.ck por ahora
         16 => steps;
 
-		return tempo;
+        return tempo;
 	}
 
     0 => static int counter;
@@ -29,12 +29,12 @@ public class BPM
             tempo => dur beat;
             beat => now;
             counter++;
-           // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los dos contadores
+           // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los contadores
         }
     }
 }
 
-//  --------- Test code ----------
+// // --------- Test code ----------
 
 // BPM bpm;
 
