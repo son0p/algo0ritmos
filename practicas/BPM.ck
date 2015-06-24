@@ -1,18 +1,16 @@
 // BPM.ck
+//
 
 public class BPM
 {
-    static int root;
+    static int root; // Acá vive la nota (midi) raiz global
     static int steps;
     static dur tempo;
-    static int roundCounter;
-    static int metro4; // debe reportar
 
     function static dur sync(float tempo)
 	{
 	    60.0/(tempo) => float SPB; // seconds per beat
         SPB :: second => dur tempo;
-
         // inicializa la cantidad de steps que tiene
         // el secuenciador pero puede ser sobre
         // escrita desde liveCode.ck por ahora
@@ -29,10 +27,9 @@ public class BPM
         {
             counter % loop => int metroLoop;
             tempo => dur beat;
-            // 100::ms => now;
             beat => now;
             counter++;
-            <<< metroLoop, "loop", loop >>>;
+           // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los dos contadores
         }
     }
 }
@@ -40,7 +37,6 @@ public class BPM
 //  --------- Test code ----------
 
 // BPM bpm;
-// BPM bpm3;
 
 // bpm.sync(120) => dur tempo;
 // // un contador de a 8
