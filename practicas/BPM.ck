@@ -39,14 +39,14 @@ public class BPM
 
 //  --------- Test code ----------
 
-BPM bpm;
-BPM bpm3;
+// BPM bpm;
+// BPM bpm3;
 
-bpm.sync(120) => dur tempo;
-// un contador de a 8
-spork~ bpm.metro(8, tempo);
-// un contador de a 3
-spork~ bpm.metro(3, tempo);
+// bpm.sync(120) => dur tempo;
+// // un contador de a 8
+// spork~ bpm.metro(8, tempo);
+// // un contador de a 3
+// spork~ bpm.metro(3, tempo);
 
-// para mantener vivos los spork
-while(true){200::ms => now;}
+// // para mantener vivos los spork
+// while(true){200::ms => now;}
