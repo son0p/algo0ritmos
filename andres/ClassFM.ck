@@ -8,6 +8,7 @@ public class Synth
         vol => gaincarrier;
         return vol;
 
+
     }
 
     public void frecuencia (float freq)
@@ -27,7 +28,6 @@ public class Synth
         gaincarrier => carrier.gain;
         freqcarrier*2 => modulator.freq;
         1000 => modulator.gain;
-
     }
     public void fm(Osc carrier, Osc carrMod, Osc modulator, int suiche)
     {
