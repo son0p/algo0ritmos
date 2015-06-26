@@ -15,7 +15,10 @@ public class Synth
         freq => freqcarrier;
 
     }
-
+    public void connectionfm (Osc carrier, Osc modulator)
+    {
+       modulator => carrier => dac;
+    }
     public void fm(Osc carrier, Osc modulator, float volumen)
     {
 
@@ -24,7 +27,7 @@ public class Synth
         gaincarrier => carrier.gain;
         freqcarrier*2 => modulator.freq;
         1000 => modulator.gain;
-        modulator => carrier => dac;
+
     }
     public void fm(Osc carrier, Osc carrMod, Osc modulator, int suiche)
     {

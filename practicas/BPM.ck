@@ -6,6 +6,7 @@ public class BPM
     static int root; // Acá vive la nota (midi) raiz global
     static int steps;
     static dur tempo;
+    static int roundCounter;
 
     function static dur sync(float tempo)
 	{
@@ -29,6 +30,7 @@ public class BPM
             tempo => dur beat;
             beat => now;
             counter++;
+            roundCounter++; // codigo legado para que funcione livecode.ck
            // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los contadores
         }
     }
