@@ -70,12 +70,15 @@ public class PlayerMelodies
 	        }
 		}
 
-		// Aquí sueno los arrays: 1 suena, 0 silencio, y hay acentos
-		// en los tiempos fuertes.
+		// Aquí sueno los arrays: 1 suena, 0 silencio,
+        // y hay acentos en los tiempos fuertes.
 		while(true)
 		{
-            i % sourceArray1.cap() => int loop;// TODO se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
-            if (sourceArray3[loop] == BPM.metro4)
+            // TODO se mide segun un array, debe protegerse contra
+            // arrays de otros tamaños en los arrays de abajo del
+            // array multidimensional
+            i % sourceArray1.cap() => int loop;
+            if (sourceArray3[loop] == BPM.metroLoop)
             {
               synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
 		    }
@@ -87,9 +90,6 @@ public class PlayerMelodies
             i++;
 		}
 	}
-
-
-
 }
 
 

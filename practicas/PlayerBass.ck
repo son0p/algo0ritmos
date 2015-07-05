@@ -1,19 +1,18 @@
 public class PlayerBass
 {
-    BPM.tempo => dur bit;
+    BPM.pleaseTempo() => dur beat;
     BPM.root - 24 => int root;
 	// Instancio clases
 	Generator generator;
     SynthBass synthBass;
     Event event;
 
-	// ojo RezonZ
 
 	// Esta funcion toca un array multidimensonal que trae
 	// en este caso tres arrays uno de  kick, otro sn, y hh.
 	fun void arrays( float arrays[][] )
 	{
-		0 => int i;
+       	0 => int i;
 		//conformo los arrays de origen
 		// DO => hacerlo dinamico
 		arrays[0] @=> float sourceArray1[];
@@ -69,52 +68,23 @@ public class PlayerBass
 		// en los tiempos fuertes.
 		while(true)
 		{
-            i % sourceArray1.cap() => int loop;// TODO se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
-            if (sourceArray3[loop] == BPM.metro4)
+            i % sourceArray1.cap() => int loop;// TODO: se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
+            // El bajo suena si la posición del contador habita en el array
+            if (sourceArray3[loop] == BPM.metroLoop)
             {
               synthBass.playNote(root + sourceArray1[loop], sourceArray2[loop] );
-		    }
-            else
-            {
-              // event => now; //maybe? not working
-                1::ms => now;
-            }
+          }
+            beat/64 => now;
             i++;
 		}
 	}
-
-
-
 }
 
-
-// ======= TEST
-
-// [[
-// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-// [0,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
-// [1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0]
-// ],
-
+//------ Test ----------
 // [
-// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-// [1,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
-// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
-// ],
-
 // [
-// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-// [1,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
-// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
-// ],
-
-// [
-// [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-// [0,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0],
-// [1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]
+// [0.0,  -2, 0  ],
+// [.50, .50, .50],
+// [0.0,  4,  8 ]
 // ]
-
-// ]@=>  int fav1[][][];
-
-// Drummer dr;
-// dr.arrayDrums(fav1[0]);
+// ]@=> float liveBass[][][];

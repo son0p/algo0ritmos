@@ -5,8 +5,16 @@ public class BPM
 {
     static int root; // Acá vive la nota (midi) raiz global
     static int steps;
-    static dur tempo;
     static int roundCounter;
+    static dur tempo;
+    static int metro4;
+    static int metroLoop;
+
+    function static dur pleaseTempo()
+    {
+        <<< "Tempo:", tempo >>>;
+        return tempo;
+    }
 
     function static dur sync(float tempo)
 	{
@@ -20,20 +28,21 @@ public class BPM
         return tempo;
 	}
 
-    0 => static int counter;
 
-    function static void  metro(int loop, dur tempo)
+    function static void  metro(int loop, dur tempoToMetro)
     {
-        while (true)
-        {
-            counter % loop => int metroLoop;
-            tempo => dur beat;
-            beat => now;
+        0 =>  int counter;
+         while (true)
+         {
+            counter % loop =>  metroLoop;
+
+            tempoToMetro  => now; // TODO: entender porque hay que multiplicar
             counter++;
-            roundCounter++; // codigo legado para que funcione livecode.ck
+             <<< "contador", metroLoop >>>;
            // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los contadores
         }
     }
+
 }
 
 // // --------- Test code ----------

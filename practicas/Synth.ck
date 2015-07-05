@@ -8,9 +8,12 @@
 // Git repo    : https://github.com/son0p/ChucK-classes-and-patches
 // ==============================================================================
 // This class takes an array of notes and play it
-BPM.tempo => dur beat;
+BPM.tempo/ms => float tempo;
+BPM.sync(tempo) => dur beat;
+
 public class Synth
 {
+
 	TriOsc chords[4]; // TODO > This must be dynamic
 	Gain master => Envelope e => NRev rev =>dac;
 	// Gain master => dac;
@@ -26,10 +29,11 @@ public class Synth
 
 	fun void playNote( float note, float duration )
 	{
+
 		Std.mtof( note ) => float freq;
 		SqrOsc mel => Envelope e =>  NRev r => HPF HPfilter => LPF LPFilter => dac;
 		freq => mel.freq;
-		0.05 => mel.gain;
+		0.01 => mel.gain;
 		0.06 => r.mix;
 		20000 => LPFilter.freq;
 	//	Math.random2f(104,4000) => HPfilter.freq;
