@@ -9,10 +9,11 @@ public class BPM
     static dur tempo;
     static int metro4;
     static int metroLoop;
+    static int counter;
 
     function static dur pleaseTempo()
     {
-        <<< "Tempo:", tempo >>>;
+       // <<< "Tempo:", tempo >>>;
         return tempo;
     }
 
@@ -28,19 +29,23 @@ public class BPM
         return tempo;
 	}
 
-
-    function static void  metro(int loop, dur tempoToMetro)
+    function static void metro(int loop, dur tempoToMetro)
     {
-        0 =>  int counter;
+
          while (true)
          {
             counter % loop =>  metroLoop;
-
             tempoToMetro  => now; // TODO: entender porque hay que multiplicar
             counter++;
-             <<< "contador", metroLoop >>>;
+            // <<< "contador", metroLoop >>>;
            // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los contadores
-        }
+       }
+    }
+
+    function static dur beat( float beatDiv)
+    {
+      tempo * beatDiv => dur beat;
+      return beat;
     }
 
 }

@@ -135,10 +135,10 @@ public class PlayerDrums
 			i % sourceArray1.cap() => int loop;
 
 			// Suenan los samples
-			// if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
-			// if( transArray1[loop] == 1 ) 0 => kks.pos;
-			// if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
-			// if( transArray2[loop] == 1 ) 0 => sns.pos;
+			 //if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
+			 //if( transArray1[loop] == 1 ) 0 => kks.pos;
+			 //if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
+			//if( transArray2[loop] == 1 ) 0 => sns.pos;
 			// if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
 			// if( transArray3[loop] == 1 ) 0 => hhs.pos;
 

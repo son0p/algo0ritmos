@@ -68,13 +68,16 @@ public class PlayerBass
 		// en los tiempos fuertes.
 		while(true)
 		{
-            i % sourceArray1.cap() => int loop;// TODO: se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
+          i % sourceArray1.cap() => int loop;// TODO: se mide segun un array, debe protegerse contra arrays de otros tamaños en los arrays de abajo del array multidimensional
             // El bajo suena si la posición del contador habita en el array
-            if (sourceArray3[loop] == BPM.metroLoop)
+            for(0 => int ii; ii < sourceArray1.cap();ii++)
             {
-              synthBass.playNote(root + sourceArray1[loop], sourceArray2[loop] );
-          }
-            beat/64 => now;
+                if ( sourceArray3[ii] == i)
+                {
+                   synthBass.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+               }
+            }
+            BPM.pleaseTempo() => now;
             i++;
 		}
 	}

@@ -1,8 +1,6 @@
-//BPM.tempo/ms => float tempo;
-//BPM.sync(tempo) => dur beat;
-//spork~ BPM.metro(8, beat);
 BPM.sync(110) => BPM.tempo => dur beat;
-BPM.pleaseTempo();
+//BPM.tempo => dur beat;
+//BPM.pleaseTempo();
 while( true )
 {
     // Cambia dentro de las comillas el archivos que quieres que
@@ -11,6 +9,4 @@ while( true )
     beat * 8 => now;
    	Machine.replace( fileID, "liveCode.ck");
 	Machine.remove( fileID );
-
-
 }
