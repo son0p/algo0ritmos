@@ -1,4 +1,4 @@
-500::ms => dur bit;
+BPM.tempo => dur beat;
 
 public class PlayerDrums
 {
@@ -172,7 +172,7 @@ public class PlayerDrums
 				globalSpGain/4.0 => sp.gain;
 				globalHspGain/3.0 => hsp.gain;
 			}
-			bit/4=> now; // quemado para seq de 16 pasos.
+			beat/4=> now; // quemado para seq de 16 pasos.
 			i++;
 		}
 	}
@@ -188,7 +188,7 @@ public class PlayerDrums
 			hihat.set(0.001,hhSustain,0.0,0.1);
 			snSeeds[Math.random2(0,snSeeds.cap()-1 )] => snSustain;
 			snare.set(0.001,snSustain,0.0,0.1);
-			bit/16 => now;
+			beat/16 => now;
 		}
 	}
 
@@ -203,7 +203,7 @@ public class PlayerDrums
 		{
 			seeds[Math.random2(0,seeds.cap()-1 )]*2 => hhRev.mix;
 			(seeds[Math.random2(0,seeds.cap()-1 )])/4 => snRev.mix;
-			bit*beatDivision => now;
+			beat*beatDivision => now;
 		}
 	  }
 	}
@@ -218,7 +218,7 @@ public class PlayerDrums
 		if( density == 0 )
 		{
 			0 => kks.pos;
-			8*bit => now;
+			8*beat => now;
 		}
 		// Golpes estables y variación leve
 		// al final del compás.
@@ -231,14 +231,14 @@ public class PlayerDrums
 				{
 					1.0 => kick.next;
 					0 => kks.pos;
-					bit/div => now;
+					beat/div => now;
 				}
 				if( loop8 > 7)
 				{
 					[1, 1, 1, 1,  2, 4] @=> int seed[];
 					1.0 => kick.next;
 					kks.samples() => kks.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				}
 				i++;
 			}
@@ -254,14 +254,14 @@ public class PlayerDrums
 				{
 					1.0 => kick.next;
 					0 => kks.pos;
-					bit/div => now;
+					beat/div => now;
 				}
 				if( loop8 > 4 )
 				{
 					[1, 1, 1, 1,  2, 4] @=> int seed[];
 					1.0 => kick.next;
 					kks.samples() => kks.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				}
 				i++;
 			}
@@ -276,14 +276,14 @@ public class PlayerDrums
 				{
 					1.0 => kick.next;
 					0 => kks.pos;
-					bit/div => now;
+					beat/div => now;
 				}
 				if( loop8 > 4 )
 				{
 					[1, 2, 4, 4, 8] @=> int seed[];
 					1.0 => kick.next;
 					kks.samples() => kks.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				}
 				i++;
 			}
@@ -302,19 +302,19 @@ public class PlayerDrums
 			i % 8 => int loop8;
 			if ( loop8 < 7)
 			{
-				bit => now;
+				beat => now;
 				//snare.keyOn();
 				0 => sns.pos;
-				bit => now;
+				beat => now;
 				//snare.keyOff();
 			}
 			else
 			{
 				[1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4, 8] @=> int seed[];
-				bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+				beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				//snare.keyOn();
 				0 => sns.pos;
-				bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+				beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				//snare.keyOff();
 			}
 			i++;
@@ -333,10 +333,10 @@ public class PlayerDrums
 			if( loop8 < 7)
 			{
 				hhs.samples() => hhs.pos;
-				bit/2 => now;
+				beat/2 => now;
 				//	hihat.keyOn();
 				0 => hhs.pos;
-				bit/2 => now;
+				beat/2 => now;
 				//	hihat.keyOff();
 				0 => hhs.pos;
 			}
@@ -344,11 +344,11 @@ public class PlayerDrums
 			{
 
 				hhs.samples() => hhs.pos;
-				bit/2 => now;
+				beat/2 => now;
 				0 => hhs.pos; globalHhsGain - 0.05 => hhs.gain;
-				bit/4 => now;
+				beat/4 => now;
 				0 => hhs.pos; globalHhsGain  => hhs.gain;
-				bit/4 => now;
+				beat/4 => now;
 			}
 			i++;
 
@@ -360,11 +360,11 @@ public class PlayerDrums
 		0 => int i;
 		if( density == 0 )
 		{
-			12*bit => now;
+			12*beat => now;
 			while( true )
 			{
 				0 => bit03.pos;
-				bit/div => now;
+				beat/div => now;
 			}
 		}
 		if( density == 1 )
@@ -375,14 +375,14 @@ public class PlayerDrums
 				if( loop8 < 7)
 				{
 					0 => bit02.pos;
-					bit/div => now;
+					beat/div => now;
 
 				}
 				if( loop8 > 7)
 				{
 					[1, 1, 1, 1,  2, 4] @=> int seed[];
 					bit01.samples() => bit01.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				}
 				i++;
 			}
@@ -395,13 +395,13 @@ public class PlayerDrums
 				if( loop8 < 4)
 				{
 					0 => bit01.pos;
-					bit/div => now;
+					beat/div => now;
 				}
 				if( loop8 > 4 )
 				{
 					[1, 1, 1, 1,  2, 4] @=> int seed[];
 					bit01.samples() => bit01.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 				}
 				i++;
 			}
@@ -414,21 +414,21 @@ public class PlayerDrums
 				if( loop8 < 4)
 				{
 					0 => bit03.pos;
-					bit/div => now;
+					beat/div => now;
 
 				}
 				if( (loop8 > 4) && (loop8 < 12) )
 				{
 					[1, 1, 3, 3] @=> int seed[];
 					0 => bit01.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 
 				}
 				if( loop8 > 12 )
 				{
 					[1, 1, 1, 3, 3] @=> int seed[];
 					0 => bit02.pos;
-					bit/seed[(Math.random2(0, seed.cap()-1))] => now;
+					beat/seed[(Math.random2(0, seed.cap()-1))] => now;
 
 				}
 				i++;

@@ -1,4 +1,4 @@
-BPM.sync(110.00) => BPM.tempo => dur beat;
+BPM.sync(80.00) => BPM.tempo => dur beat;
 16 => BPM.steps; // no anda
 Generator generator;
 PlayerDrums dr;
@@ -25,7 +25,7 @@ CollectionBasses basses;
 [
 [17.0, 15.0,  12, 10, 12 ],
 [.25, .25, .25, .25, .25, .25, .25, .25, .25 ],
-[0.0,  1,    2,   3,   4 ]
+[0.0,  1,    2,   3,   5 ]
 ]
 ]@=> float liveMel[][][];
 
@@ -33,7 +33,7 @@ CollectionBasses basses;
 [
 [0.0,  -2, 0  ],
 [0.25, 0.25, .50],
-[0.0,  4,  7 ]
+[0.0,  4,  5 ]
 ]
 ]@=> float liveBass[][][];
 
@@ -62,13 +62,13 @@ function void melodyIntegrated()
 }
 
 spork~ dr.arrayDrums(liveBeat[0]);
-spork~ BPM.metro(8, beat);
+//spork~ BPM.metro(8, beat);
 //spork~ dr.arrayDrums(beats.fav1[0]);
 
 spork~ bassist.arrays(liveBass[0]);
 //spork~ bassIntegrated();
 
-//spork~ melodier.arrays(liveMel[0]);//live
+spork~ melodier.arrays(liveMel[0]);//live
 //spork~ melodyIntegrated();
 
 //spork~ dr.reverbTransformation(1);

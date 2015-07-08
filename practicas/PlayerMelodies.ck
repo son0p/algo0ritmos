@@ -2,7 +2,7 @@
 
 public class PlayerMelodies
 {
-    BPM.tempo => dur bit;
+    BPM.pleaseTempo() => dur beat;
     BPM.root => int root;
 	// Instancio clases
 	Generator generator;
@@ -78,15 +78,15 @@ public class PlayerMelodies
             // arrays de otros tamaños en los arrays de abajo del
             // array multidimensional
             i % sourceArray1.cap() => int loop;
-            if (sourceArray3[loop] == BPM.metroLoop)
+             for(0 => int ii; ii < sourceArray1.cap();ii++)
             {
-              synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
-		    }
-            else
-            {
-              // event => now; //maybe? not working
-                1::ms => now;
+                if (sourceArray3[ii] == i)
+                {
+                    synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+                    <<<"play", root + sourceArray1[loop], sourceArray2[loop] >>>;
+		        }
             }
+            BPM.pleaseTempo() => now;
             i++;
 		}
 	}

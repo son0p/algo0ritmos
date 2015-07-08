@@ -31,16 +31,15 @@ public class BPM
 
     function static void metro(int loop, dur tempoToMetro)
     {
-
-         while (true)
-         {
+        while (true)
+        {
             counter % loop =>  metroLoop;
             tempoToMetro  => now; // TODO: entender porque hay que multiplicar
             counter++;
             // <<< "contador", metroLoop >>>;
            // <<< metroLoop, "loop", loop >>>;   // descomentar esta línea si quiere ver los contadores
        }
-    }
+   }
 
     function static dur beat( float beatDiv)
     {
