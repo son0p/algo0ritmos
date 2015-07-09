@@ -1,6 +1,6 @@
 public class PlayerBass
 {
-    BPM.pleaseTempo() => dur beat;
+    BPM.beat(1) => dur beat;
     BPM.root - 24 => int root;
 	// Instancio clases
 	Generator generator;
@@ -74,10 +74,10 @@ public class PlayerBass
             {
                 if ( sourceArray3[ii] == i)
                 {
-                   synthBass.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+                   spork~ synthBass.playNote(root + sourceArray1[ii], sourceArray2[ii] );
                }
             }
-            BPM.pleaseTempo() => now;
+            beat => now;
             i++;
 		}
 	}

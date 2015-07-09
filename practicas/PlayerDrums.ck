@@ -1,4 +1,4 @@
-BPM.tempo => dur beat;
+BPM.beat(1) => dur beat;
 
 public class PlayerDrums
 {
@@ -172,7 +172,7 @@ public class PlayerDrums
 				globalSpGain/4.0 => sp.gain;
 				globalHspGain/3.0 => hsp.gain;
 			}
-			beat/4=> now; // quemado para seq de 16 pasos.
+			beat /2 => now; // quemado para seq de 16 pasos.
 			i++;
 		}
 	}

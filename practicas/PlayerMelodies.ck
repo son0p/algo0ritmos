@@ -1,8 +1,6 @@
-//500::ms => dur bit;
-
 public class PlayerMelodies
 {
-    BPM.pleaseTempo() => dur beat;
+    BPM.beat(1) => dur beat;
     BPM.root => int root;
 	// Instancio clases
 	Generator generator;
@@ -82,11 +80,11 @@ public class PlayerMelodies
             {
                 if (sourceArray3[ii] == i)
                 {
-                    synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+                    spork~ synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
                     <<<"play", root + sourceArray1[loop], sourceArray2[loop] >>>;
 		        }
             }
-            BPM.pleaseTempo() => now;
+            beat => now;
             i++;
 		}
 	}
