@@ -34,7 +34,7 @@ public class volumen
             {
                 General(VOLGENERAL - 0.01);
                 0.1::second => now;
-                <<<"Estado vol",VOLGENERAL>>>;
+                //<<<"Estado vol",VOLGENERAL>>>;
                 if (VOLGENERAL < 0)
                 {
                     break;
