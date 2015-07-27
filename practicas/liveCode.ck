@@ -1,4 +1,4 @@
-BPM.sync(100.00) => BPM.tempo => dur beat;
+BPM.sync(120.00) => BPM.tempo => dur beat;
 16 => BPM.steps; // no anda
 Generator generator;
 PlayerDrums dr;
@@ -54,7 +54,7 @@ function void melodyIntegrated()
 {
   while(true)
   {
-    BPM.roundCounter % 16 => int phrase;
+    BPM.roundCounter % 32 => int phrase;
       if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[0]); }
       if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[2]); }
       beat * 16  => now;

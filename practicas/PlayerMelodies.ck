@@ -1,6 +1,6 @@
 public class PlayerMelodies
 {
-    BPM.beat(1) => dur beat;
+    BPM.beat(0.25) => dur beat;
     BPM.root => int root;
 	// Instancio clases
 	Generator generator;
@@ -80,7 +80,7 @@ public class PlayerMelodies
             {
                 if (sourceArray3[ii] == i)
                 {
-                    spork~ synth.playNote(root + sourceArray1[loop], sourceArray2[loop] );
+                    spork~ synth.playNote(root + sourceArray1[ii], sourceArray2[ii] );
                     <<<"play", root + sourceArray1[loop], sourceArray2[loop] >>>;
 		        }
             }

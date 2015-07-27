@@ -41,7 +41,7 @@ public class BPM
        }
    }
 
-    function static dur beat( float beatDiv)
+   function static dur beat(float beatDiv)
     {
       tempo * beatDiv => dur beat;
       return beat;
