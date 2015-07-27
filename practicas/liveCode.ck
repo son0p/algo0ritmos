@@ -23,9 +23,9 @@ CollectionBasses basses;
 
 [
 [
-[17.0, 15.0,  12, 10, 12 ],
-[1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ],
-[0.0,  1,    2,   4,   5 ]
+[24.0, 15.0,  12, 10, 12, 0, 7, 9, 10 ],
+[0.50, .50, .50, .50, .50, 1, 1, .25, .25 ],
+[0.0,  1,    2,   3,   4 , 10, 18, 22, 24]
 ]
 ]@=> float liveMel[][][];
 
@@ -55,7 +55,7 @@ function void melodyIntegrated()
   while(true)
   {
     BPM.roundCounter % 32 => int phrase;
-      if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[0]); }
+      if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[1]); }
       if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[2]); }
       beat * 16  => now;
   }
@@ -68,8 +68,8 @@ spork~ dr.arrayDrums(beats.cumbia[0]);
 //spork~ bassist.arrays(liveBass[0]);
 spork~ bassIntegrated();
 
-//spork~ melodier.arrays(liveMel[0]);//live
-spork~ melodyIntegrated();
+spork~ melodier.arrays(liveMel[0]);//live
+//spork~ melodyIntegrated();
 
 //spork~ dr.reverbTransformation(1);
 spork~ dr.soundTransformation();

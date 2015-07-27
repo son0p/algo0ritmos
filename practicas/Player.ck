@@ -57,7 +57,7 @@ public class Player
 
 			for( 0 => int i; i < chords.cap(); i++)
 			{
-				mySynth.playChord(chords[i], 1, 3);
+			//	mySynth.playChord(chords[i], 1, 3);
 				beat/div => now; 			// TODO Duration must be dynamic
 			}
 
