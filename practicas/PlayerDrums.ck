@@ -62,7 +62,7 @@ public class PlayerDrums
 	Noise h => ADSR hihat => TwoPole hsp => NRev hhRev => dac;
 	10000.0 => hsp.freq; 0.9 => hsp.radius;
 	0.05 => float hhSustain;
-	hihat.set(0.001,hhSustain,0.0,0.1);
+    hihat.set(0.001,hhSustain,0.0,0.1);
     0.05 => hsp.gain => float globalHspGain;
 
 	// Esta funcion toca un array multidimensonal que trae
@@ -94,14 +94,14 @@ public class PlayerDrums
 
 		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
 		{
-			if( sourceArray1[ii] == 0 )
-			{
-                generator.percentChance(5,1) => transArray1[ii];
-			}
-			if( sourceArray1[ii] == 1 )
-			{
-                generator.percentChance(100,1) => transArray1[ii];
-			}
+		  if( sourceArray1[ii] == 0 )
+		  {
+            generator.percentChance(5,1) => transArray1[ii];
+		  }
+		  if( sourceArray1[ii] == 1 )
+		  {
+            generator.percentChance(100,1) => transArray1[ii];
+		  }
 			 //<<< transArray1[ii] >>>; //DEBUG
 		}
 
