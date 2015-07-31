@@ -81,8 +81,7 @@ public class PlayerMelodies
                 if (sourceArray3[ii] == i)
                 {
                     spork~ synth.playNote(root + sourceArray1[ii], sourceArray2[ii] );
-                    <<<"play", root + sourceArray1[loop], sourceArray2[loop] >>>;
-		        }
+                }
             }
             beat => now;
             i++;

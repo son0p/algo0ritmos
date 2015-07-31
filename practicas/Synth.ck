@@ -1,6 +1,6 @@
 // ==============================================================================
-// PUBLIC CLASS: MySynthLead
-// File        : MySynthLead.ck
+// PUBLIC CLASS: Synth
+// File        : Synth.ck
 // Author      : son0p
 // Init Date   : 2014-Nov-23
 // Dependencies:
@@ -14,10 +14,10 @@ public class Synth
     // Initialize FM
     SqrOsc  modulator;
     SinOsc  carrier;
-    100 => modulator.gain;
+    100 => static int modulatorGain;
     2 => carrier.sync;
     0.05 => carrier.gain;
-    0.5 => float ratio;
+    0.5 => static float ratio;
     // Inicializo efectos y filtros
     NRev reverb;
     HPF HPFilter;
@@ -38,17 +38,10 @@ public class Synth
 	{
 		Std.mtof( note ) => float freq;
         freq * ratio => modulator.freq;
+        modulatorGain => modulator.gain;
         freq => carrier.freq;
 		envelope.keyOn();
 		beat*duration => now;
 		envelope.keyOff();
 	}
 }
-
-
-// ==============================================================================
-// Test code
-
-// Synth mySynth;
-// [60, 63, 66] @=> int test[];
-// mySynth.playChord(test, 1, 1);

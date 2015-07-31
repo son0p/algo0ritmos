@@ -1,7 +1,7 @@
 public class PlayerBass
 {
     BPM.beat(0.25) => dur beat;
-    BPM.root - 24 => int root;
+    BPM.root -12  => int root;
 	// Instancio clases
 	Generator generator;
     SynthBass synthBass;

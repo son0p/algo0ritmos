@@ -96,7 +96,7 @@ public class PlayerDrums
 		{
 			if( sourceArray1[ii] == 0 )
 			{
-				generator.percentChance(5,1) => transArray1[ii];
+                generator.percentChance(5,1) => transArray1[ii];
 			}
 			if( sourceArray1[ii] == 1 )
 			{
@@ -113,7 +113,7 @@ public class PlayerDrums
 			}
 			if( sourceArray2[ii] == 1 )
 			{
-			    generator.percentChance(100,1) => transArray2[ii];
+                generator.percentChance(100,1) => transArray2[ii];
 			}
 		}
 		for( 0 => int ii; ii < sourceArray3.cap(); ii++)

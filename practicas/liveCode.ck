@@ -8,6 +8,7 @@ MelodyGenerator ml;
 Player play;
 ProgressionGenerator prog;
 Synth synth;
+SynthBass synthBass;
 CollectionBeats beats;
 CollectionMelodies melodies;
 CollectionBasses basses;
@@ -87,8 +88,21 @@ spork~ dr.soundTransformation();
 //spork~ ml.generateMelody(root,2);
 
 
-// DEBUG zone
+// Modulation zone
+function void bassModulator(int modulationGain, float ratio)
+{
+   modulationGain => synthBass.modulatorGain;
+   ratio => synthBass.ratio;
+}
+spork~ bassModulator(90, 0.5);
 
+function void melodyModulator(int modulationGain, float ratio)
+{
+   modulationGain => synth.modulatorGain;
+   ratio => synth.ratio;
+}
+spork~ melodyModulator(200, 0.5);
+// mantiene vivos los sporks
 while( true ){
     100::ms => now;
 }
