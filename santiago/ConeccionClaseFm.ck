@@ -1,9 +1,9 @@
 volumen bet;
-//Melodia tam;
 Fm Mel;
 
 
-Mel.MoGain(100);
+Mel.MoGain(150);
+Mel.MoFreq(5);
 //spork~bet.FadeIn(0);
 spork~Mel.NumMel([1]);
 bet.General(1);
