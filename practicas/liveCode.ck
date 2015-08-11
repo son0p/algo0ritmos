@@ -1,4 +1,4 @@
-BPM.sync(120.00) => BPM.tempo => dur beat;
+BPM.sync(170.00) => BPM.tempo => dur beat;
 16 => BPM.steps; // no anda
 Generator generator;
 PlayerDrums dr;
@@ -12,8 +12,13 @@ SynthBass synthBass;
 CollectionBeats beats;
 CollectionMelodies melodies;
 CollectionBasses basses;
+Moodizer moodizer;
+0 => int counter;
 
-50 =>  BPM.root;
+48 =>  BPM.root;
+
+spork~ moodizer.dancefloor("expo",0);
+
 [
 [
 [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
@@ -24,9 +29,9 @@ CollectionBasses basses;
 
 [
 [
-[24.0, 15.0,  12, 10, 12, 0, 7, 9, 10 ],
-[0.50, .50, .50, .50, .50, 1, 1, .25, .25 ],
-[0.0,  1,    2,   3,   4 , 10, 18, 22, 24]
+[10.0, 10.0,  10,  12,  12,  15,   10,   10,   15, 12],
+[0.25,  .25,  .25, .25, .15, .15,  .5, .15, .25, .25 ],
+[0.0,  6,     12,   18,   24 , 26,  28,  32, 38, 40]
 ]
 ]@=> float liveMel[][][];
 
@@ -39,37 +44,47 @@ CollectionBasses basses;
 ]@=> float liveBass[][][];
 
 
-function void bassIntegrated()
-{
-  while(true)
-  {
-     BPM.roundCounter % 32 => int bassPhrase;
+// function void bassIntegrated()
+// {
+//   0 => int counter;
+//     while(true)
+//   {
+//     counter % 32 => int bassPhrase;
+//     if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbia[Math.random2(0,basses.cumbia.cap()-1)]);}
+//     if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbiaBuildUp[Math.random2(0,basses.cumbia.cap()-1)]);}
+//      if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbiaDrop[Math.random2(0,basses.cumbia.cap()-1)]);}
 
-     if (bassPhrase == 0){ spork~ bassist.arrays(basses.cumbia[0]); }
-     if (bassPhrase == 16){ spork~ bassist.arrays(basses.cumbia[1]); }
-     beat * 16 => now;
-  }
-}
+//     beat * 1 => now;
+//     counter++;
+//  }
+// }
 
 function void melodyIntegrated()
 {
   while(true)
   {
-    BPM.roundCounter % 32 => int phrase;
+      counter % 32 => int phrase;
       if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[1]); }
-      if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[2]); }
-      beat * 16  => now;
+      if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[1]); }
+      beat * 0.25  => now;
+      counter++;
   }
 }
 
+
+
+//spork~ build();
+//spork~ drop();
+
+
 //spork~ dr.arrayDrums(liveBeat[0]);
 //spork~ BPM.metro(8, beat);
-spork~ dr.arrayDrums(beats.cumbia[0]);
+//spork~ dr.arrayDrums(beats.cumbia[0]);
 
 //spork~ bassist.arrays(liveBass[0]);
-spork~ bassIntegrated();
+//spork~ bassIntegrated();
 
-spork~ melodier.arrays(liveMel[0]);//live
+//spork~ melodier.arrays(liveMel[0]);//live
 //spork~ melodyIntegrated();
 
 //spork~ dr.reverbTransformation(1);
@@ -94,7 +109,8 @@ function void bassModulator(int modulationGain, float ratio)
    modulationGain => synthBass.modulatorGain;
    ratio => synthBass.ratio;
 }
-spork~ bassModulator(90, 0.5);
+// ensaye relaciones 0.38, 0.5, 1.0, 2.0, 4.0, 1.33333, 0.33333, 0.2857
+spork~ bassModulator(50, 2.0);
 
 function void melodyModulator(int modulationGain, float ratio)
 {

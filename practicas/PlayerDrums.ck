@@ -1,5 +1,5 @@
 BPM.beat(1) => dur beat;
-
+RimShot01 rimShot01;
 public class PlayerDrums
 {
   // Instancio clases
@@ -8,6 +8,7 @@ public class PlayerDrums
   // Cadenas de sonido
   SndBuf kks => dac;
   SndBuf sns => dac;
+ //rimShot01.output => dac;
   SndBuf hhs => dac;
   SndBuf bit01 => dac;
   SndBuf bit02 => dac;
@@ -77,15 +78,15 @@ public class PlayerDrums
 
     //conformo los arrays de origen
     // DO => hacerlo dinamico
-		arrays[0] @=> int sourceArray1[];
-		arrays[1] @=> int sourceArray2[];
-		arrays[2] @=> int sourceArray3[];
+    arrays[0] @=> int sourceArray1[];
+    arrays[1] @=> int sourceArray2[];
+    arrays[2] @=> int sourceArray3[];
 
-		// creo arrays que van a contener el resultado
-		// transformado
-		int transArray1[arrays[0].cap()];
-		int transArray2[arrays[1].cap()];
-		int transArray3[arrays[2].cap()];
+    // creo arrays que van a contener el resultado
+    // transformado
+    int transArray1[arrays[0].cap()];
+    int transArray2[arrays[1].cap()];
+    int transArray3[arrays[2].cap()];
 
         // recorro los array y son variados
         // con una probabilidad de cambio
