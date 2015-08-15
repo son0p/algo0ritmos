@@ -17,7 +17,15 @@ Moodizer moodizer;
 
 48 =>  BPM.root;
 
-spork~ moodizer.dancefloor("expo",0);
+// nivel de variación
+0 => dr.variationBDOffset;
+100 => dr.variationBDOnset;
+0 => dr.variationSnOffset;
+100 => dr.variationHHatOnset;
+0 => dr.variationHHatOffset;
+
+//spork~ moodizer.dancefloor("expo",0);
+testArrays(0);
 
 [
 [
@@ -59,6 +67,14 @@ spork~ moodizer.dancefloor("expo",0);
 //  }
 // }
 
+//test
+function void testArrays(int arrayPosition)
+{
+    spork~ melodier.arrays(melodies.cumbia[arrayPosition]);
+    spork~ bassist.arrays(basses.cumbia[arrayPosition]);
+    spork~ dr.arrayDrums(beats.cumbia[arrayPosition]);
+}
+
 function void melodyIntegrated()
 {
   while(true)
@@ -83,6 +99,7 @@ function void melodyIntegrated()
 
 //spork~ bassist.arrays(liveBass[0]);
 //spork~ bassIntegrated();
+
 
 //spork~ melodier.arrays(liveMel[0]);//live
 //spork~ melodyIntegrated();

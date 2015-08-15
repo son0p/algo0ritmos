@@ -64,9 +64,19 @@ public class PlayerDrums
   hihat.set(0.001,hhSustain,0.0,0.1);
   0.05 => hsp.gain => float globalHspGain;
 
+    // Inicializo las probabilidades de variacion de tres arrays
+    // en porcentaje
+
+    100 => static int variationBDOnset;
+    5 => static int variationBDOffset;
+    100 => static int variationSnOnset;
+    5 => static int variationSnOffset;
+    100 => static int variationHHatOnset;
+    5 => static int variationHHatOffset;
+
   // Esta funcion toca un array multidimensonal que trae
   // en este caso tres arrays uno de  kick, otro sn, y hh.
-  fun void arrayDrums( int arrays[][] )
+  fun void arrayDrums( int arrays[][]  )
   {
     0 => int i;
     // presets cuando no hay transformaciones del sonido
@@ -95,11 +105,11 @@ public class PlayerDrums
         {
           if( sourceArray1[ii] == 0 )
           {
-            generator.percentChance(5,1) => transArray1[ii];
+            generator.percentChance(variationBDOffset,1) => transArray1[ii];
           }
           if( sourceArray1[ii] == 1 )
           {
-            generator.percentChance(100,1) => transArray1[ii];
+            generator.percentChance(variationBDOnset,1) => transArray1[ii];
           }
              //<<< transArray1[ii] >>>; //DEBUG
         }
@@ -108,22 +118,22 @@ public class PlayerDrums
         {
             if( sourceArray2[ii] == 0 )
             {
-                generator.percentChance(1,1) => transArray2[ii];
+                generator.percentChance(variationSnOffset,1) => transArray2[ii];
             }
             if( sourceArray2[ii] == 1 )
             {
-                generator.percentChance(100,1) => transArray2[ii];
+                generator.percentChance(variationSnOnset,1) => transArray2[ii];
             }
         }
         for( 0 => int ii; ii < sourceArray3.cap(); ii++)
         {
             if( sourceArray3[ii] == 0 )
             {
-                generator.percentChance(5,1) => transArray3[ii];
+                generator.percentChance(variationHHatOffset,1) => transArray3[ii];
             }
             if( sourceArray3[ii] == 1 )
             {
-                generator.percentChance(100,1) => transArray3[ii];
+                generator.percentChance(variationHHatOnset,1) => transArray3[ii];
             }
         }
 
