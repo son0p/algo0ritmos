@@ -6,19 +6,21 @@ public class Fm
     // La Moduladora del Gain comenzara en 10000.
     float ratioFreq;
     float freqCarrier;
-    10000 => float ModularGain;
-               
-    //Dos ondas que hacen la sintesis basica FM
-    SqrOsc carrier;
-    SqrOsc moduladora;
+    100 => float ModularGain; 
     
+    //Dos ondas que hacen la sintesis basica FM
+    ADSR adsr;
+    NRev rever;
+    SinOsc carrier;
+    SqrOsc moduladora;
+    Delay dely;
     //Variable Publica que retorna un entero
     //Que mueve la Modular Frencuencia
     public float MoFreq(float usoRatio)
         {
             if (true)
             {
-                1/usoRatio => ratioFreq;
+                8/usoRatio => ratioFreq;
                 return ratioFreq;
             }
         }
@@ -40,19 +42,23 @@ public class Fm
         {
             // Sincronizacion de la FM
             2 => carrier.sync;
-            modulador => carrier => Gain VolumenGen => dac;
+            modulador => carrier => rever => adsr => dely => dely => Gain VolumenGen => dac;
+            adsr.set(20::ms,250::ms,0.5,20::ms);
+            500 :: ms => dely.delay => dely.max;
+            0.8 => dely.gain;
+            0.1 => rever.mix;
             while(true)
             {
                 ModularGain => modulador.gain;
                 <<<"Modulador",ModularGain>>>;
                 Volumen.VOLGENERAL => VolumenGen.gain;
                 //<<<"VolumenGen",VolumenGen.gain()>>>;
-                0.01::second =>now;
+                0.001::second =>now;
             }
         
         }
 
-    // Las ondas en funcionamiento 
+    // Las ondas en funcionamiento
     spork~fmsin(carrier,moduladora);
         
         
@@ -77,12 +83,11 @@ public class Fm
                   
                     for(0 => int c ; c < melodia.cap();c++)
                     {
-                        if (melodia[c] == 0)
+                        if (melodia[c] == 00)
                         {
-                            // Silencio de la carrier  y la moduladora cuando sea 0
-                            0 => carrier.gain;
-                            0 => moduladora.gain;
-                            0.125::second => now;
+                            adsr.keyOff();
+                            0.125 :: second => now;
+                            
                         }
                         else
                         {
@@ -90,7 +95,10 @@ public class Fm
                             1 => moduladora.gain;
                             Std.mtof(melodia[c]) => carrier.freq;
                             carrier.freq()*ratioFreq => moduladora.freq;
-                            0.125::second => now;
+                            adsr.keyOn();
+                            0.125 :: second => now;
+                            adsr.keyOff();
+                            
                         }
                     }
                 }

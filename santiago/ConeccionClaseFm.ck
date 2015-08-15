@@ -2,11 +2,11 @@ volumen bet;
 Fm Mel;
 
 
-Mel.MoGain(150);
-Mel.MoFreq(5);
+Mel.MoGain(500);
+Mel.MoFreq(1);
 //spork~bet.FadeIn(0);
 spork~Mel.NumMel([1]);
-bet.General(1);
+bet.General(0.2);
 
 while(true)
 {
