@@ -1,42 +1,30 @@
-BPM.beat(1) => dur beat;
-RimShot01 rimShot01;
 public class PlayerDrums
 {
+  BPM.beat(1) => dur beat;
   // Instancio clases
   Generator generator;
-
+  RimShot01 rs;
+  BD101kjz BD;
   // Cadenas de sonido
   SndBuf kks => dac;
   SndBuf sns => dac;
+  BD.output => dac;
+  rs.output => dac;
  //rimShot01.output => dac;
   SndBuf hhs => dac;
   SndBuf bit01 => dac;
   SndBuf bit02 => dac;
   SndBuf bit03 => dac;
 
-  // Samples
-  me.dir() + "/audio/kick_01.wav" => kks.read;
-  me.dir() + "/audio/hihat_01.wav" => hhs.read;
-  me.dir() + "/audio/snare_01.wav" => sns.read;
-  me.dir() + "/audio/3048_starpause_k9dhhPulseEffect.wav" => bit01.read;
-  me.dir() + "/audio/3049_starpause_k9dhhPulseKick.wav" => bit02.read;
-  me.dir() + "/audio/3047_starpause_k9dhhNotSnare.wav" => bit03.read;
-
-  // Por defecto
+   // Por defecto
   0.1 => float globalKksGain => kks.gain;
   0.1 => float globalHhsGain => hhs.gain;
   0.1 => float globalSnsGain => sns.gain;
   0.1 => bit01.gain;
   0.3 => bit02.gain;
   0.1 => bit03.gain;
-
-  // ultimo sample para evitar sonido
-  kks.samples() => kks.pos;
-  sns.samples() => sns.pos;
-  hhs.samples() => hhs.pos;
-  bit01.samples() => bit01.pos;
-  bit02.samples() => bit02.pos;
-  bit03.samples() => bit03.pos;
+  0.9 => BD.output.gain;
+  0.8 => rs.output.gain;
 
 // Hacemos un bombo, filtrando un Impuslo.
   Impulse kick => TwoPole kp => dac;
@@ -45,16 +33,16 @@ public class PlayerDrums
   static float toneSustain;
   0.1 => static float toneRelease;
   SinOsc tone => ADSR toneKick => dac;
-  toneKick.set(0.001,0.2,toneSustain,0.1);
+  toneKick.set(0.001,0.09,toneSustain,0.1);
   0.3 => tone.gain;
   51.9 => tone.freq;
   // ojo RezonZ
 
   // Hacemos un redoblante, filtrando un Noise.
   Noise n => ADSR snare => TwoPole sp => NRev snRev => dac;
-  1000.0 => sp.freq; 0.9 => sp.radius;
+  800.0 => sp.freq; 0.9 => sp.radius;
   0.05 => static float snSustain;
-  snare.set(0.001,snSustain,0.0,0.1);
+  //snare.set(0.001,snSustain,0.0,0.1);
   0.02 => sp.gain => static float globalSpGain;
 
   // Hacemos un charles, filtrando un Noise.
@@ -62,7 +50,7 @@ public class PlayerDrums
   10000.0 => hsp.freq; 0.9 => hsp.radius;
   0.05 => float hhSustain;
   hihat.set(0.001,hhSustain,0.0,0.1);
-  0.05 => hsp.gain => float globalHspGain;
+  0.02 => hsp.gain => float globalHspGain;
 
     // Inicializo las probabilidades de variacion de tres arrays
     // en porcentaje
@@ -142,22 +130,16 @@ public class PlayerDrums
         while(true)
         {
             i % sourceArray1.cap() => int loop;
-
-            // Suenan los samples
-             //if( transArray1[loop] == 0 ) kks.samples() => kks.pos;
-             //if( transArray1[loop] == 1 ) 0 => kks.pos;
-             //if( transArray2[loop] == 0 ) sns.samples() => sns.pos;
-            //if( transArray2[loop] == 1 ) 0 => sns.pos;
-            // if( transArray3[loop] == 0 ) hhs.samples() => hhs.pos;
-            // if( transArray3[loop] == 1 ) 0 => hhs.pos;
-
             // suenan los sonidos de drums de syntesis
-            if( transArray1[loop] == 0 ) toneKick.keyOff();
-            if( transArray1[loop] != 0 ){ toneKick.keyOn(); 1.0 => kick.next;}
-            if( transArray2[loop] == 0 ) snare.keyOff();
-            if( transArray2[loop] != 0 ) snare.keyOn();
-            if( transArray3[loop] == 0 ) hihat.keyOff();
-            if( transArray3[loop] != 0 ) hihat.keyOn();
+             if( transArray1[loop] == 0 ) toneKick.keyOff();
+             if( transArray1[loop] != 0 ){ toneKick.keyOn(); 1.0 => kick.next;}
+             if( transArray2[loop] == 0 ) snare.keyOff();
+             if( transArray2[loop] != 0 ) snare.keyOn();
+
+           // if( transArray1[loop] != 0 ) BD.hit(1);
+             if( transArray2[loop] != 0 ) rs.hit(1);
+             if( transArray3[loop] == 0 ) hihat.keyOff();
+             if( transArray3[loop] != 0 ) hihat.keyOn();
 
             // Acentos: si esta en tiempos fuertes
             // la ganancia es normal, si esta en tiempos débiles la
@@ -165,8 +147,8 @@ public class PlayerDrums
             [0,0,0,0,4,0,0,0,8,0,0,0,12,0,0,0,0] @=> int hardBeats[]; // DO => mejor solucion
             if( loop == hardBeats[loop] )
             {
-                globalKksGain => kks.gain;
-                globalSnsGain => sns.gain;
+                globalKksGain => BD.output.gain;
+                globalSnsGain => rs.output.gain;
                 globalHhsGain => hhs.gain;
                 globalKpGain => kp.gain;
                 globalSpGain => sp.gain;
@@ -174,8 +156,8 @@ public class PlayerDrums
             }
             if( loop != hardBeats[loop] )
             {
-                globalKksGain/2.0 => kks.gain;
-                globalSnsGain/1.5 => sns.gain;
+                globalKksGain/2.0 => BD.output.gain;
+                globalSnsGain/1.5 => rs.output.gain;
                 globalHhsGain/3.0 => hhs.gain;
                 globalKpGain/2.0 => kp.gain;
                 globalSpGain/4.0 => sp.gain;
@@ -190,14 +172,15 @@ public class PlayerDrums
     fun void soundTransformation()
     {
         [0.01, 0.01, 0.01, 0.05, 0.01, 0.001, 0.05, 0.05, 0.09, 0.14] @=> float hhSeeds[];
-        [0.01, 0.05, 0.05, 0.05, 0.09, 0.05, 0.03, 0.09] @=> float snSeeds[];
+        [0.001, 0.035, 0.005, 0.019, 0.01, 0.005, 0.055, 0.009, 0.02] @=> float snSeeds[];
         while(true)
         {
             hhSeeds[Math.random2(0,hhSeeds.cap()-1 )] => hhSustain;
-            hihat.set(0.001,hhSustain,0.0,0.1);
+            hihat.set(0.001,hhSustain,hhSustain,0.1);
             snSeeds[Math.random2(0,snSeeds.cap()-1 )] => snSustain;
-            snare.set(0.001,snSustain,0.0,0.1);
-            beat/16 => now;
+            snare.set(0.001,snSustain,snSustain,0.1);
+            beat*2 => now;
+            //<<< snSustain>>>;
         }
     }
 
@@ -209,242 +192,15 @@ public class PlayerDrums
       if (beatDivision >= 1){
         [0.01, 0.3, 0.4, 0.05, 0.09, 0.05, 0.03, 0.01, 0.01 ] @=> float seeds[];
         while(true)
-        {
+
+          {
             seeds[Math.random2(0,seeds.cap()-1 )]*2 => hhRev.mix;
-            (seeds[Math.random2(0,seeds.cap()-1 )])/4 => snRev.mix;
+            seeds[Math.random2(0,seeds.cap()-1 )]/4 => snRev.mix;
+           // <<< snRev.mix()>>>;
             beat*beatDivision => now;
         }
-      }
     }
-    //arrayDrums(0,0); // DEBUG
-
-    // Se llaman estas funciones para ritmos fijos, los usaba para
-    // livecoding
-    fun void kk(int div, int density)
-    {
-        0 => int i;
-        // Un golpe cada 16 beats, usable para cortes.
-        if( density == 0 )
-        {
-            0 => kks.pos;
-            8*beat => now;
-        }
-        // Golpes estables y variación leve
-        // al final del compás.
-        if( density == 1 )
-        {
-            while(true)
-            {
-                i % 8 => int loop8;
-                if( loop8 < 7)
-                {
-                    1.0 => kick.next;
-                    0 => kks.pos;
-                    beat/div => now;
-                }
-                if( loop8 > 7)
-                {
-                    [1, 1, 1, 1,  2, 4] @=> int seed[];
-                    1.0 => kick.next;
-                    kks.samples() => kks.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                }
-                i++;
-            }
-        }
-        // Golpes estables y variación
-        // al final del compás.
-        if( density == 2)
-        {
-            while(true)
-            {
-                i % 8 => int loop8;
-                if( loop8 < 4)
-                {
-                    1.0 => kick.next;
-                    0 => kks.pos;
-                    beat/div => now;
-                }
-                if( loop8 > 4 )
-                {
-                    [1, 1, 1, 1,  2, 4] @=> int seed[];
-                    1.0 => kick.next;
-                    kks.samples() => kks.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                }
-                i++;
-            }
-        }
-
-        if( density == 3)
-        {
-            while(true)
-            {
-                i % 8 => int loop8;
-                if( loop8 < 4)
-                {
-                    1.0 => kick.next;
-                    0 => kks.pos;
-                    beat/div => now;
-                }
-                if( loop8 > 4 )
-                {
-                    [1, 2, 4, 4, 8] @=> int seed[];
-                    1.0 => kick.next;
-                    kks.samples() => kks.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                }
-                i++;
-            }
-        }
-
-    }
-
-
-    // Una función que ejecuta un redoblante
-    // dejando una negra en silencio.
-    fun void sn()
-    {
-        0 => int i;
-        while(true)
-        {
-            i % 8 => int loop8;
-            if ( loop8 < 7)
-            {
-                beat => now;
-                //snare.keyOn();
-                0 => sns.pos;
-                beat => now;
-                //snare.keyOff();
-            }
-            else
-            {
-                [1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4, 8] @=> int seed[];
-                beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                //snare.keyOn();
-                0 => sns.pos;
-                beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                //snare.keyOff();
-            }
-            i++;
-
-        }
-    }
-
-    // Una función que ejecuta el hihat
-// dejando un silencio de corchea.
-    fun void hh()
-    {
-        0 => int i;
-        while(true)
-        {
-            i % 8 => int loop8;
-            if( loop8 < 7)
-            {
-                hhs.samples() => hhs.pos;
-                beat/2 => now;
-                //  hihat.keyOn();
-                0 => hhs.pos;
-                beat/2 => now;
-                //  hihat.keyOff();
-                0 => hhs.pos;
-            }
-            if( loop8 >= 7)
-            {
-
-                hhs.samples() => hhs.pos;
-                beat/2 => now;
-                0 => hhs.pos; globalHhsGain - 0.05 => hhs.gain;
-                beat/4 => now;
-                0 => hhs.pos; globalHhsGain  => hhs.gain;
-                beat/4 => now;
-            }
-            i++;
-
-        }
-    }
-    // Función para manejar sonidos de 8bit.
-    fun void bi(int div, int density)
-    {
-        0 => int i;
-        if( density == 0 )
-        {
-            12*beat => now;
-            while( true )
-            {
-                0 => bit03.pos;
-                beat/div => now;
-            }
-        }
-        if( density == 1 )
-        {
-            while(true)
-            {
-                i % 8 => int loop8;
-                if( loop8 < 7)
-                {
-                    0 => bit02.pos;
-                    beat/div => now;
-
-                }
-                if( loop8 > 7)
-                {
-                    [1, 1, 1, 1,  2, 4] @=> int seed[];
-                    bit01.samples() => bit01.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                }
-                i++;
-            }
-        }
-        if( density == 2)
-        {
-            while(true)
-            {
-                i % 8 => int loop8;
-                if( loop8 < 4)
-                {
-                    0 => bit01.pos;
-                    beat/div => now;
-                }
-                if( loop8 > 4 )
-                {
-                    [1, 1, 1, 1,  2, 4] @=> int seed[];
-                    bit01.samples() => bit01.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-                }
-                i++;
-            }
-        }
-        if( density > 2)
-        {
-            while(true)
-            {
-                i % 16 => int loop8;
-                if( loop8 < 4)
-                {
-                    0 => bit03.pos;
-                    beat/div => now;
-
-                }
-                if( (loop8 > 4) && (loop8 < 12) )
-                {
-                    [1, 1, 3, 3] @=> int seed[];
-                    0 => bit01.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-
-                }
-                if( loop8 > 12 )
-                {
-                    [1, 1, 1, 3, 3] @=> int seed[];
-                    0 => bit02.pos;
-                    beat/seed[(Math.random2(0, seed.cap()-1))] => now;
-
-                }
-                i++;
-            }
-        }
-    }
-
+  }
 }
 
 

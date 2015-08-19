@@ -16,10 +16,15 @@ public class Synth
     SinOsc  carrier;
     100 => static int modulatorGain;
     2 => carrier.sync;
-    0.05 => carrier.gain;
+    0.05 =>  carrier.gain;
     0.5 => static float ratio;
     // Inicializo efectos y filtros
     NRev reverb;
+    Delay delay;
+    Gain feedback;
+    (beat*2)/3 => delay.max => delay.delay;
+    0.3 => static float delayGain => delay.gain;
+    0.5 =>  static float delayFeedback => feedback.gain;
     HPF HPFilter;
     LPF LPFilter;
     0.02 => reverb.mix;
@@ -28,11 +33,13 @@ public class Synth
     50 => HPFilter.freq;
     // Gain
 	Gain master => dac;
-	0.5=> master.gain;
+    static float synthGain;
+	0.5=> synthGain => master.gain;
     ADSR envelope;
     envelope.set( 5::ms, 8::ms, .5, 50::ms);
     // Audio chain
     modulator => carrier => envelope => reverb => master;
+    master =>  feedback => delay => master;
 
 	fun void playNote( float note, float duration )
 	{
@@ -43,5 +50,7 @@ public class Synth
 		envelope.keyOn();
 		beat*duration => now;
 		envelope.keyOff();
+        delayGain => delay.gain;
+        delayFeedback => feedback.gain;
 	}
 }

@@ -16,6 +16,15 @@ public class Generator
     percentArray[Math.random2( 0, percentArray.cap()-1 )] => int selected;
     return selected;
   }
+  fun float octaver( float note, float condition, int octave )
+  {
+      [0.0, 12.0, 24, 48, 96] @=> float octaves[];
+      if( note == condition)
+      {
+          note + octaves[octave] => note;
+     }
+     return note;
+  }
 }
 // //-------------------------------------
 // // Test

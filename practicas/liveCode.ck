@@ -13,43 +13,82 @@ CollectionBeats beats;
 CollectionMelodies melodies;
 CollectionBasses basses;
 Moodizer moodizer;
+Modulator modulator;
 0 => int counter;
 
 48 =>  BPM.root;
 
+//FM
+fun void fm()
+{
+    while(true){
+        1000 => synth.modulatorGain; // 100 default
+        0.5 => synth.ratio;
+        100 => synthBass.modulatorGain;
+        0.5 => synthBass.ratio;
+        beat => now;
+    }
+};
+//spork~ fm();
+//spork~ modulator.close(1.0); //10.0 slow 0.2 fast
+
+fun void delay()
+{
+    while(true){
+        0.99 => synth.delayGain;
+        0.99 => synth.delayFeedback;
+        beat => now;
+    }
+
+}
+spork~ delay();
+//alteraciones notas
+
 // nivel de variación
-0 => dr.variationBDOffset;
+5 => dr.variationBDOffset;
 100 => dr.variationBDOnset;
-0 => dr.variationSnOffset;
+10 => dr.variationSnOffset;
+90 => dr.variationSnOnset;
 100 => dr.variationHHatOnset;
-0 => dr.variationHHatOffset;
+50 => dr.variationHHatOffset;
 
-//spork~ moodizer.dancefloor("expo",0);
-testArrays(0);
+spork~ moodizer.dancefloor("c",0);
+//spork~ moodizer.dancefloor("a",0);
+
+//testArrays(1);
+//spork~ dr.reverbTransformation(2);
+spork~ dr.reverbTransformation(1);
 
 [
 [
-[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
-[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
-[1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1]
+[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+[0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0],
+[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]
 ]
 ]@=>  int liveBeat[][][];
 
-[
-[
-[10.0, 10.0,  10,  12,  12,  15,   10,   10,   15, 12],
-[0.25,  .25,  .25, .25, .15, .15,  .5, .15, .25, .25 ],
-[0.0,  6,     12,   18,   24 , 26,  28,  32, 38, 40]
-]
-]@=> float liveMel[][][];
 
 [
 [
-[0.0,  -2, 0  ],
-[1.0, 0.5, 1.0],
-[0.0,  1,  4 ]
+[0.0,  0, 0, 8,7, 6,  5, 4, 3, 2, 1, 0, 0, 0 ],
+[1.0,   1,  1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+[0.0,2.0, 4.0,6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28 ]
 ]
 ]@=> float liveBass[][][];
+
+[
+[
+[12.0, 12.0,    12,   12,  12,  12, 12  ],
+[  .25,  .25,   .50, 1, .15, 1, .15 ],
+[0.0,     2.0,  14.0, 16, 18, 24, 28  ]
+]
+
+]@=> float liveMel[][][];
+
+
+//spork~ dr.arrayDrums(liveBeat[0]);
+//spork~ bassist.arrays(liveBass[0]);
+//spork~ melodier.arrays(liveMel[0]);
 
 
 // function void bassIntegrated()
@@ -87,7 +126,12 @@ function void melodyIntegrated()
   }
 }
 
-
+function void liveArrays()
+{
+    spork~ dr.arrayDrums(liveBeat[0]);
+    spork~ bassist.arrays(liveBass[0]);
+    spork~ melodier.arrays(liveMel[0]);//live
+    }
 
 //spork~ build();
 //spork~ drop();
@@ -104,8 +148,7 @@ function void melodyIntegrated()
 //spork~ melodier.arrays(liveMel[0]);//live
 //spork~ melodyIntegrated();
 
-//spork~ dr.reverbTransformation(1);
-spork~ dr.soundTransformation();
+
 
 //spork~ dr.fill(5, 0.125);
 //spork~ melodier.arrays(melodies.base[1]);

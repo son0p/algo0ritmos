@@ -34,15 +34,9 @@ public class PlayerMelodies
 
 		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
 		{
-			if( sourceArray1[ii] == 0 )
-			{
-				generator.percentChance(5,1) => transArray1[ii];
-			}
-			if( sourceArray1[ii] == 1 )
-			{
-                generator.percentChance(100,1) => transArray1[ii];
-			}
-			 //<<< transArray1[ii] >>>; //DEBUG
+            // acá condicion
+            sourceArray1[ii] => float note;
+           	generator.octaver(note,0.0,1) => transArray1[ii];
 		}
 
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
