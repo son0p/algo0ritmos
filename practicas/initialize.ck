@@ -1,7 +1,7 @@
 Machine.add(me.dir()+"/BPM.ck");
 // Instruments
 Machine.add(me.dir()+"/instruments/BD101kjz.ck");
-Machine.add(me.dir()+"/RimShot01.ck");
+Machine.add(me.dir()+"/instruments/RimShot01.ck");
 Machine.add(me.dir()+"/SynthBass.ck");
 Machine.add(me.dir()+"/Synth.ck");
 // Collections
@@ -16,8 +16,6 @@ Machine.add(me.dir()+"/PlayerBass.ck");
 // Modulators
 Machine.add(me.dir()+"/Modulator.ck");
 Machine.add(me.dir()+"/Mode.ck");
-Machine.add(me.dir()+"/MelodyGenerator.ck");
 Machine.add(me.dir()+"/Player.ck");
 Machine.add(me.dir()+"/Moodizer.ck");
-Machine.add(me.dir()+"/ProgressionGenerator.ck");
 Machine.add(me.dir()+"/looper.ck");
