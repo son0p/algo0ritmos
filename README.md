@@ -8,6 +8,8 @@ Algo-Ritmos
 
 # Entornos para aprendizaje de código en vivo y música generativa
 
+Actualmente el proyecto habita en la Escuela de Experimentos de <img src="http://wiki.medellinvivelamusica.com/_media/logo.png" alt="Medellin Vive La Música" height="200" width="240")
+
 ## Uso
 Instale ChucK http://chuck.cs.princeton.edu/release/
 
