@@ -12,19 +12,21 @@ Algo-Ritmos
 Instale ChucK http://chuck.cs.princeton.edu/release/
 
 Clone este repositorio
-'''
+
+```
 $ git clone https://github.com/son0p/algo-ritmos.git
 $ cd algo-ritmos/practicas
 $ chuck initialize.ck
-'''
+```
 
 
 ### Onliner para Ubuntu
 Esta línea pretende instalar las dependencias de Chuck, Chuck, MiniAudicle y clonar los  repositorios Algo-Ritmos y CHmUsiCK
-'''
+
+```
 mkdir Algo-Ritmos-ChucK; cd Algo-Ritmos-ChucK; git clone https://github.com/son0p/algo-ritmos.git; git clone https://github.com/essteban/CHmUsiCK.git; wget http://audicle.cs.princeton.edu/mini/release/files/miniAudicle-1.3.2.tgz; tar zxvf miniAudicle-1.3.2.tgz;
 sudo apt-get install make gcc g++ bison flex libasound2-dev libsndfile1-dev libqt4-dev libqscintilla2-dev libjack-dev; cd miniAudicle-1.3.2/; cd src; make linux-jack;mv miniAudicle ~/Desktop/
-'''
+```
 ## Documentación
 
 initialize.ck : carga las clases que usaremos en el entorno
