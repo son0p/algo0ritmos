@@ -6,6 +6,10 @@ public class PlayerMelodies
 	Generator generator;
     Synth synth;
     Event event;
+    ModesClass modesClass;
+
+
+
 
 	// ojo RezonZ
 
@@ -29,6 +33,17 @@ public class PlayerMelodies
 		float transArray2[arrays[1].cap()];
 		float transArray3[arrays[2].cap()];
 
+        // curva de probabilidad
+        int chanceNote[arrays[0].cap()];
+        int chanceInterval[12];
+        [0, 5, 0, 15, 5, 50, 0, 15, 5, 0, 5, 0, 15, 0, 5, 50, 0] @=> int baseChance[]; // FIX> puede desbordarse
+        modesClass.modes(12) @=> chanceInterval;
+        // llena el array de reemplazo con las opciones del modo
+        for(0 => int i; i < arrays[0].cap();i++)
+        {
+          baseChance[i] => chanceNote[i];
+        }
+
 		// recorro los array y son variados
 		// con una probabilidad de cambio
 
@@ -36,7 +51,20 @@ public class PlayerMelodies
 		{
             // acá condicion
             sourceArray1[ii] => float note;
-           	generator.octaver(note,0.0,1) => transArray1[ii];
+            // deme probabilidad de que la nota sea otro valor, como el array de probabilidad queda se llena de ceros, solo se reemplazan la cantidad de ceros que se dicte al llamar la función percentChance(), entonces si es cero deje el valor que tiene el sourceArray, si es diferente use el valor que generó la probabilidad
+           // function int
+           	generator.percentChance(chanceNote[ii],chanceInterval[Math.random2(0, chanceInterval.cap()-1)]) => note;
+
+            if (note == 0)
+            {
+               sourceArray1[ii] => transArray1[ii];
+            }
+            if (note != 0)
+            {
+                // cuido que el intervalo nuevo no sea mayor a 6
+                // para no dar salto melódico
+                note => transArray1[ii];
+            }
 		}
 
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
@@ -74,7 +102,7 @@ public class PlayerMelodies
             {
                 if (sourceArray3[ii] == i)
                 {
-                    spork~ synth.playNote(root + sourceArray1[ii], sourceArray2[ii] );
+                    spork~ synth.playNote(root + transArray1[ii], sourceArray2[ii] );
                 }
             }
             beat => now;

@@ -19,27 +19,21 @@ public class PlayerBass
 		arrays[1] @=> float sourceArray2[];
 		arrays[2] @=> float sourceArray3[];
 
-		// creo arrays que van a contener el resultado
+        // creo arrays que van a contener el resultado
 		// transformado
 		float transArray1[arrays[0].cap()];
 		float transArray2[arrays[1].cap()];
 		float transArray3[arrays[2].cap()];
 
-		// recorro los array y son variados
-		// con una probabilidad de cambio
-
-		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
+        for( 0 => int ii; ii < sourceArray1.cap(); ii++)
 		{
-			if( sourceArray1[ii] == 0 )
-			{
-				generator.percentChance(5,1) => transArray1[ii];
-			}
 			if( sourceArray1[ii] == 1 )
 			{
                 generator.percentChance(100,1) => transArray1[ii];
 			}
 			 //<<< transArray1[ii] >>>; //DEBUG
-		}
+         }
+
 
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
 		{
@@ -82,6 +76,8 @@ public class PlayerBass
 		}
 	}
 }
+
+
 
 //------ Test ----------
 // [

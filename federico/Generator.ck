@@ -22,6 +22,7 @@ public class Generator
       if( note == condition)
       {
           note + octaves[octave] => note;
+          <<< "octave", note>>>;
      }
      return note;
   }

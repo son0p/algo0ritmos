@@ -1,4 +1,6 @@
+// Entornos
 Machine.add(me.dir()+"/BPM.ck");
+Machine.add(me.dir()+"/ModesClass.ck");
 // Instruments
 Machine.add(me.dir()+"/instruments/BD101kjz.ck");
 Machine.add(me.dir()+"/RimShot01.ck");

@@ -14,18 +14,20 @@ spork~ dr.reverbTransformation(1);
 5 => dr.variationSnOffset;100 => dr.variationSnOnset;
 0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
 //---------- Floor---------------
-spork~ moodizer.dancefloor("b",2);
+//spork~ moodizer.dancefloor("b",2);
 //spork~ moodizer.dancefloor("c",2);
 // ------- Live
 [[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]]]@=>  int liveBeat[][][];
 [[[0.0,0,0],[.15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15],[0.0,2.0, 10.0 ]]]@=> float liveBass[][][];
-[[[12.0, 12.0,12,12,12,  12, 12  ],[  .25,  .25,   .50, 1, .15, 1, .15 ],[0.0,2.0,  14.0, 16, 18, 24, 28  ]]]@=> float liveMel[][][];
+[[[0.0, 0.0,12,12,12,  12, 12  ],[  .25,  .25,   .50, 1, .15, 1, .15 ],[0.0,2.0,  14.0, 16, 18, 24, 28  ]]]@=> float liveMel[][][];
 
 // spork~ dr.arrayDrums(liveBeat[0]);
 // spork~ bassist.arrays(liveBass[0]);
-// spork~ melodier.arrays(liveMel[0]);
+ spork~ melodier.arrays(liveMel[0]);
 
 //------------------------------------------POOL-----------------------------------------------------
+
+// mode probability
 
 // [[[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]]]@=>  int liveBeat[][][];
 // [[[0.0,1,2,3,4,5,6,7,12],[1.0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[0.0,4,6,8,10,12,14,16,18 ]]]@=> float liveBass[][][];

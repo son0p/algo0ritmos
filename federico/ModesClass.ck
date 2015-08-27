@@ -8,10 +8,10 @@
 
 
 
-public class Modes 
+public class ModesClass
 {
     int notes[];
-    
+
     public int[] modes (int input)
     {
         if( input == 1 )
@@ -28,9 +28,9 @@ public class Modes
         }
         if( input == 3 )
         {
-            [0, 1, 3, 5, 7, 8, 10] @=> int phg[]; //phrygian 
+            [0, 1, 3, 5, 7, 8, 10] @=> int phg[]; //phrygian
             phg @=> notes;
-            return notes;  
+            return notes;
         }
         if( input == 4 )
         {
@@ -76,7 +76,7 @@ public class Modes
         }
         if( input == 11 )
         {
-            [0, 1, 4, 5, 7, 8, 10] @=> 
+            [0, 1, 4, 5, 7, 8, 10] @=>
             int jewish[]; //phrygian dominant-jewish
             jewish @=> notes;
             return notes;
@@ -114,6 +114,6 @@ public class Modes
         else
         {
             <<<"Number between 1 and 15">>>;
-        }     
+        }
     }
 }
