@@ -10,6 +10,9 @@ Machine.add(me.dir()+"/Synth.ck");
 Machine.add(me.dir()+"/CollectionBeats.ck") =>  int beatID;
 Machine.add(me.dir()+"/CollectionBasses.ck") =>  int bassID;
 Machine.add(me.dir()+"/CollectionMelodies.ck") =>  int melodyID;
+Machine.add(me.dir()+"/CollectionProbabilities.ck");
+// Rules
+Machine.add(me.dir()+"/Rules.ck");
 // Players
 Machine.add(me.dir()+"/Generator.ck");
 Machine.add(me.dir()+"/PlayerDrums.ck");

@@ -1,5 +1,7 @@
 public class Generator
 {
+  Rules rules;
+  ModesClass.modeNumber => int modeNumber;
   // Generador de aleatoriedad entre cero y un valor
   fun int percentChance( int percent, int value )
   {
@@ -16,6 +18,14 @@ public class Generator
     percentArray[Math.random2( 0, percentArray.cap()-1 )] => int selected;
     return selected;
   }
+
+  function float findNote(float oldNote, float note, float maxInterval, int modeNumber)
+  {
+      // verifico que el intervalo no sea mayor
+      rules.interval(oldNote, note, 2.0, modeNumber ) => note;
+      return note;
+  }
+
   fun float octaver( float note, float condition, int octave )
   {
       [0.0, 12.0, 24, 48, 96] @=> float octaves[];

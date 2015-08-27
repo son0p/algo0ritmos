@@ -6,13 +6,12 @@
 //  Copyright (c) 2014 Esteban Betancur. All rights reserved.
 //
 
-
-
 public class ModesClass
 {
+    1 => static int modeNumber;
     int notes[];
 
-    public int[] modes (int input)
+    public int[] mode (int input)
     {
         if( input == 1 )
         {

@@ -1,9 +1,13 @@
-BPM.sync(180.00) => BPM.tempo => dur beat;16 => BPM.steps; Generator generator;PlayerDrums dr;PlayerMelodies melodier;PlayerBass bassist;MelodyGenerator ml;Player play;ProgressionGenerator prog;Synth synth;SynthBass synthBass;CollectionBeats beats;CollectionMelodies melodies;CollectionBasses basses;Moodizer moodizer;Modulator modulator;0 => int counter;48 =>  BPM.root;
+BPM.sync(180.00) => BPM.tempo => dur beat;16 => BPM.steps; Generator generator;PlayerDrums dr;PlayerMelodies melodier;PlayerBass bassist;MelodyGenerator ml;Player play;ProgressionGenerator prog;Synth synth;SynthBass synthBass;CollectionBeats beats;CollectionMelodies melodies;CollectionBasses basses; CollectionProbabilities collectionProbabilities; Moodizer moodizer;Modulator modulator;
+0 => CollectionProbabilities.probabilityOffset; // max 80
+0 => int counter;
+48 =>  BPM.root;
+6 => ModesClass.modeNumber;
 
 //--------------- Modulate effects
 fun void fm(){while(true){1000 => synth.modulatorGain; 0.5 => synth.ratio; 100 => synthBass.modulatorGain;0.5 => synthBass.ratio; beat => now; }};
 fun void delay(){while(true){0.99 => synth.delayGain;0.99 => synth.delayFeedback;beat => now;}}
-spork~ delay();
+//spork~ delay();
 //spork~ fm();
 //spork~ modulator.close(1.0); //10.0 slow 0.2 fast
 //--------alteraciones notas-----------
@@ -14,16 +18,16 @@ spork~ dr.reverbTransformation(1);
 5 => dr.variationSnOffset;100 => dr.variationSnOnset;
 0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
 //---------- Floor---------------
-//spork~ moodizer.dancefloor("b",2);
+spork~ moodizer.dancefloor("c",0);
 //spork~ moodizer.dancefloor("c",2);
 // ------- Live
 [[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]]]@=>  int liveBeat[][][];
-[[[0.0,0,0],[.15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15],[0.0,2.0, 10.0 ]]]@=> float liveBass[][][];
-[[[0.0, 0.0,12,12,12,  12, 12  ],[  .25,  .25,   .50, 1, .15, 1, .15 ],[0.0,2.0,  14.0, 16, 18, 24, 28  ]]]@=> float liveMel[][][];
+[[[0.0,0,0],[2.0, 2, 2, 4, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15],[0.0,8.0, 16.0 ]]]@=> float liveBass[][][];
+[[[0.0, 0.0,0,0,0,0,0,0,0,0,0 ],[  .25,  .25,   .50, 1, .15, 1, .15, .5,.5,.5,.5,.5 ],[0.0,2.0,4,6,8,10,12,  14.0, 16, 18, 24, 28  ]]]@=> float liveMel[][][];
 
-// spork~ dr.arrayDrums(liveBeat[0]);
-// spork~ bassist.arrays(liveBass[0]);
- spork~ melodier.arrays(liveMel[0]);
+ //spork~ dr.arrayDrums(liveBeat[0]);
+ //spork~ bassist.arrays(liveBass[0]);
+ //spork~ melodier.arrays(liveMel[0]);
 
 //------------------------------------------POOL-----------------------------------------------------
 

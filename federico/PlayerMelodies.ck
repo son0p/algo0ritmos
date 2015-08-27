@@ -2,22 +2,25 @@ public class PlayerMelodies
 {
     BPM.beat(0.25) => dur beat;
     BPM.root + 12 => int root;
+
 	// Instancio clases
 	Generator generator;
     Synth synth;
     Event event;
     ModesClass modesClass;
+    Rules rules;
+    CollectionProbabilities collectionProbabilities;
 
-
-
-
-	// ojo RezonZ
+    float note;
+    float oldNote;
 
 	// Esta funcion toca un array multidimensonal que trae
 	// en este caso tres arrays uno de  kick, otro sn, y hh.
 	fun void arrays( float arrays[][] )
 	{
+        ModesClass.modeNumber => int modeNumber;
 		0 => int i;
+
 		// ---acá intercepto el array buscando inyectar
 		// aleatoriedad
 
@@ -36,37 +39,39 @@ public class PlayerMelodies
         // curva de probabilidad
         int chanceNote[arrays[0].cap()];
         int chanceInterval[12];
-        [0, 5, 0, 15, 5, 50, 0, 15, 5, 0, 5, 0, 15, 0, 5, 50, 0] @=> int baseChance[]; // FIX> puede desbordarse
-        modesClass.modes(12) @=> chanceInterval;
-        // llena el array de reemplazo con las opciones del modo
+        collectionProbabilities.melodyIntervalChance @=> int baseChance[]; // FIX> puede desbordarse
+        // uso el modo definido globalmente
+        modesClass.mode(modeNumber) @=> chanceInterval;
+        // llena el array de posibles reemplazos con las opciones del modo
         for(0 => int i; i < arrays[0].cap();i++)
         {
-          baseChance[i] => chanceNote[i];
+          baseChance[i]+ collectionProbabilities.probabilityOffset => chanceNote[i];
         }
 
 		// recorro los array y son variados
 		// con una probabilidad de cambio
-
 		for( 0 => int ii; ii < sourceArray1.cap(); ii++)
 		{
-            // acá condicion
-            sourceArray1[ii] => float note;
-            // deme probabilidad de que la nota sea otro valor, como el array de probabilidad queda se llena de ceros, solo se reemplazan la cantidad de ceros que se dicte al llamar la función percentChance(), entonces si es cero deje el valor que tiene el sourceArray, si es diferente use el valor que generó la probabilidad
-           // function int
-           	generator.percentChance(chanceNote[ii],chanceInterval[Math.random2(0, chanceInterval.cap()-1)]) => note;
+            sourceArray1[ii] =>  note => oldNote;
 
+            // deme probabilidad de que la nota sea otro valor,
+            // como el array de probabilidad queda se llena de ceros,
+            // solo se reemplazan la cantidad de ceros que se dicte
+            // al llamar la función percentChance(), entonces
+            // si es cero deje el valor que tiene el sourceArray,
+            //si es diferente use el valor que generó la probabilidad
+            generator.percentChance(chanceNote[ii],chanceInterval[Math.random2(0, chanceInterval.cap()-1)]) => note;
+
+            // si en el array de probabilidades hay cero deje la nota original
             if (note == 0)
             {
                sourceArray1[ii] => transArray1[ii];
             }
             if (note != 0)
             {
-                // cuido que el intervalo nuevo no sea mayor a 6
-                // para no dar salto melódico
-                note => transArray1[ii];
+                generator.findNote(oldNote, note, 6.0, modeNumber) => transArray1[ii];
             }
-		}
-
+        }
 		for( 0 => int ii; ii < sourceArray2.cap(); ii++)
 		{
 			if( sourceArray2[ii] == 0 )
