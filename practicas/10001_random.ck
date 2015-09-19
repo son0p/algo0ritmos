@@ -14,5 +14,5 @@ SinOsc sinOsc => NRev reverb => dac;
 while(true)
 {
     Math.random2(20, 5000) => sinOsc.freq;
-    150::ms => now;
+    Math.random2(150, 300)::ms => now;
 }
