@@ -1,6 +1,8 @@
-// define una
+// define una duración
 500::ms=> dur beat;
+// iteraciones que pueden usarse para contadores
 0 => int i;
+// sonido para probar
 Impulse impulse => dac;
 
 // funciones de prueba
@@ -21,15 +23,19 @@ fun void hihat()
         beat/2 => now;
     }
 }
-// llama las funciones de forma paralela
+
+// llama funciones concurrentes
 spork ~ kick();
 spork ~ hihat();
 
-while(i < 16)
+// ciclo que define cuanto tiempo transcurre
+// antes de que el código sea reemplazado
+// por si mismo, con o sin modificaciones.
+while(i < 8)
 {
     beat => now;
+    <<< i + " ::: contador" >>>;
     i++;
-    <<<i+ " ::: contador">>>;
 }
-// antes de terminar se llama a si mismo
+// antes de desaparecer se instancia a sí mismo
 Machine.add(me.dir() + "/001live.ck");
