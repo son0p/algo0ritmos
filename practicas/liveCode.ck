@@ -14,7 +14,7 @@ spork~ dr.reverbTransformation(1);
 5 => dr.variationSnOffset;100 => dr.variationSnOnset;
 0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
 //---------- Floor---------------
-spork~ moodizer.dancefloor("b",2);
+spork~ moodizer.dancefloor("a",0);
 //spork~ moodizer.dancefloor("c",2);
 // ------- Live
 [[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]]]@=>  int liveBeat[][][];
