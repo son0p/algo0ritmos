@@ -30,7 +30,7 @@ Descargue y ejecute este instalador [chuck-1.3.5.0.msi](http://chuck.stanford.ed
 Encuentre más información aquí: [Mini-Audicle Windows](http://audicle.cs.princeton.edu/mini/windows/)
 
 ### Instalación para OSX
-Descargue y ejecute este instalado [chuck-1.3.5.0.pkg](http://chuck.stanford.edu/release/files/exe/chuck-1.3.5.0.pkg)
+Descargue y ejecute este instalador [chuck-1.3.5.0.pkg](http://chuck.stanford.edu/release/files/exe/chuck-1.3.5.0.pkg)
 Encuentre más información aquí: [Mini-Audicle MAC OS X](http://audicle.cs.princeton.edu/mini/mac/)
 
 ## Información de este repositorio
