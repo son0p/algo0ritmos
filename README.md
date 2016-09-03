@@ -25,6 +25,9 @@ mkdir algo0ritmos-ChucK; cd algo0ritmos-ChucK; git clone https://github.com/son0
 sudo apt-get install make gcc g++ bison flex libasound2-dev libsndfile1-dev libqt4-dev libqscintilla2-dev libjack-dev; cd miniAudicle-1.3.2/; cd src; make linux-jack;mv miniAudicle ~/
 ```
 
+El programa miniAudicle queda en el home ( ~/ ) para moverlo al escritorio ``` mv ~/miniAudicle ~/Desktop/miniAudicle``` si tiene su sistema en inglés o ``` mv ~/miniAudicle ~/Escritorio/miniAudicle``` si lo tiene en español.
+
+
 ### Instalación para Windows
 Descargue y ejecute este instalador [chuck-1.3.5.0.msi](http://chuck.stanford.edu/release/files/exe/chuck-1.3.5.0.msi)
 Encuentre más información aquí: [Mini-Audicle Windows](http://audicle.cs.princeton.edu/mini/windows/)
