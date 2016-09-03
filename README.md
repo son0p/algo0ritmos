@@ -21,8 +21,8 @@ Esta línea pretende instalar las dependencias de Chuck, Chuck, MiniAudicle y cl
 Abra una terminal y pegue esta larga línea:
 
 ```
-mkdir Algo-Ritmos-ChucK; cd Algo-Ritmos-ChucK; git clone https://github.com/son0p/algo-ritmos.git; git clone https://github.com/essteban/CHmUsiCK.git; wget http://audicle.cs.princeton.edu/mini/release/files/miniAudicle-1.3.2.tgz; tar zxvf miniAudicle-1.3.2.tgz;
-sudo apt-get install make gcc g++ bison flex libasound2-dev libsndfile1-dev libqt4-dev libqscintilla2-dev libjack-dev; cd miniAudicle-1.3.2/; cd src; make linux-jack;mv miniAudicle ~/Desktop/
+mkdir algo0ritmos-ChucK; cd algo0ritmos-ChucK; git clone https://github.com/son0p/algo0ritmos.git; git clone https://github.com/essteban/CHmUsiCK.git; wget http://audicle.cs.princeton.edu/mini/release/files/miniAudicle-1.3.3.tgz; tar zxvf miniAudicle-1.3.3.tgz;
+sudo apt-get install make gcc g++ bison flex libasound2-dev libsndfile1-dev libqt4-dev libqscintilla2-dev libjack-dev; cd miniAudicle-1.3.2/; cd src; make linux-jack;mv miniAudicle ~/
 ```
 
 ### Instalación para Windows
