@@ -3,6 +3,9 @@
 ## list.files(pattern ="*.txt")  me hace un vector con los nombres de los archivos
 ## rep() , seq()
 ## escribir(rep(1:4, 15), "hihat2.txt")
+x <- c(2,3,4)
+x <- as.character(x)
+system("chuck 004live:1:"+x+":2")
 
 root <- 30
 intervals <- c(2,2,1,2,2,2,1,2,1,2,1,1,1,1,2,1) # major # ¿cómo modulo esto?
