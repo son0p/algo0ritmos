@@ -3,11 +3,12 @@
 ## list.files(pattern ="*.txt")  me hace un vector con los nombres de los archivos
 ## rep() , seq()
 ## escribir(rep(1:4, 15), "hihat2.txt")
-x <- c(2,3,4)
-x <- as.character(x)
-system("chuck 004live:1:"+x+":2")
+## paste sirve como as.character y concatena strings
 
-root <- 30
+x <- c(0,2,3,5,7,9,10,12)
+system(paste0("chuck ","004live:",paste0(root + x, collapse =":") ))
+
+root <- 60
 intervals <- c(2,2,1,2,2,2,1,2,1,2,1,1,1,1,2,1) # major # ¿cómo modulo esto?
 scaleLenght <- 7
 melody <- c(1:16)
@@ -24,7 +25,7 @@ intervals
 kick <- c(36, 0, 0, 0, 36, 0, 0, 0, 36, 0, 0, 0, 36, 0, 0, 0)
 # pat1 <- for( i in 0:15) { c(base[i%%4+1])} # NULL
 kickFile <- file("kick.txt")
-writeLines(as.character(kick),kickFile)
+writeLines(paste0(kick),kickFile)
 
 
 ##...... sn

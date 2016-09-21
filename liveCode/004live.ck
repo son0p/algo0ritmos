@@ -18,37 +18,21 @@ mout.open(0);
 for( int i; i < me.args(); i++ )
   {
     <<< "   ", me.arg(i) >>>;
+    
   }
 
 //me.arg(0) => string a;
 //<<<a>>>;
 
-fun void  playMIDI(int channel, string instrument, FileIO fio )
+fun void  playMIDI(int channel)
 {
-  // tamaño
-  0 => int size;
-  fio.open(instrument, FileIO.READ);
-  while( fio.more() )
-    {
-      size + 1 => size;
-      fio.readLine();
-    }
-  // play
     while(true)
     {
-      // open a file
-      fio.open(instrument, FileIO.READ);
-      // ensure it's ok
-      if(!fio.good()) {
-        cherr <= "can't open file: " <= instrument <= " for reading..." <= IO.newline();
-        me.exit();
-      }
-      // Aquí traté de usar directamente while ( fio.more()) pero sacaba una linea extra
-      // fue necesario determinar el número de líneas arriba (ugly)
-      for( 0 => int i; i < size-1; i++)
+        for( int i; i < 4; i++)
         {
-          Std.atoi(fio.readLine()) => int note;
-          MidiMsg msg;
+            Std.atoi(me.arg(i)) => int note;
+            <<< note>>>;
+            MidiMsg msg;
           if( note == 0 )
             {
               0x90 + channel => msg.data1;
@@ -59,6 +43,7 @@ fun void  playMIDI(int channel, string instrument, FileIO fio )
             }
           else
             {
+                <<< "play">>>;
               0x90+ channel => msg.data1;
               note => msg.data2;
               127 => msg.data3;
@@ -92,7 +77,7 @@ fun void counters()
 /* spork~play(hihat, hihatT, f3); */
 /* //spork~play(bass, bassT, f4); */
 /* spork~playMIDI(0, bassT, f4); */
-/* spork ~playMIDI(1, lead1T, f5); */
+spork~ playMIDI(1); 
 
 
 while(true) 10::ms => now;
