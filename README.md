@@ -15,7 +15,9 @@ Instale ChucK http://chuck.cs.princeton.edu/release/
 
 ## Instalación
 
-### Onliner para Ubuntu
+### Linux
+
+#### Onliner para Ubuntu
 Esta línea pretende instalar las dependencias de Chuck, Chuck, MiniAudicle y clonar los  repositorios algo0ritmos y CHmUsiCK
 
 Abra una terminal y pegue esta larga línea:
@@ -26,6 +28,10 @@ sudo apt-get install make gcc g++ bison flex libasound2-dev libsndfile1-dev libq
 ```
 
 El programa miniAudicle queda en el home ( ~/ ) para moverlo al escritorio ``` mv ~/miniAudicle ~/Desktop/miniAudicle``` si tiene su sistema en inglés o ``` mv ~/miniAudicle ~/Escritorio/miniAudicle``` si lo tiene en español.
+
+#### Dependencias para Manjaro (Arch)
+
+* qscintilla-qt4
 
 
 ### Instalación para Windows
