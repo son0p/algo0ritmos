@@ -1,37 +1,33 @@
 // TODO:
-// - debe poder leer archivos con diferentes cantidades de líneas
-// - quitar batería
-120::ms => dur beat;
+// - el beat esta inestable
+
+220::ms => dur beat;
 0 => int count16;
 
 MidiOut mout;
 mout.open(0);
 
-
-// shows getting command line arguments
-//    (example run: chuck args:1:2:foo)
-
 // print number of args
 <<< "number of arguments:", me.args() >>>;
+me.args() => int size;
+int notes[me.args()];
 
 // print each
 for( int i; i < me.args(); i++ )
   {
     <<< "   ", me.arg(i) >>>;
-    
+    Std.atoi(me.arg(i)) @=>  notes[i];
   }
-
-//me.arg(0) => string a;
-//<<<a>>>;
 
 fun void  playMIDI(int channel)
 {
     while(true)
     {
-        for( int i; i < 4; i++)
+        for( int i; i < size; i++)
         {
-            Std.atoi(me.arg(i)) => int note;
-            <<< note>>>;
+            //Std.atoi(me.arg(1)) => int note; // TODO: deberia poderse esto?
+            notes[i] => int note;
+            
             MidiMsg msg;
           if( note == 0 )
             {
@@ -43,7 +39,6 @@ fun void  playMIDI(int channel)
             }
           else
             {
-                <<< "play">>>;
               0x90+ channel => msg.data1;
               note => msg.data2;
               127 => msg.data3;
@@ -77,7 +72,7 @@ fun void counters()
 /* spork~play(hihat, hihatT, f3); */
 /* //spork~play(bass, bassT, f4); */
 /* spork~playMIDI(0, bassT, f4); */
-spork~ playMIDI(1); 
+spork~ playMIDI(0); 
 
 
 while(true) 10::ms => now;

@@ -5,10 +5,15 @@
 ## escribir(rep(1:4, 15), "hihat2.txt")
 ## paste sirve como as.character y concatena strings
 
+## Environment
+root <- 10
 x <- c(0,2,3,5,7,9,10,12)
-system(paste0("chuck ","004live:",paste0(root + x, collapse =":") ))
+y <- c(0:200)
 
-root <- 60
+## primero corre $ chuck --loop en una terminal
+system(paste0("chuck + 004live:",paste0(root + x, collapse =":") ))
+system("chuck ^") ## consulta estado de chuck
+
 intervals <- c(2,2,1,2,2,2,1,2,1,2,1,1,1,1,2,1) # major # ¿cómo modulo esto?
 scaleLenght <- 7
 melody <- c(1:16)
