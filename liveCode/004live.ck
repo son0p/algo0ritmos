@@ -54,5 +54,9 @@ if( me.arg(0)== "bass" )
   {
     spork~ playMIDI(0);
   }
+if( me.arg(0)== "bDrum" )
+  {
+    spork~ playMIDI(1);
+  }
 
 while(true) 10::ms => now;
