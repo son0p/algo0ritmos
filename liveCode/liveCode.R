@@ -4,14 +4,29 @@
 ## rep() , seq()
 ## escribir(rep(1:4, 15), "hihat2.txt")
 ## paste sirve como as.character y concatena strings
+##
 
-## Environment
-root <- 10
+## TODO: sincronizar los sporks
+## entorno
+system("zynaddsubfx -a -l base.xmz ", wait=FALSE)
+system("chuck --loop", wait=FALSE)
+
+## inicializacion
+root <- 60
 x <- c(0,2,3,5,7,9,10,12)
 y <- c(0:200)
 
+## remover shreds
+all <-c(0:10) ## casi todos
+some <- c(5,9)
+
+system(paste0("chuck - ", paste0(all, collapse=" ")))
+
 ## primero corre $ chuck --loop en una terminal
 system(paste0("chuck + 004live:",paste0(root + x, collapse =":") ))
+## test argumentos string e ints
+system(paste0("chuck + 004live:bass:notes:0:2:0:4:12:0:12"))
+
 system("chuck ^") ## consulta estado de chuck
 
 intervals <- c(2,2,1,2,2,2,1,2,1,2,1,1,1,1,2,1) # major # ¿cómo modulo esto?
