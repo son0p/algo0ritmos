@@ -91,67 +91,70 @@ fun void bs()
 // Función para la melodia.
 fun void ml()
 {
-  //** Comenta y descomenta las líneas de código
-  //** de cada bloque para escuchar cambios.
+  while(true)
+  {
+    //** Comenta y descomenta las líneas de código
+    //** de cada bloque para escuchar cambios.
 
-  //-------- Notas aleatorias sin armonía.
-  // Std.mtof(Math.random2(31, 71)) => mel.freq;
-  // eMel.keyOn();
-  // beat/2 => now;
-  // eMel.keyOff();
+    //-------- Notas aleatorias sin armonía.
+    Std.mtof(Math.random2(31, 71)) => mel.freq;
+    eMel.keyOn();
+    beat/2 => now;
+    eMel.keyOff();
 	
-  //-------- Seleccionar solo determinadas notas
-  ////------ en orden.
-  // [57, 60, 62, 65, 67] @=> int opciones[];
-  // for (0 => int i; i < opciones.cap(); i++)
-  // {
-  // 	Std.mtof(opciones[i]) => mel.freq;
-  // 	eMel.keyOn();
-  // 	beat/2 => now;
-  // 	eMel.keyOff();
-  // }
+    //-------- Seleccionar solo determinadas notas
+    ////------ en orden.
+    // [57, 60, 62, 65, 67] @=> int opciones[];
+    // for (0 => int i; i < opciones.cap(); i++)
+    // {
+    // 	Std.mtof(opciones[i]) => mel.freq;
+    // 	eMel.keyOn();
+    // 	beat/2 => now;
+    // 	eMel.keyOff();
+    // }
 
 
-  //--------- Seleccionar notas aleatorias
-  //--------- de solo de unas opciones (array).
-  // [57, 60, 62, 65, 67] @=> int options[];
-  // for (0 => int i; i < options.cap(); i++)
-  // {
-  // 	Math.random2(0, options.cap()-1) => int select;
-  // 	Std.mtof(options[select]) => mel.freq;
-  // 	eMel.keyOn();
-  // 	beat/2 => now;
-  // 	eMel.keyOff();
-  // }
+    //--------- Seleccionar notas aleatorias
+    //--------- de solo de unas opciones (array).
+    // [57, 60, 62, 65, 67] @=> int options[];
+    // for (0 => int i; i < options.cap(); i++)
+    // {
+    // 	Math.random2(0, options.cap()-1) => int select;
+    // 	Std.mtof(options[select]) => mel.freq;
+    // 	eMel.keyOn();
+    // 	beat/2 => now;
+    // 	eMel.keyOff();
+    // }
 
-  //---------- Notas y ritmo aleatorios
-  //---------- seleccionados de determinados arrays.
-  // [57, 60, 62, 65, 67] @=> int options[];
-  // [1, 2, 4, 3] @=> int div[];
-  // for (0 => int i; i < options.cap(); i++)
-  // {
-  // 	Math.random2(0, options.cap()-1) => int select;
-  // 	Std.mtof(options[select]) => mel.freq;
-  // 	eMel.keyOn();
-  // 	Math.random2(0, div.cap()-1) => int divBeat; 
-  //	beat/divBeat => now;
-  // 	eMel.keyOff();
-  // }
+    //---------- Notas y ritmo aleatorios
+    //---------- seleccionados de determinados arrays.
+    // [57, 60, 62, 65, 67] @=> int options[];
+    // [1, 2, 4, 3] @=> int div[];
+    // for (0 => int i; i < options.cap(); i++)
+    // {
+    // 	Math.random2(0, options.cap()-1) => int select;
+    // 	Std.mtof(options[select]) => mel.freq;
+    // 	eMel.keyOn();
+    // 	Math.random2(0, div.cap()-1) => int divBeat; 
+    //	beat/divBeat => now;
+    // 	eMel.keyOff();
+    // }
 
 
-  //---------- Aumentar probabilidades de unas mas que otras
-  //---------- repitiendo varias veces un valor en un array.
-  // [57, 60, 60, 60, 62, 62, 65, 67] @=> int options[];
-  // [1, 2, 2, 2, 2, 2, 2, 2, 3] @=> int div[];
-  // for (0 => int i; i < options.cap(); i++)
-  // {
-  //  	Math.random2(0, options.cap()-1) => int select;
-  //  	Std.mtof(options[select]) => mel.freq;
-  //  	eMel.keyOn();
-  //  	Math.random2(0, div.cap()-1) => int divBeat; 
-  //  	beat/div[divBeat] => now;
-  //  	eMel.keyOff();
-  // }
+    //---------- Aumentar probabilidades de unas mas que otras
+    //---------- repitiendo varias veces un valor en un array.
+    // [57, 60, 60, 60, 62, 62, 65, 67] @=> int options[];
+    // [1, 2, 2, 2, 2, 2, 2, 2, 3] @=> int div[];
+    // for (0 => int i; i < options.cap(); i++)
+    // {
+    //  	Math.random2(0, options.cap()-1) => int select;
+    //  	Std.mtof(options[select]) => mel.freq;
+    //  	eMel.keyOn();
+    //  	Math.random2(0, div.cap()-1) => int divBeat; 
+    //  	beat/div[divBeat] => now;
+    //  	eMel.keyOff();
+    // }
+  }
 }
 
 // Se llaman todas las funciones. 
@@ -159,7 +162,7 @@ spork~ kk();
 spork~ sn();
 spork~ hh();
 spork~ bs();
-  //spork~ ml();
+spork~ ml();
 
 // marco de tiempo donde estan vivos los sporks
 beat*8 => now;
