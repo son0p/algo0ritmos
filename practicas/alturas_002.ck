@@ -1,9 +1,3 @@
-// * Para correr este archivo de manera
-// * infinita, edite y ejecute looper.ck
-// * En looper.ck edite de la siguiente manera
-// * Machine.add(me.dir()+"/201melodiasAleatorias.ck") => int fileID;
-// * Luego ejecute looper.ck
-
 // Determinamos una duración para lo que
 // va a ser nuestro beat.
 500::ms => dur beat;
