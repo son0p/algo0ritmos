@@ -8,8 +8,8 @@ Imaginar los componentes musicales como organismos nos permite crear unidades ge
 ### Curva de probabilidad
 Describa una curva de probabilidad que describa los momentos en que un instrumento debe sonar o permanecer en silencio.
 + Solución con tres instrumentos (bombo, redoblante, charlse) [gen_agitacion_001.ck](https://github.com/son0p/algo0ritmos/blob/master/generatives/gen_agitation_001.ck)
+
 ### Markov?
 ## Rutinas
-### 
 ## Herramientas
 ## ¿Cómo replicar este taller?
