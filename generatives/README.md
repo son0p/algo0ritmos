@@ -3,6 +3,9 @@
 Imaginar los componentes musicales como organismos nos permite crear unidades generadoras con una serie de condiciones que podrían crear música.
 ## Prácticas
 ### Generación simple
+Genere un sonido cada cierto tiempo
++ Soluciones
+  + Genera un tick cada cierto tiempo 
 ### Generación aleatoria
 ### Generacion con aleatoriedad condicionada
 ### Curva de probabilidad
