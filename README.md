@@ -5,6 +5,7 @@ algo0ritmos
 [![Join the chat at https://gitter.im/son0p/algo-ritmos](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/son0p/algo-ritmos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [Wiki](http://wiki.son0p.net/aprendizaje/algo-ritmos/start)
+[Trello](https://trello.com/b/iWfoT3DI/algo-ritmos)
 
 # Entornos para aprendizaje de código en vivo y música generativa
 
