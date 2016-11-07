@@ -100,7 +100,8 @@ fun void ml()
     Std.mtof(Math.random2(31, 71)) => mel.freq;
     eMel.keyOn();
     beat/2 => now;
-    eMel.keyOff();
+    eMel.keyOff(
+      );
 	
     //-------- Seleccionar solo determinadas notas
     ////------ en orden.
@@ -136,7 +137,7 @@ fun void ml()
     // 	Std.mtof(options[select]) => mel.freq;
     // 	eMel.keyOn();
     // 	Math.random2(0, div.cap()-1) => int divBeat; 
-    //	beat/divBeat => now;
+    // 	beat/divBeat => now;
     // 	eMel.keyOff();
     // }
 

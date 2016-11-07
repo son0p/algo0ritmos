@@ -7,8 +7,30 @@
 [  0,  0,  0, 0,100,  0,  0,  0,  0,  0,  0,  0,100,  0,  0, 15] @=> int chanceSd[];
 [  0,  0,100, 0,  0,  3,100,  0,  5,  5,100,  3,  0,  0,100, 20] @=> int chanceHh[];
 [ 13,  3, 90, 3, 10,  3, 90, 15,  5,  5, 90,  3,  5,  5, 90,  3] @=> int chanceBass[];
-[  0,  0,  0, 0,  0,  3,  3,  3,  7,  0,  10, 12, 24, 0,  0, -2] @=> int chanceNotes[];
-[[]]
+[  0,  0,  0, 0,  0,  3,  3,  3,  7,  0, 10, 12, 24,  0,  0, -2] @=> int chanceBassNotes[];
+[ 90,  3, 50, 3, 90,  3, 50, 15,  5,  5, 50,  3,  95, 5, 50,  3] @=> int chanceMelody[];
+// 1. array multidimensional
+// 0 step
+//   0 root
+//   90
+[
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [90, 0, 0,50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+] @=>  int chanceMelodyNote[][];
 
 // instrumentos
 // --bassDrum 
@@ -30,6 +52,11 @@ hh.set( 0::ms, 50::ms, .1, 100::ms );
 SqrOsc saw => ADSR bass => dac;
 0.15 => saw.gain;
 bass.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
+
+// --Melody
+SinOsc sin1 => ADSR melody1 => dac;
+0.35 => sin1.gain;
+melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
 
 
 // función para generar probabilidades 
@@ -53,20 +80,25 @@ fun void playDrums()
   0 => int i;
   while(true)
   {
-    floatChance( chanceBd[i], 1,0 ) => float bdSwitch;
-    floatChance( chanceSd[i], 1,0 ) => float sdSwitch;
-    floatChance( chanceHh[i], 1,0 ) => float hhSwitch;
-    floatChance( chanceBass[i], 1,0 ) => float bassSwitch;
-    chanceNotes[Math.random2(0, 15)]  => float bassNote;
+    floatChance( chanceBd[i], 1,0 )     => float bdSwitch;
+    floatChance( chanceSd[i], 1,0 )     => float sdSwitch;
+    floatChance( chanceHh[i], 1,0 )     => float hhSwitch;
+    floatChance( chanceBass[i], 1,0 )   => float bassSwitch;
+    chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
+    floatChance( chanceMelody[i], 1,0 ) => float melodySwitch;
+    floatChance( chanceMelodyNote[0][0], (floatChance(chanceMelodyNote[0][0]),0,)  => float melodyNote;
 
+    
     bd.keyOff();
     sd.keyOff();
     hh.keyOff();
     bass.keyOff();
+    melody1.keyOff();
     if( bdSwitch == 1 ){ bd.keyOn(); 1.0 => bdImpulse.next;  }
     if( sdSwitch == 1 ){ sd.keyOn(); }
     if( hhSwitch == 1 ){ hh.keyOn(); }
-    if( bassSwitch == 1 ){ Std.mtof(bassNote + root) => saw.freq; bass.keyOn();  }
+    if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => saw.freq; bass.keyOn();  }
+    if( melodySwitch == 1 ){ Std.mtof( melodyNote + root + 24 ) => sin1.freq; melody1.keyOn();  }
     beat => now;
     i++;
   }
