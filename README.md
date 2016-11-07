@@ -9,7 +9,7 @@ algo0ritmos
 
 # Entornos para aprendizaje de código en vivo y música generativa
 
-Este proyecto fue financiado por Medellin Vive La Música durante dos años 
+Este proyecto fue financiado por Medellin Vive La Música durante dos años
 
 ## Uso
 Instale ChucK http://chuck.cs.princeton.edu/release/
