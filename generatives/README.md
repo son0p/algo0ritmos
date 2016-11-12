@@ -14,7 +14,7 @@ Genere un sonido cada cierto tiempo
 
 *Curva de probabilidad*
 
-Describa una curva de probabilidad que describa los momentos en que un instrumento debe sonar o permanecer en silencio.
+Escriba una curva de probabilidad que describa los momentos en que un instrumento debe sonar o permanecer en silencio.
 + Solución con tres instrumentos (bombo, redoblante, charles) [gen_agitacion_001.ck](https://github.com/son0p/algo0ritmos/blob/master/generatives/gen_agitation_001.ck)
 
 ### Alturas / Melodías
