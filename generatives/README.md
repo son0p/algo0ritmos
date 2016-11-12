@@ -1,4 +1,4 @@
-# Introducción para generar música usando ChucK
+# Música generativa para principiantes (usando ChucK)
 ## ¿De qué se trata esto?
 Imaginar los componentes musicales como organismos nos permite crear unidades generadoras con una serie de condiciones que podrían crear música.
 ## Prácticas
@@ -40,6 +40,11 @@ Construya una función que permita generar notas aleatorias
 ## Rutinas
 
 ## Herramientas
+
+### ChucK 
++ Descargar:  http://chuck.cs.princeton.edu/release/ 
+ 
+
 
 ### Algoritmos 
 +  Concurso para determinar si un algoritmo que selecciona música como un DJ pasa el touring test ( via @danielgomezmarin ) http://bregman.dartmouth.edu/turingtests/algorhythms 
