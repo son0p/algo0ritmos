@@ -9,7 +9,7 @@
 [ 13,  3, 90, 3, 10,  3, 90, 15,  5,  5, 90,  3,  5,  5, 90,  3] @=> int chanceBass[];
 [  0,  0,  0, 0,  0,  3,  3,  3,  7,  0, 10, 12, 24,  0,  0, -2] @=> int chanceBassNotes[];
 [ 10,  15, 5, 30, 15, 10, 10, 30, 90,  5,  0,  3, 30,  15, 0, 30] @=> int chanceMelody[];
-// 1. array multidimensional
+// TODO:1. array multidimensional
 // 0 step
 //   0 root
 //   [] step
@@ -54,12 +54,10 @@ SqrOsc saw => ADSR bass => dac;
 0.15 => saw.gain;
 bass.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
 // --Melody
-SinOsc sin1 => ADSR melody1 => NRev melodyReverb => dac;
+BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => dac;
 0.35 => sin1.gain;
 melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
 0.03 => melodyReverb.mix;
-
-
 
 // función para generar probabilidades 
 fun float floatChance( int percent, float value1, float value2)
@@ -108,13 +106,12 @@ fun void playBass()
     }
 }
 
-// crea un array para hospedar las posibles notas
-//float noteSelectionArray[100];
 fun void playMelody()
 {
   0 => int i;
   while(true)
   {
+    // TODO:
     // si la nota suena para cada step hay una curva de probabilidades que suene determinado intervalo.
     // hago un array de 100 que se va sobreescribiendo en cada step llenandolo de los valores dados por las posiciones y llena cuantos indica la probabilidad.
     //for( 0 => int j; j < 16; j++)
@@ -125,7 +122,7 @@ fun void playMelody()
     //    <<< noteSelectionArray[k] >>>;
     // }
     // }
-    [0.0,0,0,0,0,3,3,3,5,5,5,12,12,14,14,15,15,24,7,3,-12] @=> float noteSelectionArray[];
+    [0.0,0,0,0,0,3,3,3,5,5,5,12,12,14,14,15,15,24,7,3,-12] @=> float noteSelectionArray[]; // probabilidad fija :(  TODO variar la probabilidad según la posición del step
     floatChance( chanceMelody[i], 1,0 ) => float melodySwitch;
     melody1.keyOff();
     if( melodySwitch == 1 )
