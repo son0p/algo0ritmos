@@ -1,20 +1,13 @@
-// * Para correr este archivo de manera
-// * infinita, edite y ejecute looper.ck
-// * En looper.ck edite de la siguiente manera
-// * Machine.add(me.dir()+"/300densidad.ck") => int fileID;
-// * Luego ejecute looper.ck
-
 // Determinamos una duración para lo que
 // va a ser nuestro beat.
-500::ms => dur bit;
+500::ms => dur beat;
 
 // Definimos la nota raiz.
 28 => int root;
 
 // Hacemos un bajo y le asingamos
 // una ganancia (volumen).
-SawOsc bass => Envelope e => dac;
-
+SinOsc bass => Envelope e => dac;
 // Hacemos un sonido para melodía
 // y la pasamos por una reverberación.
 TriOsc mel => Envelope eMel => NRev rMel => dac;
@@ -47,7 +40,7 @@ for( 0 => int i; i < chord.cap(); i++ )
  	chord[i] => master;
 }
 
-// Un bajo que se ejecuta en corcheas (bit/2)
+// Un bajo que se ejecuta en corcheas (beat/2)
 // y variando la distancia de la nota raiz
 // (root -2)(root + 10)etc. Para la última parte
 // de la ejecución, que se repite igual 6 veces,
@@ -56,15 +49,15 @@ fun void bs()
 {
 	while(true)
 	{
-		Std.mtof( root -2) => bass.freq;e.keyOn(); bit/2 => now; e.keyOff();
-		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
-		Std.mtof( root -2) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
-		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+		Std.mtof( root -2) => bass.freq;e.keyOn(); beat/2 => now; e.keyOff();
+		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); beat/2 => now; e.keyOff();
+		Std.mtof( root -2) => bass.freq; e.keyOn(); beat/2 => now; e.keyOff();
+		Std.mtof( root + 10 ) => bass.freq; e.keyOn(); beat/2 => now; e.keyOff();
 		0 => int i;
 		until ( i == 6 )
 		{
-			Std.mtof( root ) => bass.freq;e.keyOn(); bit/2 => now; e.keyOff();
-			Std.mtof( root + 12 ) => bass.freq; e.keyOn(); bit/2 => now; e.keyOff();
+			Std.mtof( root ) => bass.freq;e.keyOn(); beat/2 => now; e.keyOff();
+			Std.mtof( root + 12 ) => bass.freq; e.keyOn(); beat/2 => now; e.keyOff();
 			i++;
 		}
 	}
@@ -82,12 +75,10 @@ fun void ch( int root, int notes[], int div1, int div2)
 			Math.random2f(-1, 1) => p.pan;
 		}
 		eChord.keyOn();
-		bit/div1 => now;
+		beat/div1 => now;
 		eChord.keyOff();
-		bit/div2 => now;
-		
+		beat/div2 => now;
 	}
-	
 }
 
 // Función para la melodia.
@@ -102,32 +93,25 @@ fun void ml(int div1, int div2)
 	
 			eMel.keyOn();
 			Std.mtof(root+ 12+ opciones[i]) => mel.freq;
-			bit/dura[i] => now;
+			beat/dura[i] => now;
 			eMel.keyOff();
 		//	[1,1,1,1,1,2,2,2,4,4,4,8] @=> int seed[];
-		//	bit/seed[(Math.random2(0, seed.cap()-1))] => now;
-			bit/dura[i] => now;
+		//	beat/seed[(Math.random2(0, seed.cap()-1))] => now;
+			beat/dura[i] => now;
 		}
 	}
 }
 
 // Se llaman todas las funciones. 
-Drummer dr;
-spork~ dr.kk(1);
-spork~ dr.sn();
-spork~ dr.hh();
-
 // -Bajo
 spork~ bs();
-
 // -Acordes
 spork~ ch(root+36, notes, 12, 4);
-
 // Melodía
 spork~ ml(4, 4);
 
-// Un ciclo infinito para mantener vivos los llamados a las funciones.
-while(true)
-{
-	bit => now;
-}
+// vive un tiempo
+beat*16 => now;
+// antes de morir  se crea  a sí mismo
+Machine.add(me.dir() + "/300densidad.ck");
+
