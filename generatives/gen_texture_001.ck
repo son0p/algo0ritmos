@@ -1,14 +1,15 @@
 // un filtro va subiendo la frecuencia
 // cuando se acerca al final del ciclo
 
-// definimos la duración de un beat
+// definimos la duración de un beat y de un ciclo
 120::ms => dur beat;
+16 * beat => dur loop; // puede cambiar el tamaño del loop multiplicando por otro número
 
 // voces
 // --snareDrum
 Noise myNoiseImpulse => ResonZ myNoiseFilter => ADSR myNoise => dac;
 0.7 => myNoiseImpulse.gain;
-400.0 => float filterFreq;
+100.0 => float filterFreq;
 myNoiseFilter.set(filterFreq, 1.0);
 myNoise.set( 0::ms, 50::ms, .1, 100::ms );
 
@@ -25,7 +26,7 @@ fun void playNoise()
 
 fun void playFilter()
 {
-  beat * 8 => now;
+  loop - (loop/3) => now; // cambien los valores que dividen loop a 4 o a 2
   while(true)
   {
     myNoiseFilter.set(filterFreq, 1.0);
@@ -39,7 +40,7 @@ spork~ playNoise();
 spork~ playFilter(); // descomente este spork para ejecutar el filtro
 
 // vive un tiempo
-beat*16 => now;
+loop => now;
 // antes de morir  se crea  a sí mismo
 Machine.add(me.dir() + "/gen_texture_001.ck");
 
