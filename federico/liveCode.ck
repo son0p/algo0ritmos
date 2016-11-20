@@ -4,14 +4,24 @@ BPM.sync(180.00) => BPM.tempo => dur beat;16 => BPM.steps; Generator generator;P
 48 =>  BPM.root;
 6 => ModesClass.modeNumber;
 
+// cadena de audio -- drums
+Gain master => dac;
+// instrumentos
+// --bassDrum 
+Impulse bdImpulse => ResonZ bdFilter => ADSR bd => master;
+1000 => bdImpulse.gain; bdFilter.set(50.0, 10.0); bd.set( 1::ms, 150::ms, .50, 100::ms );
+// --snareDrum
+Noise sdImpulse => ResonZ sdFilter => ADSR sd => master;
+0.7 => sdImpulse.gain; sdFilter.set(400.0, 1.0); sd.set( 0::ms, 100::ms, .01, 100::ms );
+// --hiHat
+Noise hhImpulse => ResonZ hhFilter => ADSR hh => master;
+0.2 => float hhGain; // asignamos esta variable para afectarla en la función
+hhGain => hhImpulse.gain; hhFilter.set(10000.0, 5.0); hh.set( 0::ms, 50::ms, .01, 10::ms );
+
 //--------------- Modulate effects
 fun void fm(){while(true){1000 => synth.modulatorGain; 0.5 => synth.ratio; 100 => synthBass.modulatorGain;0.5 => synthBass.ratio; beat => now; }};
 fun void delay(){while(true){0.99 => synth.delayGain;0.99 => synth.delayFeedback;beat => now;}}
-//spork~ delay();
-//spork~ fm();
-//spork~ modulator.close(1.0); //10.0 slow 0.2 fast
-//--------alteraciones notas-----------
-//spork~ dr.reverbTransformation(2);
+
 spork~ dr.reverbTransformation(1);
 //---------- nivel de variación---------
 5 => dr.variationBDOffset;100 => dr.variationBDOnset;
@@ -19,38 +29,54 @@ spork~ dr.reverbTransformation(1);
 0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
 //---------- Floor---------------
 spork~ moodizer.dancefloor("a",1);
-//spork~ moodizer.dancefloor("c",2);
-// ------- Live
-[[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]]]@=>  int liveBeat[][][];
-[[[0.0,0,0],[2.0, 2, 2, 4, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15, .15],[0.0,8.0, 16.0 ]]]@=> float liveBass[][][];
-[[[0.0, 0.0,0,0,0,0,0,0,0,0,0 ],[  .25,  .25,   .50, 1, .15, 1, .15, .5,.5,.5,.5,.5 ],[0.0,2.0,4,6,8,10,12,  14.0, 16, 18, 24, 28  ]]]@=> float liveMel[][][];
 
- //spork~ dr.arrayDrums(liveBeat[0]);
- //spork~ bassist.arrays(liveBass[0]);
- //spork~ melodier.arrays(liveMel[0]);
+// -------- drums ---------
 
-//------------------------------------------POOL-----------------------------------------------------
 
-// mode probability
 
-// [[[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0]]]@=>  int liveBeat[][][];
-// [[[0.0,1,2,3,4,5,6,7,12],[1.0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[0.0,4,6,8,10,12,14,16,18 ]]]@=> float liveBass[][][];
-// [[[24.0, 12.0,12,12,48,  12, 12  ],[  .25,  .25,   .50, 1, .15, 1, .15 ],[0.0,2.0,  8.0, 10, 14, 24, 28  ]]]@=> float liveMel[][][];
 
-// function void bassIntegrated()
-// {
-//   0 => int counter;
-//     while(true)
-//   {
-//     counter % 32 => int bassPhrase;
-//     if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbia[Math.random2(0,basses.cumbia.cap()-1)]);}
-//     if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbiaBuildUp[Math.random2(0,basses.cumbia.cap()-1)]);}
-//      if(bassPhrase == 0){spork~ bassist.arrays(basses.cumbiaDrop[Math.random2(0,basses.cumbia.cap()-1)]);}
 
-//     beat * 1 => now;
-//     counter++;
-//  }
-// }
+// función generar probabilidades según corpus
+fun float floatChance( int percent, float value1, float value2)
+{
+  float percentArray[100];
+  for( 0 => int i; i < 100; i++)
+    {
+      if( i < percent ) value1 => percentArray[i];
+      if( i >= percent ) value2 => percentArray[i];
+    }
+  percentArray[Math.random2(0, percentArray.cap()-1)] => float selected;
+  return selected;
+}
+
+// Probabilidad de un corpus -- drums
+[100,  0,  0, 0,100,  0, 10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
+[  0,  0,100, 0, 00,  0,100,  0,  0,  0,100,  0, 00,  0,100,  0] @=> int chanceSd[];
+[ 100, 0,100,100,100, 0,100,100, 90,  0,100,100, 80,  0,100, 50] @=> int chanceHh[];
+
+// curva de dinámica fija
+[1.0,1.0,0.4,0.8,1.0,1.0,0.4,0.8,1.0,0.7,0.4,0.8,1.0,1.0,0.4,0.8] @=> float dynamicsFixed[];
+
+// función que usa probabilidades para activar los instrumentos
+fun void playDrums()
+{
+  0 => int i;
+  while(true)
+  {
+    hhGain * dynamicsFixed[i] => hhImpulse.gain; // comente y descomente esta línea para escuchar la diferencia
+    floatChance( chanceBd[i], 1,0 ) => float bdSwitch;
+    floatChance( chanceSd[i], 1,0 ) => float sdSwitch;
+    floatChance( chanceHh[i], 1,0 ) => float hhSwitch;
+    bd.keyOff();
+    sd.keyOff();
+    hh.keyOff();
+    if( bdSwitch == 1 ){ bd.keyOn(); 1.0 => bdImpulse.next;  }
+    if( sdSwitch == 1 ){ sd.keyOn(); }
+    if( hhSwitch == 1 ){ hh.keyOn(); }
+    beat => now;
+    i++;
+  }
+}
 
 //test
 function void testArrays(int arrayPosition)
@@ -72,42 +98,6 @@ function void melodyIntegrated()
   }
 }
 
-function void liveArrays()
-{
-  spork~ dr.arrayDrums(liveBeat[0]);
-  spork~ bassist.arrays(liveBass[0]);
-  spork~ melodier.arrays(liveMel[0]);//live
-}
-
-//spork~ build();
-//spork~ drop();
-
-
-//spork~ dr.arrayDrums(liveBeat[0]);
-//spork~ BPM.metro(8, beat);
-//spork~ dr.arrayDrums(beats.cumbia[0]);
-
-//spork~ bassist.arrays(liveBass[0]);
-//spork~ bassIntegrated();
-
-
-//spork~ melodier.arrays(liveMel[0]);//live
-//spork~ melodyIntegrated();
-
-
-
-//spork~ dr.fill(5, 0.125);
-//spork~ melodier.arrays(melodies.base[1]);
-//spork~ melodier.arrays(liveMel[0]);
-//spork~ play.chordPlayer(test,1);
-//spork~ synth.playChord([57,60,64], 1, 0);
-//spork~ play.chordPlayer([[57,60,64], [57,63,67], [80, 84, 88]]);
-//spork~ play.playMelody(1, root, 3, [[(test[0]),2],[test(1),1]]);
-//spork~ play.playMelody(1, root, 3, [[0,1],[3,1]]);
-//spork~ play.playMelody(1, root, 3, [[0,2],[4,1],[2,2],[0,1],[-88,1],[6,1],[-88,1]]);
-//spork~ ml.searchMelody( root,6,4, 8);
-//spork~ ml.generateMelody(root,2);
-
 
 // Modulation zone
 function void bassModulator(int modulationGain, float ratio)
@@ -120,20 +110,17 @@ spork~ bassModulator(50, 2.0);
 
 function void melodyModulator(int modulationGain, float ratio)
 {
-   modulationGain => synth.modulatorGain;
-   ratio => synth.ratio;
+  modulationGain => synth.modulatorGain;
+  ratio => synth.ratio;
 }
-spork~ melodyModulator(200, 0.5);
+//spork~ melodyModulator(200, 0.5);
+spork~ playDrums();
 // mantiene vivos los sporks
 beat * 8 => now;
 // antes de morir se crea a sí mismo
-Machine.add(me.dir()+"/liveCode.ck") => int fileID;
-if(Machine.replace( fileID, me.dir() + "/liveCode.ck") == true)
-	{
-    Machine.remove( fileID );
-    Machine.add(me.dir()+"/liveCode.ck") => int fileID; // and problem solved
-	}
- else{ beat * 8 => now;}
+Machine.add(me.dir()+"/liveCode.ck"); 
+
+
 
 
 
