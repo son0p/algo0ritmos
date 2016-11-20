@@ -18,7 +18,7 @@ spork~ dr.reverbTransformation(1);
 5 => dr.variationSnOffset;100 => dr.variationSnOnset;
 0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
 //---------- Floor---------------
-spork~ moodizer.dancefloor("c",0);
+spork~ moodizer.dancefloor("a",1);
 //spork~ moodizer.dancefloor("c",2);
 // ------- Live
 [[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,0,1,1,1,0,1,1,1,0,1,1,1]]]@=>  int liveBeat[][][];
@@ -55,29 +55,29 @@ spork~ moodizer.dancefloor("c",0);
 //test
 function void testArrays(int arrayPosition)
 {
-    spork~ melodier.arrays(melodies.cumbia[arrayPosition]);
-    spork~ bassist.arrays(basses.cumbia[arrayPosition]);
-    spork~ dr.arrayDrums(beats.cumbia[arrayPosition]);
+  spork~ melodier.arrays(melodies.cumbia[arrayPosition]);
+  spork~ bassist.arrays(basses.cumbia[arrayPosition]);
+  spork~ dr.arrayDrums(beats.cumbia[arrayPosition]);
 }
 
 function void melodyIntegrated()
 {
   while(true)
   {
-      counter % 32 => int phrase;
-      if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[1]); }
-      if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[1]); }
-      beat * 0.25  => now;
-      counter++;
+    counter % 32 => int phrase;
+    if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[1]); }
+    if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[1]); }
+    beat * 0.25  => now;
+    counter++;
   }
 }
 
 function void liveArrays()
 {
-    spork~ dr.arrayDrums(liveBeat[0]);
-    spork~ bassist.arrays(liveBass[0]);
-    spork~ melodier.arrays(liveMel[0]);//live
-    }
+  spork~ dr.arrayDrums(liveBeat[0]);
+  spork~ bassist.arrays(liveBass[0]);
+  spork~ melodier.arrays(liveMel[0]);//live
+}
 
 //spork~ build();
 //spork~ drop();
@@ -125,6 +125,15 @@ function void melodyModulator(int modulationGain, float ratio)
 }
 spork~ melodyModulator(200, 0.5);
 // mantiene vivos los sporks
-while( true ){
-    100::ms => now;
-}
+beat * 8 => now;
+// antes de morir se crea a sí mismo
+Machine.add(me.dir()+"/liveCode.ck") => int fileID;
+if(Machine.replace( fileID, me.dir() + "/liveCode.ck") == true)
+	{
+    Machine.remove( fileID );
+    Machine.add(me.dir()+"/liveCode.ck") => int fileID; // and problem solved
+	}
+ else{ beat * 8 => now;}
+
+
+

@@ -25,4 +25,5 @@ Machine.add(me.dir()+"/MelodyGenerator.ck");
 Machine.add(me.dir()+"/Player.ck");
 Machine.add(me.dir()+"/Moodizer.ck");
 Machine.add(me.dir()+"/ProgressionGenerator.ck");
-Machine.add(me.dir()+"/looper.ck");
+//Machine.add(me.dir()+"/looper.ck");
+Machine.add(me.dir()+"/liveCode.ck");
