@@ -1,8 +1,5 @@
-BPM.sync(180.00) => BPM.tempo => dur beat;16 => BPM.steps; Generator generator;PlayerDrums dr;PlayerMelodies melodier;PlayerBass bassist;MelodyGenerator ml;Player play;ProgressionGenerator prog;Synth synth;SynthBass synthBass;CollectionBeats beats;CollectionMelodies melodies;CollectionBasses basses; CollectionProbabilities collectionProbabilities; Moodizer moodizer;Modulator modulator;
-0 => CollectionProbabilities.probabilityOffset; // max 80
-0 => int counter;
-48 =>  BPM.root;
-6 => ModesClass.modeNumber;
+220::ms => dur beat;
+36 => int root;
 
 // cadena de audio -- drums
 Gain master => dac;
@@ -18,23 +15,21 @@ Noise hhImpulse => ResonZ hhFilter => ADSR hh => master;
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
 hhGain => hhImpulse.gain; hhFilter.set(10000.0, 5.0); hh.set( 0::ms, 50::ms, .01, 10::ms );
 
-//--------------- Modulate effects
-fun void fm(){while(true){1000 => synth.modulatorGain; 0.5 => synth.ratio; 100 => synthBass.modulatorGain;0.5 => synthBass.ratio; beat => now; }};
-fun void delay(){while(true){0.99 => synth.delayGain;0.99 => synth.delayFeedback;beat => now;}}
+// --bass
+SqrOsc saw => ADSR bass => LPF filterBass => dac;
+0.15 => saw.gain;  800 => filterBass.freq;
+bass.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
+// --Melody
+BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => dac;
+0.35 => sin1.gain;
+melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
+0.03 => melodyReverb.mix;
 
-spork~ dr.reverbTransformation(1);
-//---------- nivel de variación---------
-5 => dr.variationBDOffset;100 => dr.variationBDOnset;
-5 => dr.variationSnOffset;100 => dr.variationSnOnset;
-0 => dr.variationHHatOffset;100 => dr.variationHHatOnset;
-//---------- Floor---------------
-spork~ moodizer.dancefloor("a",1);
-
-// -------- drums ---------
-
-
-
-
+/*
+---------- Floor---------------
+TODO: debe permitir cambiar de estados globales según tres estados
+expo, buildUp, y drop
+*/
 
 // función generar probabilidades según corpus
 fun float floatChance( int percent, float value1, float value2)
@@ -49,6 +44,7 @@ fun float floatChance( int percent, float value1, float value2)
   return selected;
 }
 
+// ============= DRUMS =================
 // Probabilidad de un corpus -- drums
 [100,  0,  0, 0,100,  0, 10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
 [  0,  0,100, 0, 00,  0,100,  0,  0,  0,100,  0, 00,  0,100,  0] @=> int chanceSd[];
@@ -78,43 +74,25 @@ fun void playDrums()
   }
 }
 
-//test
-function void testArrays(int arrayPosition)
+// ========== BASS ===========================
+[ 100,  0, 0, 3, 100,  0, 100, 0, 100,  5, 0 ,  3, 100,  5, 100,  0] @=> int chanceBass[];
+[  12,  0,  0, 0,  3,  3,  7,  3,  12,   0, 10, 12, 3,  0,  7, 0] @=> int chanceBassNotes[];
+fun void playBass()
 {
-  spork~ melodier.arrays(melodies.cumbia[arrayPosition]);
-  spork~ bassist.arrays(basses.cumbia[arrayPosition]);
-  spork~ dr.arrayDrums(beats.cumbia[arrayPosition]);
-}
-
-function void melodyIntegrated()
-{
+  0 => int i;
   while(true)
-  {
-    counter % 32 => int phrase;
-    if (phrase == 0){ spork~ melodier.arrays(melodies.cumbia[1]); }
-    if(phrase == 16){ spork~ melodier.arrays(melodies.cumbia[1]); }
-    beat * 0.25  => now;
-    counter++;
-  }
+    {
+      floatChance( chanceBass[i], 1,0 )   => float bassSwitch;
+      chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
+      bass.keyOff();
+      if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => saw.freq; bass.keyOn();  }
+      beat => now;
+      i++;
+    }
 }
 
-
-// Modulation zone
-function void bassModulator(int modulationGain, float ratio)
-{
-   modulationGain => synthBass.modulatorGain;
-   ratio => synthBass.ratio;
-}
-// ensaye relaciones 0.38, 0.5, 1.0, 2.0, 4.0, 1.33333, 0.33333, 0.2857
-spork~ bassModulator(50, 2.0);
-
-function void melodyModulator(int modulationGain, float ratio)
-{
-  modulationGain => synth.modulatorGain;
-  ratio => synth.ratio;
-}
-//spork~ melodyModulator(200, 0.5);
 spork~ playDrums();
+spork~ playBass();
 // mantiene vivos los sporks
 beat * 8 => now;
 // antes de morir se crea a sí mismo
