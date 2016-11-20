@@ -91,10 +91,46 @@ fun void playBass()
     }
 }
 
+// ========== Melody ============
+SinOsc sine => ADSR eSine => dac;
+0.03 => sine.gain;
+eSine.set( 10::ms, 150::ms, .3, 10::ms );
+
+// dos estados posibles:
+[0.0,12.0] @=> float octaveStates[];
+
+[[0.0,0.5],
+ [1.0,0.5]] @=> float transitionMatrix[][];
+
+// estado actual solo se usa al iniciar
+12.0 => float currentState;
+
+fun void playMarkov()
+{
+  while(true)
+  {
+    // recorre la cantidad de estados posibles
+    for( 0 => int i; i < octaveStates.cap(); i++)
+    {
+      eSine.keyOff();
+      if( currentState == octaveStates[i] )
+      {
+        (transitionMatrix[i][i] * 100.0) $ int => int percent;
+        floatChance( percent,octaveStates[0],octaveStates[1] ) => currentState;
+        Std.mtof(root + 24 + currentState) => sine.freq;
+        eSine.keyOn();
+        <<< currentState >>>;
+        beat => now;
+      }
+    }
+  }
+}
+
 spork~ playDrums();
 spork~ playBass();
+spork~ playMarkov();
 // mantiene vivos los sporks
-beat * 8 => now;
+beat * 16 => now;
 // antes de morir se crea a sí mismo
 Machine.add(me.dir()+"/liveCode.ck"); 
 
