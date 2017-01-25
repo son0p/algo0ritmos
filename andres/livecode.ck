@@ -1,10 +1,12 @@
 Synth fm;
-SinOsc carrier;
-TriOsc modulator;
-fm.connectionfm(carrier, modulator);
-[70,0,70,0,69,0,69,0,70,0,0,67,0,67,0,0]@=> int bassexample[];
-//[1,0,0,0,1,0,0,0]@ int basicdrum;
-while (true)
-{
-fm.lectormidi(bassexample, 125.0, carrier, modulator);
-}
+Arraylibrary O;
+Drums dr;
+    SinOsc carrier;
+    SawOsc modulator;
+    fm.ratio(1,2);
+    spork~dr.recorrer();
+    spork~fm.connectionfm(carrier, modulator);
+    spork~fm.lectormidi(bassline1, 120.0, carrier, modulator ,1500.0 ,4.0);
+    
+    1::day => now;
+    

@@ -1,48 +1,55 @@
-public class Synth
+ public class Synth
 {
-    0 => float freqcarrier;
-    0 => float freqmodulator;
-    0 => float gaincarrier;
+    1 => float gaincarrier; 
     1000 => float gainmodulator;
-    0 => float ratio;
-    
+    1 => float ratioVariable;
+    ADSR envolvente;
         Tempo tempo;
         Volume gain;
     
-   public void lectormidi(int array[], float tiempo, Osc carrier, Osc modulator)
-        {
-            Tempo tempo;
-
-            //while (true)
-              //  {
+public void lectormidi(int array[], float bpm, Osc carrier, Osc modulator, float amSynth, float div)
+    {
+    array.cap()$float => float arrayCapacity;
+    //<arrayCapacity>>>;
+        amSynth => modulator.gain;
+             
+            while(true)
+                {
                     for(0 => int i; i < array.cap(); i++)
                     {
-                        //<<<bassexample[i]>>>;
+                                //<<<array[i]>>>;
 
-                        if (array[i]==0)
-                            {
-                            volumeSynth(0);
-                            tempo.functionbpm(tiempo, array.cap());    
-                            //<<<"text">>>;
-                            }
-                            
-                        if (array[i]>0)
-                            {
-                            volumeSynth(0.5);
-                            frecuencias (Std.mtof(array[i]));
-                            fm(carrier ,modulator);
-                            tempo.functionbpm(tiempo, array.cap());
-                            }
-                
+                                if (array[i]==0)
+                                {
+                                    //volumeSynth(0);
+                                    0 => carrier.gain;
+                                    envolvente.keyOff();    
+                                    (tempo.beatUnity(bpm)/div)::second => now; 
+                                    //<<<"0">>>;
+                                }
+                                    
+                                if (array[i]>0)
+                                {
+                                    //volumeSynth(0.5); 
+                                    0.5 => carrier.gain;
+                                    Std.mtof(array[i])=> carrier.freq;
+                                    carrier.freq()*ratioVariable => modulator.freq;
+                                    envolvente.keyOn();
+                                    <<<"sonido">>>;
+                                    (tempo.beatUnity(bpm)/div)::second => now; 
+                                    envolvente.keyOff();
+                                    //<<<"1", array[i]>>>;
+                                }
+                        
                     }
-                //}
+                }  
+            
         }
-        
-    public void frecuencias (float freqc, float freqm)
+    
+    public void ratio (float numerador, float denominador)
     {
-            freqc => freqcarrier;
-            freqm => freqmodulator;
-            freqcarrier/freqmodulator => ratio;
+            numerador/denominador => ratioVariable; 
+            
     }
         
 //_______________________________________________________
@@ -59,25 +66,21 @@ public class Synth
         
     public void connectionfm (Osc carrier, Osc modulator)
     {
-            modulator => carrier => Gain gainSynth => Gain volumeGen=> dac; 
-            while (true)
+            modulator => carrier => envolvente => Gain gainSynth => Gain volumeGen=> dac;
+            envolvente.set( 20::ms, 8::ms, .5, 100::ms );
+            2 => carrier.sync;
+            gaincarrier => carrier.gain;
+            gainmodulator => modulator.gain;
+        while (true)
             {
                 gain.VOLUMENGENERAL => volumeGen.gain; 
-                gain.specificvolume => gainSynth.gain;
+                gain.SPECIFICVOLUME => gainSynth.gain;
                 0.01::second => now;
             }
                                                     
     }
-//_______________________________________________________        
-    public void fm(Osc carrier, Osc modulator)
-        {
-            2 => carrier.sync;
-            freqcarrier => carrier.freq;
-            gaincarrier => carrier.gain;
-            freqcarrier*ratio => modulator.freq;
-            gainmodulator => modulator.gain;
-        }
-        
+//_______________________________________________________
+    /*    
     public void fm(Osc carrier, Osc carrMod, Osc modulator, int Switch)
         {
             2 => carrier.sync;
@@ -97,5 +100,17 @@ public class Synth
                     carrMod => carrier => dac;
                     }
         }
-      
+      */
 }
+  //------------------test lectormidi--------------
+/*
+    Synth fm;
+    SinOsc carrier;
+    SawOsc modulator;
+    fm.ratio(1,2);
+    [52,55,59,55,0,52,55,52,52,55,59,55,0,52,55,52,52,55,59,55,0,52,55,52,52,55,59,55,0,52,55,52] @=>int bassline1[];
+    spork~fm.connectionfm(carrier, modulator);
+    spork~fm.lectormidi(bassline1, 120.0, carrier, modulator ,1500.0 ,4.0);
+    1::day => now;
+*/    
+  //-----------------------------------------------   
