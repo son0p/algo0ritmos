@@ -1,9 +1,10 @@
 // sonido que queremos que forme un ritmo
-Impulse tick => dac;
+SinOsc sonido => dac;
+[60,62,64,65,67,69,71,72] @=> int escalaMayor[];
 
 // ciclo infinito donde suena un ritmo con ticks
 while( true )
 {
-	1.0 => tick.next;
-	0.20::second => now;
+	Std.mtof(escalaMayor[Math.random2(0,7)]) => sonido.freq;
+	200::ms => now;
 }

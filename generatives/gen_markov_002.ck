@@ -43,14 +43,24 @@ eSine.set( 10::ms, 150::ms, .3, 10::ms );
 // función para generar probabilidades 
 
 float percentArray[100];
+100 => int remain;
 fun float floatChance2( int percent, float value )
 {
-  for( 0 => int i; i < percent; i++ )
+  
+    for(0 => int k; k < 100; k++)
+  {
+    if(percentArray[k] == 0)
+    {
+      k =>  remain;
+    }
+  }
+  for( remain => int i; i < 100; i++ )
   {
     if( percentArray[i] == 0)
     {
-      if( i >= percent ) value => percentArray[i];
-      <<<"fill", value, i>>>;
+      //if( i < percent ) value => percentArray[i];
+      value => percentArray[i];
+      //<<<"fill", value, i>>>;
     }
   }
 }
@@ -62,7 +72,7 @@ fun float chanceResult()
 }
 
 // estado actual solo se usa al iniciar
-7.0 => float currentState;
+12.0 => float currentState;
 
 fun void playMarkov()
 {
@@ -72,6 +82,7 @@ fun void playMarkov()
     for( 0 => int i; i < posibleStates.cap(); i++)
     {
       melody.keyOff();
+      0 => int percent;
       // si el estado actual es igual a al estado que hay en la posición i
       // trae el porcentaje correspondiente de la matríz de transición
       // para usarlo al llamar la función de probabilidad y renovar
@@ -81,28 +92,36 @@ fun void playMarkov()
       {
         for( 0 => int j; j < posibleStates.cap(); j++)
         {
-          0 => int percent;
           (transitionMatrix[i][j] * 100.0) $ int =>   percent;
-          floatChance2( percent, posibleStates[j] );
+          //floatChance2( percent, posibleStates[j] );
+          floatChance2( 70, 3.0 );
           chanceResult() => currentState;
+          //0.0 => currentState;
+          //<<< chanceResult() >>>;
           Std.mtof(root + 12.0 + currentState) => melodyImpulse.freq;
         }
         melody.keyOn();
-        <<< currentState >>>;
+        //<<< currentState >>>;
         beat => now;
       }
     }
   }
 }
 // llama la función
-spork~ playMarkov();
+//spork~ playMarkov();
 /*
 (transitionMatrix[1][1] * 100) $ int => int  percent;
 floatChance2(percent, posibleStates[1]);
 beat => now;
 floatChance2(50, posibleStates[2]);
-//for(0 => int k; k < 100; k++){<<< percentArray[k], "position:",k >>>;}
+
 */
+
+floatChance2( 40, 3.0 );
+for(0 => int k; k < 100; k++){<<< percentArray[k], "position:",k >>>;}
+4 * beat => now;
+floatChance2(50, 1.1);
+for(0 => int k; k < 100; k++){<<< percentArray[k], "position2:",k >>>;}
 
 
 // mantiene vivas las funciones un ciclo

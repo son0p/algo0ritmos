@@ -3,7 +3,7 @@
 
 // definimos la duración de un beat y de un ciclo
 120::ms => dur beat;
-16 * beat => dur loop; // puede cambiar el tamaño del loop multiplicando por otro número
+32 * beat => dur loop; // puede cambiar el tamaño del loop multiplicando por otro número
 
 // voces
 // --snareDrum

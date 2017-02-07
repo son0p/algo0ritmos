@@ -101,7 +101,7 @@ fun void playBass()
       chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
       bass.keyOff();
       if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => saw.freq; bass.keyOn();  }
-      beat => now;
+      beat  => now;
       i++;
     }
 }
@@ -122,7 +122,7 @@ fun void playMelody()
     //    <<< noteSelectionArray[k] >>>;
     // }
     // }
-    [0.0,0,0,0,0,3,3,3,5,5,5,12,12,14,14,15,15,24,7,3,-12] @=> float noteSelectionArray[]; // probabilidad fija :(  TODO variar la probabilidad según la posición del step
+    [0.0,0,0,0,0,0,0,3,3,3,5,5,5,12,12,14,14,14,14,15,15,17,17,24,7,3,-12] @=> float noteSelectionArray[]; // probabilidad fija :(  TODO variar la probabilidad según la posición del step
     floatChance( chanceMelody[i], 1,0 ) => float melodySwitch;
     melody1.keyOff();
     if( melodySwitch == 1 )
@@ -139,11 +139,10 @@ fun void playMelody()
   }
 }
 
-
 // llama funciones
-spork~ playDrums();
-spork~ playBass();
-spork~ playMelody();
+//spork~ playDrums();
+//spork~ playBass();
+//spork~ playMelody();
 
 // vive un tiempo
 beat*16 => now;

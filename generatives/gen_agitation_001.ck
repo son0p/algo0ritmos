@@ -4,7 +4,7 @@
 // Probabilidad de un corpus
 [100,  0,  0, 0,100,  0, 10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
 [  0,  0,  0, 0,100,  0,  0,  0,  0,  0,  0,  0,100,  0,  0, 15] @=> int chanceSd[];
-[  0,  0,100, 0,  0,  3,100,  0,  5,  5,100,  3,  0,  0,100, 20] @=> int chanceHh[];
+[  100,  50,100, 0,  0,  3,100,  0,  5,  5,100,  3,  0,  0,100, 20] @=> int chanceHh[];
 
 // instrumentos
 // --bassDrum 
@@ -63,3 +63,4 @@ spork~ playDrums();
 beat*16 => now;
 // antes de morir  se crea  a sí mismo
 Machine.add(me.dir() + "/gen_agitation_001.ck");
+

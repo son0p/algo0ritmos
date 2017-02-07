@@ -8,6 +8,7 @@
 
 ## TODO: sincronizar los sporks
 ## entorno
+system("a2jmidid", wait=FALSE)
 system("zynaddsubfx -a -l base.xmz ", wait=FALSE)
 system("chuck --loop", wait=FALSE)
 
