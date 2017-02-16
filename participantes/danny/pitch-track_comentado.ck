@@ -68,7 +68,7 @@ fun void ramp_stuff()
     {
         (target_freq - curr_freq) * 5 * slew + curr_freq => curr_freq => s.freq;
         (target_gain - curr_gain) * slew + curr_gain => curr_gain => s.gain;
-        chout <= Std.ftom(s.freq());
+        chout <= now/second+ ";"+Std.ftom(s.freq())+" \n" ;
         0.0025::second => now;
     }
 }
