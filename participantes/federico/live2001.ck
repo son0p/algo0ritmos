@@ -1,0 +1,64 @@
+Library lib;
+440::ms => dur beat;
+36 => int root;
+
+int chanceBd[16];
+int chanceSd[16];
+int chanceHh[16];
+int chanceBass[16];
+int chanceBassNotes[16];
+
+[0,4,8,12] @=> int onKick[];
+for( int i; i < onKick.cap(); i++)
+  {
+    onKick[i] => chanceBd[i]; 
+  }
+
+[0,2,8,12,24] @=> int onBass[];
+for( int i; i < onBass.cap(); i++)
+  {
+    100 => chanceBass[i]; 
+  }
+
+fun void drums()
+{
+ 
+  100 => chanceBd[8];
+  0 => int i;
+  while(true)
+  {
+    lib.floatChance( chanceBd[i], 1,0 )     => float bdSwitch;
+    lib.floatChance( chanceSd[i], 1,0 )     => float sdSwitch;
+    lib.floatChance( chanceHh[i], 1,0 )     => float hhSwitch;
+    lib.bd.keyOff();
+    lib.sd.keyOff();
+    lib.hh.keyOff();
+    if( bdSwitch == 1 ){ lib.bd.keyOn(); 1.0 => lib.bdImpulse.next;  }
+    if( sdSwitch == 1 ){ lib.sd.keyOn(); }
+    if( hhSwitch == 1 ){ lib.hh.keyOn(); }
+    beat  => now;
+    i++;
+  }
+}
+
+fun void playBass()
+{
+  0 => int i;
+  while(true)
+    {
+      lib.floatChance( chanceBass[i], 1,0 )   => float bassSwitch;
+      chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
+      lib.bass.keyOff();
+      if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => lib.saw.freq; lib.bass.keyOn();  }
+      beat  => now;
+      i++;
+    }
+}
+
+
+spork~ drums();
+spork~ playBass();
+
+beat*16 => now;
+
+Machine.add(me.dir()+"/live2001");
