@@ -1,5 +1,5 @@
 Library lib;
-440::ms => dur beat;
+120::ms => dur beat;
 36 => int root;
 
 int chanceBd[16];
@@ -10,20 +10,23 @@ int chanceBassNotes[16];
 
 [0,4,8,12] @=> int onKick[];
 for( int i; i < onKick.cap(); i++)
-  {
-    onKick[i] => chanceBd[i]; 
-  }
+{
+  100 => chanceBd[onKick[i]]; 
+}
 
-[0,2,8,12,24] @=> int onBass[];
-for( int i; i < onBass.cap(); i++)
-  {
-    100 => chanceBass[i]; 
-  }
+[  2,  6,  10, 14] @=> int onBass[];
+[100, 90, 100, 70] @=> int onBassChances[];
+//for( int i; i < onBass.cap(); i++)
+//{
+//  onBassChances[i] => chanceBass[onBass[i]];
+//}
+
+lib.fillArray( chanceBass, onBass, onBassChances);
 
 fun void drums()
 {
  
-  100 => chanceBd[8];
+  //100 => chanceBd[8];
   0 => int i;
   while(true)
   {
@@ -58,7 +61,7 @@ fun void playBass()
 
 spork~ drums();
 spork~ playBass();
-
+ 
 beat*16 => now;
 
 Machine.add(me.dir()+"/live2001");

@@ -38,4 +38,14 @@ public class Library
   0.35 => sin1.gain;
   melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
   0.03 => melodyReverb.mix;
+
+  // ============= Funciones
+  //// ======= Arrays
+  fun int fillArray( int toFill[], int positions[], int values[] )
+  {
+    for ( int i; i < positions.cap(); i++ )
+      {
+        values[i] => toFill[positions[i]];
+      }
+  }
 }
