@@ -1,7 +1,7 @@
 public class Library
 {
   // función generar probabilidades según corpus
-  fun float floatChance( int percent, float value1, float value2)
+  fun static float floatChance( int percent, float value1, float value2)
   {
     float percentArray[100];
     for( 0 => int i; i < 100; i++)
@@ -23,7 +23,7 @@ public class Library
   Noise sdImpulse => ResonZ sdFilter => ADSR sd => dac;
   0.9 => sdImpulse.gain;
   sdFilter.set(400.0, 1.0);
-  sd.set( 0::ms, 50::ms, .1, 100::ms );
+  sd.set( 0::ms, 50::ms, .0, 100::ms );
   // --hiHat
   Noise hhImpulse => ResonZ hhFilter => ADSR hh => dac;
   0.5 => hhImpulse.gain;
@@ -48,4 +48,23 @@ public class Library
         values[i] => toFill[positions[i]];
       }
   }
+  // ---- Players
+  //.............. playDrums
+
+  fun void playDrums( ADSR instrument, Impulse imp)
+  {
+    instrument.keyOff();
+    instrument.keyOn(); 1.0 => imp.next;  
+  }
+
+  fun void playDrums( int active,  ADSR instrument)
+  {
+    instrument.keyOff();
+    if( active == 1 ){ instrument.keyOn();  }
+  }
 }
+
+
+
+
+

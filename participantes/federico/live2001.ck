@@ -14,35 +14,15 @@ for( int i; i < onKick.cap(); i++)
   100 => chanceBd[onKick[i]]; 
 }
 
+lib.floatChance( 50, 0, 1 );
+
+// posiciones en que suena
 [  2,  6,  10, 14] @=> int onBass[];
 [100, 90, 100, 70] @=> int onBassChances[];
-//for( int i; i < onBass.cap(); i++)
-//{
-//  onBassChances[i] => chanceBass[onBass[i]];
-//}
-
 lib.fillArray( chanceBass, onBass, onBassChances);
-
-fun void drums()
-{
- 
-  //100 => chanceBd[8];
-  0 => int i;
-  while(true)
-  {
-    lib.floatChance( chanceBd[i], 1,0 )     => float bdSwitch;
-    lib.floatChance( chanceSd[i], 1,0 )     => float sdSwitch;
-    lib.floatChance( chanceHh[i], 1,0 )     => float hhSwitch;
-    lib.bd.keyOff();
-    lib.sd.keyOff();
-    lib.hh.keyOff();
-    if( bdSwitch == 1 ){ lib.bd.keyOn(); 1.0 => lib.bdImpulse.next;  }
-    if( sdSwitch == 1 ){ lib.sd.keyOn(); }
-    if( hhSwitch == 1 ){ lib.hh.keyOn(); }
-    beat  => now;
-    i++;
-  }
-}
+// notas
+[ 0,  12,  0,  -2] @=> int bassNoteAlterations[];
+lib.fillArray( chanceBassNotes, onBass, bassNoteAlterations);
 
 fun void playBass()
 {
@@ -58,6 +38,34 @@ fun void playBass()
     }
 }
 
+fun int checkArray( int seq[], int iter )
+{
+  int value;
+  for(int i; i < seq.cap();i++)
+  {
+    if( seq[i] == iter )
+    {
+      1 =>  value;
+    }
+  }
+  return value;
+}
+
+fun void drums()
+{
+  0 => int i;
+  while(true)
+  {
+    checkArray( onKick, i ) => int kOn;
+    if( kOn == 1 )
+      {
+        lib.playDrums(lib.bd, lib.bdImpulse );
+      }
+    //lib.playDrums(1, lib.sd );
+    beat => now;
+    i++;
+  }
+}
 
 spork~ drums();
 spork~ playBass();
