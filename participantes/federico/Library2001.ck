@@ -137,6 +137,25 @@ public class Library
         beat/4 => now;
       }
   }
+
+  // funcion para mutar los arreglos aleatorios
+  // TODO: la base de la mutación debe adaptarse a un nuevo arreglo que
+  //       ya contiene las notas encontradas
+  fun int mutate(int base[], int sequence[][], int goal[] )
+  {
+    Math.random2(0, C-1) => int seqToMutate;
+    Math.random2(0, base.cap()-1) => int noteToMutate;
+    // se evalua si la nota existente es igual a la melodía de referencia,
+    if(sequence[seqToMutate][noteToMutate] == goal[noteToMutate])
+      {
+        <<< ": ** encontró coincidencia**  ",  goal[noteToMutate], "\n" >>>;
+      }
+    else
+      {
+        base[Math.random2(0, base.cap()-1)] => sequence[seqToMutate][noteToMutate];
+        <<< "muta melodía ",seqToMutate,"\n">>>;
+      }
+  }
 }
 
 
