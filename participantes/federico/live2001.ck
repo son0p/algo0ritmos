@@ -91,11 +91,14 @@ fun void playMelody()
       lib.melody1.keyOff();
       if( melSwitch == 1 ){ Std.mtof( melNote +24 + root ) => lib.sin1.freq; lib.melody1.keyOn();  }
       beat  => now;
+      
       i++;
     }
 }
 
+//spork~ lib.bassLine(1, 4);
 spork~ drums();
+spork~ lib.bees();
 spork~ playBass();
 spork~ playMelody();
 beat*16 => now;

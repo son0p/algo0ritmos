@@ -75,6 +75,68 @@ public class Library
       }
     return value;
   }
+
+  // bees
+  //Math.srandom(33679);   ////////  INTERESTING to control randomnes
+  6 => int C; //number of bees
+  SawOsc s[C]; // Oscillators and Pans for each bee
+  Pan2 p[C];
+  Envelope e[C];
+  NRev r[C];
+  Gain gBees;
+  36 => int root;
+  120::ms => dur beat;
+  fun void bees(){
+    for ( 0 => int ii ; ii < C ; ++ii ) {
+      s[ii] => e[ii] => r[ii] => p[ii]  =>  gBees => dac;
+      r[ii].mix(0.1);
+      s[ii].gain(0.05/C);
+      root/1 + Math.random2f(-2, 2) => s[ii].freq;
+      Math.random2f(-1, 1) => p[ii].pan;
+    }
+    while(true){
+      for ( 0 => int ii ; ii < C ; ++ii ) { e[ii].keyOn(); }
+      beat*2 => now;
+      for ( 0 => int ii ; ii < C ; ++ii ) { e[ii].keyOff(); }
+      beat*2 => now;
+    }
+  }
+  // cambiar rango de i
+  fun float changeRange (int OldValue, int OldMin, int OldMax, float NewMin, float NewMax)
+  {
+    (OldMax - OldMin) => int OldRange;
+    (NewMax - NewMin) => float NewRange;
+    (((OldValue - OldMin) * NewRange) / OldRange) + NewMin => float NewValue;
+    return NewValue;
+  }
+  // ==== bass pulse arpegiator
+  PulseOsc pulse => ADSR ePulse => NRev rPulse=> dac;
+  rPulse.mix(0.0);
+  pulse.gain(0.2);
+  pulse.width(0.1);
+  fun void bassPulse(float freq, dur duration, float width)
+  {
+    (ms, duration, 0.01, 100::ms) => ePulse.set;
+    pulse.freq(freq);
+    width => pulse.width;
+    ePulse.keyOn();
+    duration => now;
+    ePulse.keyOff();
+  }
+
+
+  fun void bassLine(int metro, int loopSize)
+  {
+    while(true)
+      {
+        changeRange(metro, 0, loopSize, 0.1, 1.0) => float newWidth;
+        floatChance(90 - metro*4/loopSize, 0, root/Math.random2(2,4)) => float tone;
+        floatChance(70 - metro*2, 4, 16) $ int => int division;
+        floatChance(70 - metro  , newWidth, 0.05) => float width;
+        spork ~ bassPulse( root + tone , beat/division, width );
+        beat/4 => now;
+      }
+  }
 }
 
 
