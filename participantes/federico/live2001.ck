@@ -36,6 +36,21 @@ lib.fillArray( chanceBass, onBass, onBassChances);
 [ 0,  12,  0,  -2] @=> int bassNoteAlterations[];
 lib.fillArray( chanceBassNotes, onBass, bassNoteAlterations);
 
+fun void playBees()
+{
+  lib.bees(6);
+  6 => int C; //number of bees
+  // bees
+  while(true)
+  {
+    //for ( 0 => int ii ; ii < C ; ++ii ) { lib.bees.e[ii].keyOn(); }
+    lib.run(beat);
+    //for ( 0 => int ii ; ii < C ; ++ii ) { lib.bees.e[ii].keyOff(); }
+    lib.run(beat);
+  }
+}
+
+
 fun void playBass()
 {
   0 => int i;
@@ -45,9 +60,31 @@ fun void playBass()
       chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
       lib.bass.keyOff();
       if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => lib.saw.freq; lib.bass.keyOn();  }
-      beat  => now;
+      lib.run(beat);
       i++;
     }
+}
+
+fun void playSin()
+{
+  lib.revNR.mix    (0.2);
+  lib.sinWave.gain (0.1);
+  lib.sin.set      ( 0::ms, 100::ms, 0.2, 10000::ms);
+  lib.sin.keyOn();
+  lib.run          (beat);
+  lib.sin.keyOff();
+  lib.rev          (lib.sin);
+  
+  while(true){
+    // arco largo
+    //Std.mtof(root + 12 + Math.hypot(now/beat, now/beat)*0.0030001*pi) => lib.sinWave.freq;
+    // 2 sparks 00001 leve variacion
+    //Std.mtof(root + 24 + Math.tan(now/beat)*0.0000001*pi) => lib.sinWave.freq;
+
+    Std.mtof(root + 24 + Math.sqrt(now/beat)*0.0500001*pi) => lib.sinWave.freq;
+
+    lib.run(beat/8);
+  }
 }
 
 fun int checkArray( int seq[], int iter )
@@ -74,13 +111,13 @@ fun void drums()
         lib.playDrums(lib.bd, lib.bdImpulse );
       }
     //lib.playDrums(1, lib.sd );
-    beat => now;
+    lib.run(beat);
     i++;
   }
 }
 
 
-fun void playMelody()
+ fun void playMelody()
 {
   0 => int i;
   while(true)
@@ -90,17 +127,17 @@ fun void playMelody()
       chanceMelNotes[Math.random2(0, 15)]   => float melNote;
       lib.melody1.keyOff();
       if( melSwitch == 1 ){ Std.mtof( melNote +24 + root ) => lib.sin1.freq; lib.melody1.keyOn();  }
-      beat  => now;
-      
+      lib.run(beat);
       i++;
     }
 }
 
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
-spork~ lib.bees();
+spork~ lib.bees(6);
 spork~ playBass();
 spork~ playMelody();
+spork~ playSin();
 beat*16 => now;
 
 Machine.add(me.dir()+"/live2001");

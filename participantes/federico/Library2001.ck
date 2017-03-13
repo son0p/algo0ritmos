@@ -1,5 +1,6 @@
 public class Library
 {
+    36 => float root;
   // función generar probabilidades según corpus
   fun static float floatChance( int percent, float value1, float value2)
   {
@@ -14,7 +15,10 @@ public class Library
   }
   //
   // instrumentos =========================================
-  // --bassDrum 
+  // --bassDrum
+
+  SinOsc sinWave => ADSR sin => dac;
+  sin.set( 0::ms, 500::ms, .0, 100::ms );
   Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
   1000 => bdImpulse.gain;
   bdFilter.set(50.0, 10.0);
@@ -38,6 +42,46 @@ public class Library
   0.35 => sin1.gain;
   melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
   0.03 => melodyReverb.mix;
+
+  // modelado
+
+  ResonZ modes[10];
+
+  [[ root , 0.70212 ],              // these are the modes from the
+   [ root + root/2 , 0.971846 ],    // plate we whacked in the
+   [ root + root/8 , 0.849900 ],    // online video
+   [ 2010.662842 , 0.378065 ],
+   [ 2670.117188 , 1.000000 ],  // replace them with your own from
+   [ 3071.173096 , 0.104546 ],  //    your analysis of your object/sound
+   [ 3563.745117 , 0.098136 ],
+   [ 4465.447998 , 0.043037 ],  // NOTE:  number of entries here should
+   [ 4556.964111 , 0.007220 ],  //    equal NUM_MODES
+   [ 5499.041748 , 0.004922 ]]  // which you can change if you like!
+    @=> float freqsNamps[][];
+
+  Noise n => ADSR strike;
+  (ms, 50::ms, 0.01, 100::ms) => strike.set;
+  30.0 => strike.gain;
+
+  for (int i; i < 10; i++){
+    strike => modes[i] => dac;
+    freqsNamps[i][0] => modes[i].freq;
+    500 - (i*30) => modes[i].Q;
+    freqsNamps[i][1] => modes[i].gain;
+  }
+
+  // test
+  // fun void bass()
+  // {
+  //   while(true)
+  //     {
+  //       1 => strike.keyOn;
+  //       beat/2 => now;
+  //       strike.keyOff;
+  //       beat/2 => now;
+  //     }
+  // }
+
 
   // ============= Funciones
   //// ======= Arrays
@@ -75,18 +119,18 @@ public class Library
       }
     return value;
   }
-
-  // bees
-  //Math.srandom(33679);   ////////  INTERESTING to control randomnes
-  6 => int C; //number of bees
-  SawOsc s[C]; // Oscillators and Pans for each bee
-  Pan2 p[C];
-  Envelope e[C];
-  NRev r[C];
-  Gain gBees;
-  36 => int root;
   120::ms => dur beat;
-  fun void bees(){
+
+
+  // bees=================
+  //Math.srandom(33679);   ////////  INTERESTING to control randomnes
+  fun int bees(int C)
+  {
+    SawOsc s[C]; // Oscillators and Pans for each bee
+    Pan2 p[C];
+    Envelope e[C];
+    NRev r[C];
+    Gain gBees;
     for ( 0 => int ii ; ii < C ; ++ii ) {
       s[ii] => e[ii] => r[ii] => p[ii]  =>  gBees => dac;
       r[ii].mix(0.1);
@@ -94,12 +138,7 @@ public class Library
       root/1 + Math.random2f(-2, 2) => s[ii].freq;
       Math.random2f(-1, 1) => p[ii].pan;
     }
-    while(true){
-      for ( 0 => int ii ; ii < C ; ++ii ) { e[ii].keyOn(); }
-      beat*2 => now;
-      for ( 0 => int ii ; ii < C ; ++ii ) { e[ii].keyOff(); }
-      beat*2 => now;
-    }
+    return C;
   }
   // cambiar rango de i
   fun float changeRange (int OldValue, int OldMin, int OldMax, float NewMin, float NewMax)
@@ -141,6 +180,7 @@ public class Library
   // funcion para mutar los arreglos aleatorios
   // TODO: la base de la mutación debe adaptarse a un nuevo arreglo que
   //       ya contiene las notas encontradas
+  2 => int C;
   fun int mutate(int base[], int sequence[][], int goal[] )
   {
     Math.random2(0, C-1) => int seqToMutate;
@@ -155,6 +195,19 @@ public class Library
         base[Math.random2(0, base.cap()-1)] => sequence[seqToMutate][noteToMutate];
         <<< "muta melodía ",seqToMutate,"\n">>>;
       }
+  }
+
+  // ====================== TIME -=======================
+  fun dur run(dur time)
+  {
+    time => now;
+  }
+
+  // ==================== FX-s
+  NRev revNR;
+  fun void rev(UGen ob)
+  {
+    ob => revNR => dac;
   }
 }
 
