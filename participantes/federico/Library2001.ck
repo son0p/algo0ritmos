@@ -198,7 +198,7 @@ public class Library
       }
   }
   // aproximar según cercanía
-  fun float magneticGrid(float ref[], float src, int root)
+  fun float magneticGrid(float ref[], float src)
   {
     0 => int index;
     Std.fabs( src - ref[0] ) => float difference;
