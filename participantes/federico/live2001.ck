@@ -68,23 +68,60 @@ fun void playBass()
 fun void playSin()
 {
   lib.revNR.mix    (0.2);
-  lib.sinWave.gain (0.1);
-  lib.sin.set      ( 0::ms, 100::ms, 0.2, 10000::ms);
+  lib.sinWave.gain (0.5);
+  lib.sin.set      ( 0::ms, 100::ms, 0.2, 500::ms);
   lib.sin.keyOn();
-  lib.run          (beat);
+  //lib.run          (beat);
   lib.sin.keyOff();
   lib.rev          (lib.sin);
   
   while(true){
     // arco largo
     //Std.mtof(root + 12 + Math.hypot(now/beat, now/beat)*0.0030001*pi) => lib.sinWave.freq;
+
     // 2 sparks 00001 leve variacion
-    //Std.mtof(root + 24 + Math.tan(now/beat)*0.0000001*pi) => lib.sinWave.freq;
+    Std.mtof(root + 48 + Math.cos( 1000*(now/ms))*0.1001*pi) => lib.sinWave.freq;
 
-    Std.mtof(root + 24 + Math.sqrt(now/beat)*0.0500001*pi) => lib.sinWave.freq;
+    //    Std.mtof(root + 12 + Math.tan(2)*0.09001*pi) => lib.sinWave.freq;
 
-    lib.run(beat/8);
+    //chout <= (now/second+";"+lib.sinWave.freq()+"\n");
+
+    //Std.mtof(root + 24 + Math.sqrt(now/beat)*2.09001*pi) => lib.sinWave.freq;
+    lib.run(beat*2);
   }
+}
+fun void playSqr()
+{
+  lib.revNR.mix    (0.05);
+  lib.sqrWave.gain (0.0101);
+  lib.sqr.set      ( 1::ms, 100::ms, 0.1, 10::ms);
+  lib.rev          (lib.sqr);
+  while(true){
+    lib.sqr.keyOn();
+    // arco largo
+    //Std.mtof(root + 12 + Math.hypot(now/beat, now/beat)*0.0030001*pi) => lib.sqrWave.freq;
+
+    // 2 sparks 00001 leve variacion
+    //Std.mtof(root + 24 + Math.tan( 100*(now/ms))*3.1001*pi) => lib.sqrWave.freq;
+
+    Std.mtof(root + 36 + Math.tan((now/ms)/(2*beat/ms))*5.50000091*pi) => lib.sqrWave.freq;
+    if( lib.sqrWave.freq() > 10000.0 ){ lib.sqrWave.gain(0.0);}
+    else { lib.sqrWave.gain (0.0101); }
+    // filter
+    //chout <= (now/second+";"+lib.sqrWave.freq()+"\n");
+
+    //Std.mtof(root + 24 + Math.sqrt(now/beat)*2.09001*pi) => lib.sqrWave.freq;
+    [1,2,4,8] @=> int step[];
+    lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
+    lib.sqr.keyOff();
+  }
+}
+
+fun void filter()
+{
+  100000 + Math.sin(1*(now/ms))*0.000002*pi => lib.sqrFilter.freq;
+  lib.sqrFilter.gain();
+  lib.run(beat/1);
 }
 
 fun int checkArray( int seq[], int iter )
@@ -132,12 +169,27 @@ fun void drums()
     }
 }
 
+// test
+fun void test()
+{
+  [9.0, 3.0, 5.0] @=> float ref[];
+  while(true)
+  {
+    lib.magneticGrid(ref, 4.1, 7) => float ret;
+    <<< ret >>>;
+    500::ms => now;
+  }
+}
+spork~ test();
+
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
 spork~ lib.bees(6);
 spork~ playBass();
 spork~ playMelody();
 spork~ playSin();
+spork~ playSqr();
+spork~ filter();
 beat*16 => now;
 
 Machine.add(me.dir()+"/live2001");

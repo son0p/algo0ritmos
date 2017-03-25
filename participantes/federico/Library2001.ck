@@ -19,6 +19,8 @@ public class Library
 
   SinOsc sinWave => ADSR sin => dac;
   sin.set( 0::ms, 500::ms, .0, 100::ms );
+  SqrOsc sqrWave => ADSR sqr => LPF sqrFilter => dac;
+  sqr.set( 0::ms, 500::ms, .0, 500::ms );
   Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
   1000 => bdImpulse.gain;
   bdFilter.set(50.0, 10.0);
@@ -163,7 +165,6 @@ public class Library
     ePulse.keyOff();
   }
 
-
   fun void bassLine(int metro, int loopSize)
   {
     while(true)
@@ -195,6 +196,29 @@ public class Library
         base[Math.random2(0, base.cap()-1)] => sequence[seqToMutate][noteToMutate];
         <<< "muta melodía ",seqToMutate,"\n">>>;
       }
+  }
+  // aproximar según cercanía
+  fun float magneticGrid(float ref[], float src, int root)
+  {
+    0 => int index;
+    Std.fabs( src - ref[0] ) => float difference;
+    for( 0 => int i; i < ref.cap(); i++)
+    {
+      if( difference > Std.fabs( src - ref[i]))
+      {
+        Std.fabs( src - ref[i]) => difference;
+        i => index;
+      }
+    }
+    return ref[index];
+  }
+  // evalua la presencia de <target> en un array <seed[]>
+  fun float evalFor(float seed[], float target)
+  {
+    for(0 => int i; i < seed.cap(); i++)
+    {
+      if( target == seed[i]){ return target;}
+    }
   }
 
   // ====================== TIME -=======================
