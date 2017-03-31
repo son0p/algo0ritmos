@@ -89,9 +89,9 @@ fun void playSin()
 }
 fun void playSqr()
 {
-  lib.revNR.mix    (0.2);
+  lib.revNR.mix    (0.1);
   lib.sqrWave.gain (0.01);
-  lib.sqr.set      ( 1::ms, 100::ms, 0.05, 10::ms);
+  lib.sqr.set      ( 1::ms, 100::ms, 0.05, 100::ms);
   lib.rev          (lib.sqr);
   15.00001 => float amplitude;
   while(true){
@@ -107,9 +107,14 @@ fun void playSqr()
 
 fun void filter()
 {
-  100000 + Math.sin(1*(now/ms))*0.000002*pi => lib.sqrFilter.freq;
-  lib.sqrFilter.gain();
-  lib.run(beat/1);
+  while(true)
+    {
+      Math.fabs(Math.sin((now/ms)%5000)*1000) => float filterFreq;
+      filterFreq => lib.sqrFilter.freq;
+      <<< filterFreq >>>;
+      lib.sqrFilter.gain(10.01);
+      lib.run(beat);
+    }
 }
 
 fun int checkArray( int seq[], int iter )
@@ -141,22 +146,6 @@ fun void drums()
   }
 }
 
-
- fun void playMelody()
-{
-  0 => int i;
-  while(true)
-    {
-      0.1 => lib.sin1.gain;
-      lib.floatChance( chanceMel[i], 1,0 )   => float melSwitch;
-      chanceMelNotes[Math.random2(0, 15)]   => float melNote;
-      lib.melody1.keyOff();
-      if( melSwitch == 1 ){ Std.mtof( melNote +24 + root ) => lib.sin1.freq; lib.melody1.keyOn();  }
-      lib.run(beat);
-      i++;
-    }
-}
-
 // test
 fun void test()
 {
@@ -173,7 +162,6 @@ fun void test()
 spork~ drums();
 //spork~ lib.bees(6);
 spork~ playBass();
-spork~ playMelody();
 spork~ playSin();
 spork~ playSqr();
 spork~ filter();
