@@ -75,57 +75,32 @@ fun void playBass()
 fun void playSin()
 {
   lib.revNR.mix    (0.2);
-  lib.sinWave.gain (1.0);
-  lib.sin.set      ( 0::ms, 100::ms, 0.2, 500::ms);
-  lib.sin.keyOn();
-  //lib.run          (beat);
-  lib.sin.keyOff();
+  lib.sinWave.gain (0.05);
+  lib.sin.set      ( 0::ms, 100::ms, 0.3, 5::ms);
   lib.rev          (lib.sin);
-  
+
   while(true){
-    // arco largo
-    //Std.mtof(root + 12 + Math.hypot(now/beat, now/beat)*0.0030001*pi) => lib.sinWave.freq;
-
-    // 2 sparks 00001 leve variacion
-    Std.mtof(root + 48 + Math.cos( 1000*(now/ms))*0.1001*pi) => float freq;
-    // lib.magneticGrid(ref,freq) => lib.sinWave.freq;
-    440 => lib.sinWave.freq;
-    <<<freq>>>;
-
-    //    Std.mtof(root + 12 + Math.tan(2)*0.09001*pi) => lib.sinWave.freq;
-
-    //chout <= (now/second+";"+lib.sinWave.freq()+"\n");
-
-    //Std.mtof(root + 24 + Math.sqrt(now/beat)*2.09001*pi) => lib.sinWave.freq;
+    lib.sin.keyOn();
+    Std.mtof(root + 48 + Math.cos( 100*(now/ms))*1.1001*pi) => float freq;
+    lib.magneticGrid(ref,freq) => lib.sinWave.freq;
     lib.run(beat*2);
+    lib.sin.keyOff();
   }
 }
 fun void playSqr()
 {
-  lib.revNR.mix    (0.05);
-  lib.sqrWave.gain (0.0101);
-  lib.sqr.set      ( 1::ms, 100::ms, 0.1, 10::ms);
+  lib.revNR.mix    (0.2);
+  lib.sqrWave.gain (0.01);
+  lib.sqr.set      ( 1::ms, 100::ms, 0.05, 10::ms);
   lib.rev          (lib.sqr);
+  15.00001 => float amplitude;
   while(true){
     lib.sqr.keyOn();
-    // arco largo
-    //Std.mtof(root + 12 + Math.hypot(now/beat, now/beat)*0.0030001*pi) => lib.sqrWave.freq;
-
-    // 2 sparks 00001 leve variacion
-    //Std.mtof(root + 24 + Math.tan( 100*(now/ms))*3.1001*pi) => lib.sqrWave.freq;
-
-    Std.mtof(root + 36 + Math.sin((now/ms)/(4*beat/ms))*5.0000091*pi) => float freq;
-    freq => lib.sqrWave.freq;
-    //lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
-    if( lib.sqrWave.freq() > 10000.0 ){ lib.sqrWave.gain(0.0);}
-    else { lib.sqrWave.gain (0.0101); }
-    // filter
-    chout <= (now/second+";"+lib.sqrWave.freq()+"\n");
-
-    //Std.mtof(root + 24 + Math.sqrt(now/beat)*2.09001*pi) => lib.sqrWave.freq;
-    lib.run(beat/8);
+    Std.mtof(root + 36 + Math.cos( 100*(now/ms))*8.1001*pi) => float freq;
+    lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
+    lib.run(beat * 2);
     [1,2,4,8] @=> int step[];
-    //lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
+    lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
     lib.sqr.keyOff();
   }
 }
@@ -199,7 +174,7 @@ spork~ drums();
 //spork~ lib.bees(6);
 spork~ playBass();
 spork~ playMelody();
-//spork~ playSin();
+spork~ playSin();
 spork~ playSqr();
 spork~ filter();
 beat*16 => now;
