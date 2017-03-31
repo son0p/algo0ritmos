@@ -4,7 +4,10 @@ Library lib;
 // frecuency center
 Std.mtof(root*2) => float rootFreq;
 // frecuencias armonicas
-[rootFreq, rootFreq*2, rootFreq/2, root*4] @=> float ref[];
+[rootFreq, rootFreq*2, rootFreq*1.189207115, rootFreq*1.3348398542
+ , rootFreq*1.4983070769, rootFreq*1.7817974363
+
+] @=> float ref[];
 
 int chanceBd[16];
 int chanceSd[16];
@@ -111,16 +114,18 @@ fun void playSqr()
     // 2 sparks 00001 leve variacion
     //Std.mtof(root + 24 + Math.tan( 100*(now/ms))*3.1001*pi) => lib.sqrWave.freq;
 
-    Std.mtof(root + 36 + Math.tan((now/ms)/(2*beat/ms))*5.50000091*pi) => float freq;
-    lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
+    Std.mtof(root + 36 + Math.sin((now/ms)/(4*beat/ms))*5.0000091*pi) => float freq;
+    freq => lib.sqrWave.freq;
+    //lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
     if( lib.sqrWave.freq() > 10000.0 ){ lib.sqrWave.gain(0.0);}
     else { lib.sqrWave.gain (0.0101); }
     // filter
-    //chout <= (now/second+";"+lib.sqrWave.freq()+"\n");
+    chout <= (now/second+";"+lib.sqrWave.freq()+"\n");
 
     //Std.mtof(root + 24 + Math.sqrt(now/beat)*2.09001*pi) => lib.sqrWave.freq;
+    lib.run(beat/8);
     [1,2,4,8] @=> int step[];
-    lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
+    //lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
     lib.sqr.keyOff();
   }
 }
@@ -191,7 +196,7 @@ fun void test()
 
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
-spork~ lib.bees(6);
+//spork~ lib.bees(6);
 spork~ playBass();
 spork~ playMelody();
 //spork~ playSin();
