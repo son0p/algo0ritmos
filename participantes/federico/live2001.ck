@@ -150,14 +150,16 @@ fun void drums()
 // test
 fun void test()
 {
-  while(true)
-  {
-    lib.magneticGrid(ref, 4.1) => float ret;
-    <<< ret >>>;
-    500::ms => now;
-  }
+    while(true)
+    {
+        if( lib.bd.state() != 2)
+            {
+                lib.bass.keyOff();
+            }
+        100::ms => now;
+    }
 }
-//spork~ test();
+spork~ test();
 
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
