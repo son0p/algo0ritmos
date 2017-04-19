@@ -36,13 +36,13 @@ public class Library
   hhFilter.set(10000.0, 5.0);
   hh.set( 0::ms, 50::ms, .0, 100::ms );
   // --bass
-  SqrOsc saw => ADSR bass => dac;
-  0.15 => saw.gain;
-  bass.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
+  SqrOsc sawWave => ADSR bass => dac;
+  0.15 => sawWave.gain;
+  bass.set( 0::ms, 80::ms, sawWave.gain()/1.5, 100::ms );
   // --Melody
   BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => dac;
   0.35 => sin1.gain;
-  melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
+  melody1.set( 0::ms, 80::ms, sin1.gain()/1.5, 100::ms );
   0.03 => melodyReverb.mix;
 
   // modelado

@@ -57,18 +57,19 @@ fun void playBees()
   }
 }
 
-
 fun void playBass()
 {
-  0 => int i;
-  while(true)
-    {
-      lib.floatChance( chanceBass[i], 1,0 )   => float bassSwitch;
-      chanceBassNotes[Math.random2(0, 15)]    => float bassNote;
-      lib.bass.keyOff();
-      if( bassSwitch == 1 ){ Std.mtof( bassNote + root ) => lib.saw.freq; lib.bass.keyOn();  }
-      lib.run(beat);
-      i++;
+    lib.revNR.mix    (0.2);
+    lib.sawWave.gain (0.03);
+    lib.bass.set      ( 0::ms, 100::ms, 0.3, 5::ms);
+    lib.rev          (lib.bass);
+
+    while(true){
+        lib.bass.keyOn();
+        Std.mtof(root + 12 + Math.sin( 100*(now/ms))*10.1001*pi) => float freq;
+        (lib.magneticGrid(ref,freq))/8 => lib.sawWave.freq;
+        lib.run(beat*2);
+        lib.bass.keyOff();
     }
 }
 
@@ -111,7 +112,7 @@ fun void filter()
     {
       Math.fabs(Math.sin((now/ms)%5000)*1000) => float filterFreq;
       filterFreq => lib.sqrFilter.freq;
-      <<< filterFreq >>>;
+      //<<< filterFreq >>>;
       lib.sqrFilter.gain(10.01);
       lib.run(beat);
     }
@@ -162,7 +163,7 @@ fun void test()
 spork~ drums();
 //spork~ lib.bees(6);
 spork~ playBass();
-spork~ playSin();
+//spork~ playSin();
 spork~ playSqr();
 spork~ filter();
 beat*16 => now;
