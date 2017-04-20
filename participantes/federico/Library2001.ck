@@ -1,6 +1,6 @@
 public class Library
 {
-    36 => float root;
+  36 => float root;
   // función generar probabilidades según corpus
   fun static float floatChance( int percent, float value1, float value2)
   {
@@ -15,12 +15,13 @@ public class Library
   }
   //
   // instrumentos =========================================
-  // --bassDrum
+  
 
   SinOsc sinWave => ADSR sin => dac;
   sin.set( 0::ms, 500::ms, .0, 100::ms );
   SqrOsc sqrWave => ADSR sqr => LPF sqrFilter => dac;
   sqr.set( 0::ms, 500::ms, .0, 500::ms );
+    // --bassDrum
   Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
   1000 => bdImpulse.gain;
   bdFilter.set(50.0, 10.0);
@@ -221,6 +222,21 @@ public class Library
     }
   }
 
+  // establece la relación entre dos ADSR en sporks depredador/presa
+  // con una estructura de control excluyente y un valor de
+  // permanencia de ese estado
+  fun void predation(ADSR predator, ADSR prey, dur permanence)
+  {
+    while(true)
+    {
+      if( predator.state() != 2)
+      {
+          prey.keyOff();
+      }
+      permanence => now;
+    }
+  }
+
   // ====================== TIME -=======================
   fun dur run(dur time)
   {
@@ -234,8 +250,3 @@ public class Library
     ob => revNR => dac;
   }
 }
-
-
-
-
-

@@ -147,25 +147,15 @@ fun void drums()
   }
 }
 
-// test
-fun void test()
-{
-    while(true)
-    {
-        if( lib.bd.state() != 2)
-            {
-                lib.bass.keyOff();
-            }
-        100::ms => now;
-    }
-}
-spork~ test();
+
+spork~ lib.predation(lib.bd, lib.bass, 500::ms);
+spork~ lib.predation(lib.sqr, lib.sin, 50::ms);
 
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
 //spork~ lib.bees(6);
 spork~ playBass();
-//spork~ playSin();
+spork~ playSin();
 spork~ playSqr();
 spork~ filter();
 beat*16 => now;
