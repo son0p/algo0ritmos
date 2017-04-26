@@ -23,8 +23,6 @@ fun void drums()
   {
     // cast
     (Math.sin( 120*(now/ms))*1.70) $ int => int position;
-    <<< position >>>;
-    // esta entrando porque no suena_?????????????
     if( position == 0)
     {
       lib.playDrums(lib.bd, lib.bdImpulse );
