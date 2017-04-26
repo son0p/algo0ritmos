@@ -15,7 +15,6 @@ public class Library
   }
   //
   // instrumentos =========================================
-  
 
   SinOsc sinWave => ADSR sin => dac;
   sin.set( 0::ms, 500::ms, .0, 100::ms );

@@ -17,31 +17,25 @@ int chanceBassNotes[16];
 int chanceMel[16];
 int chanceMelNotes[16];
 
-
-// kick
-[0,4,8,12] @=> int onKick[];
-for( int i; i < onKick.cap(); i++)
+fun void drums()
 {
-  100 => chanceBd[onKick[i]]; 
+  while(true)
+  {
+    // cast
+    (Math.sin( 120*(now/ms))*1.70) $ int => int position;
+    <<< position >>>;
+    // esta entrando porque no suena_?????????????
+    if( position == 0)
+    {
+      lib.playDrums(lib.bd, lib.bdImpulse );
+      lib.run(beat*2);
+    }
+    else
+    {
+      lib.run(beat);
+    }
+  }
 }
-
-// melody
-[2  ,  3,  4,   5,  6,  8, 10, 12, 14] @=> int onMel[];
-[100, 90, 100, 70, 50, 50, 50, 50, 50] @=> int onMelChances[];
-lib.fillArray( chanceMel, onMel, onMelChances);
-// notas
-[ 0,  12,  3,  -2, 7 , 0, 3, 24, 48] @=> int melNoteAlterations[];
-lib.fillArray( chanceMelNotes, onMel, melNoteAlterations);
-
-lib.floatChance( 50, 0, 1 );
-
-// posiciones en que suena
-[  2,  6,  10, 14] @=> int onBass[];
-[100, 90, 100, 70] @=> int onBassChances[];
-lib.fillArray( chanceBass, onBass, onBassChances);
-// notas
-[ 0,  12,  0,  -2] @=> int bassNoteAlterations[];
-lib.fillArray( chanceBassNotes, onBass, bassNoteAlterations);
 
 fun void playBees()
 {
@@ -59,18 +53,19 @@ fun void playBees()
 
 fun void playBass()
 {
-    lib.revNR.mix    (0.2);
-    lib.sawWave.gain (0.03);
-    lib.bass.set      ( 0::ms, 100::ms, 0.3, 5::ms);
-    lib.rev          (lib.bass);
+  lib.revNR.mix    (0.2);
+  lib.sawWave.gain (0.03);
+  lib.bass.set      ( 0::ms, 100::ms, 0.3, 5::ms);
+  lib.rev          (lib.bass);
 
-    while(true){
-        lib.bass.keyOn();
-        Std.mtof(root + 12 + Math.sin( 100*(now/ms))*10.1001*pi) => float freq;
-        (lib.magneticGrid(ref,freq))/8 => lib.sawWave.freq;
-        lib.run(beat*2);
-        lib.bass.keyOff();
-    }
+  while(true)
+  {
+    lib.bass.keyOn();
+    Std.mtof(root + 12 + Math.sin( 100*(now/ms))*10.1001*pi) => float freq;
+    (lib.magneticGrid(ref,freq))/8 => lib.sawWave.freq;
+    lib.run(beat*2);
+    lib.bass.keyOff();
+  }
 }
 
 fun void playSin()
@@ -97,7 +92,7 @@ fun void playSqr()
   15.00001 => float amplitude;
   while(true){
     lib.sqr.keyOn();
-    Std.mtof(root + 36 + Math.cos( 100*(now/ms))*8.1001*pi) => float freq;
+    Std.mtof(root + 36 + Math.tan( 100*(now/ms))*8.1001*pi) => float freq;
     lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
     lib.run(beat * 2);
     [1,2,4,8] @=> int step[];
@@ -131,25 +126,15 @@ fun int checkArray( int seq[], int iter )
   return value;
 }
 
-fun void drums()
+// perturba el comportamiento de un ADSR según una función matemática
+fun void perturbation()
 {
-  0 => int i;
-  while(true)
-  {
-    checkArray( onKick, i ) => int kOn;
-    if( kOn == 1 )
-      {
-        lib.playDrums(lib.bd, lib.bdImpulse );
-      }
-    //lib.playDrums(1, lib.sd );
-    lib.run(beat);
-    i++;
-  }
+  
 }
 
 
-spork~ lib.predation(lib.bd, lib.bass, 500::ms);
-spork~ lib.predation(lib.sqr, lib.sin, 50::ms);
+//spork~ lib.predation(lib.bd, lib.bass, 500::ms);
+//spork~ lib.predation(lib.sqr, lib.sin, 50::ms);
 
 //spork~ lib.bassLine(1, 4);
 spork~ drums();
@@ -157,7 +142,7 @@ spork~ drums();
 spork~ playBass();
 spork~ playSin();
 spork~ playSqr();
-spork~ filter();
+//spork~ filter();
 beat*16 => now;
 
 Machine.add(me.dir()+"/live2001");
