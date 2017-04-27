@@ -10,6 +10,22 @@
      :  Std.mtof(root + 36 + (Math.sin((now/ms)/1000))) => float freq;
      :  beat => now;
 ***** ¿Unos valores de referencia (escala) y doblegar la altura al valor mas cercano de la escala?
+      
+:      // aproximar según cercanía
+:      fun float magneticGrid(float ref[], float src)
+:      {
+:        0 => int index;
+:        Std.fabs( src - ref[0] ) => float difference;
+:        for( 0 => int i; i < ref.cap(); i++)
+:        {
+:          if( difference > Std.fabs( src - ref[i]))
+:          {
+:            Std.fabs( src - ref[i]) => difference;
+:            i => index;
+:          }
+:        }
+:        return ref[index];
+:      }
 * Uso
 En una terminal ejecute ChucK en modo loop =$ chuck --loop= 
 
