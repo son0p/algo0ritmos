@@ -1,0 +1,10 @@
+* ¿Cómo modelar  matemáticamente una música?
+** ¿Cómo se describe una melodía?
+*** ¿Arrays multidimensionales que informen sobre alturas y duraciones? 
+*** ¿Generadores aleatorios?
+**** ¿Reglas para los generadores aleatorios?
+*** ¿Funciones?
+**** ¿Trigonométricas?
+***** ¿Unos valores de referencia (escala) y doblegar la altura al valor mas cercano de la escala?
+
+
