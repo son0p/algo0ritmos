@@ -4,7 +4,11 @@
 *** ¿Generadores aleatorios?
 **** ¿Reglas para los generadores aleatorios?
 *** ¿Funciones?
+    Funciones periódicas o series de tiempo generan curvas que pueden ser explotadas como relieves melódicos
 **** ¿Trigonométricas?
+     La función seno definiendo la dirección que va tomando una melodía:
+     :  Std.mtof(root + 36 + (Math.sin((now/ms)/1000))) => float freq;
+     :  beat => now;
 ***** ¿Unos valores de referencia (escala) y doblegar la altura al valor mas cercano de la escala?
 * Uso
 En una terminal ejecute ChucK en modo loop =$ chuck --loop= 
