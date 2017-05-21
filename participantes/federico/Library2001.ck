@@ -113,7 +113,6 @@ public class Library
     instrument.keyOff();
     if( active == 1 ){ instrument.keyOn();  }
   }
-  
   // verifica la presencia en el array
   fun int checkArray( int seq[], int iter )
   {
