@@ -97,17 +97,23 @@ public class Library
   // ---- Players
   //.............. playDrums
 
-  fun void playDrums( ADSR instrument, Impulse imp)
+  fun void playDrums( ADSR instrument )
   {
     instrument.keyOff();
-    instrument.keyOn(); 1.0 => imp.next;  
+    instrument.keyOn();
+  }
+  fun void playDrums( ADSR instrument, Impulse imp )
+  {
+    instrument.keyOff();
+    instrument.keyOn(); 1.0 => imp.next;
   }
 
-  fun void playDrums( int active,  ADSR instrument)
+  fun void playDrums( int active,  ADSR instrument )
   {
     instrument.keyOff();
     if( active == 1 ){ instrument.keyOn();  }
   }
+  
   // verifica la presencia en el array
   fun int checkArray( int seq[], int iter )
   {
@@ -248,4 +254,24 @@ public class Library
   {
     ob => revNR => dac;
   }
+    // ================ Generators
+    // ------- Rythm Generators
+    // .... Euclidean
+    fun int[] euclideangenerator ( int pulses, int steps ) {
+        // @jazzmonster Euclidean rhythm generator based Bresenham's algorithm
+        // pulses - amount of pulses
+        // steps - amount of discrete timing intervals
+        int seq[steps];
+        int error;
+        for ( int i; i < steps; i++ ) {
+            error + pulses => error;
+            if ( error > 0 ) {
+                true => seq[i];
+                error - steps => error;
+            } else {
+                false => seq[i];
+            }
+        }
+        return seq; 
+    }
 }

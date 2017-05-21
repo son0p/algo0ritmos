@@ -1,13 +1,11 @@
 Library lib;
 120::ms => dur beat;
 36 => int root;
+
 // frecuency center
 Std.mtof(root*2) => float rootFreq;
 // frecuencias armonicas
-[rootFreq, rootFreq*2, rootFreq*1.189207115, rootFreq*1.3348398542
- , rootFreq*1.4983070769, rootFreq*1.7817974363
-
-] @=> float ref[];
+[rootFreq, rootFreq*2, rootFreq*1.189207115, rootFreq*1.3348398542, rootFreq*1.4983070769, rootFreq*1.7817974363] @=> float ref[];
 
 int chanceBd[16];
 int chanceSd[16];
@@ -17,7 +15,7 @@ int chanceBassNotes[16];
 int chanceMel[16];
 int chanceMelNotes[16];
 
-fun void drums()
+fun void drumsFunction()
 {
   while(true)
   {
@@ -35,6 +33,43 @@ fun void drums()
   }
 }
 
+fun void drums( int seq[], ADSR instrument )
+{
+    while(true)
+    {
+        for( 0 => int i; i < seq.cap(); i++)
+        {
+          if( seq[i] == 1 )
+          {
+            lib.playDrums( instrument );
+            lib.run(beat);
+          }
+          else
+          {
+            lib.run(beat);
+          }
+        }
+    }
+}
+fun void drumsImpulse( int seq[], ADSR instrument )
+{
+    while(true)
+    {
+        for( 0 => int i; i < seq.cap(); i++)
+        {
+            if( seq[i] == 1 )
+            {
+                lib.playDrums( instrument, lib.bdImpulse );
+                lib.run(beat);
+            }
+            else
+            {
+                lib.run(beat);
+            }
+        }
+    }
+}
+
 fun void playBees()
 {
   lib.bees(6);
@@ -49,36 +84,33 @@ fun void playBees()
   }
 }
 
+
 fun void playBass()
 {
-  lib.revNR.mix    (0.2);
-  lib.sawWave.gain (0.03);
-  lib.bass.set      ( 0::ms, 100::ms, 0.3, 5::ms);
+  lib.sawWave.gain (0.02);
+  lib.bass.set      ( 0::ms, 100::ms, .0, 100::ms);
   lib.rev          (lib.bass);
 
   while(true)
   {
-    lib.bass.keyOn();
-    Std.mtof(root + 12 + Math.sin( 100*(now/ms))*10.1001*pi) => float freq;
+    Std.mtof(root + 12 + Math.tan( 10*(now/ms))*10.20*pi) => float freq;
     (lib.magneticGrid(ref,freq))/8 => lib.sawWave.freq;
-    lib.run(beat*2);
-    lib.bass.keyOff();
+    lib.run(beat);
   }
 }
+
 
 fun void playSin()
 {
   lib.revNR.mix    (0.2);
-  lib.sinWave.gain (0.05);
-  lib.sin.set      ( 0::ms, 100::ms, 0.3, 5::ms);
+  
+  lib.sin.set      ( 0::ms, 100::ms, 0.0, 5::ms);
   lib.rev          (lib.sin);
 
   while(true){
-    lib.sin.keyOn();
     Std.mtof(root + 48 + Math.cos( 100*(now/ms))*1.1001*pi) => float freq;
     lib.magneticGrid(ref,freq) => lib.sinWave.freq;
-    lib.run(beat*2);
-    lib.sin.keyOff();
+    lib.run(beat);
   }
 }
 fun void playSqr()
@@ -88,14 +120,13 @@ fun void playSqr()
   lib.sqr.set      ( 1::ms, 100::ms, 0.05, 100::ms);
   lib.rev          (lib.sqr);
   15.00001 => float amplitude;
-  while(true){
-    lib.sqr.keyOn();
+  while(true)
+  {
     Std.mtof(root + 36 + Math.tan( 100*(now/ms))*8.1001*pi) => float freq;
     lib.magneticGrid(ref,freq) => lib.sqrWave.freq;
     lib.run(beat * 2);
     [1,2,4,8] @=> int step[];
     lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
-    lib.sqr.keyOff();
   }
 }
 
@@ -130,15 +161,57 @@ fun void perturbation()
   
 }
 
+fun void test()
+    {
+        lib.revNR.mix    (0.1);
+        lib.sqrWave.gain (0.01);
+        lib.sqr.set      ( 1::ms, 100::ms, 0.05, 100::ms);
+        lib.rev          (lib.sqr);
+        15.00001 => float amplitude;
+        while(true){
+            now/ms => float x;
+            lib.sqr.keyOn();
+             //Std.mtof(root + 36 + (Math.sin((now/ms)*(2*pi/10000)))) => float freq;
+             (Math.sin(x*(2*pi/10000)*1))*1000 => float freq;
+            freq => lib.sqrWave.freq;
+            lib.run(beat/10);
+            <<<freq>>>;
+            //[1,2,4,8] @=> int step[];
+            //lib.run(beat*(step[Math.random2(0,step.cap()-1)]));
+            lib.sqr.keyOff();
+        }
+    }
 
-//spork~ lib.predation(lib.bd, lib.bass, 500::ms);
+// mixer
+0.9 =>   lib.bd.gain;
+0.4 =>   lib.sd.gain;
+0.3 =>   lib.hh.gain;
+0.6 => lib.bass.gain;
+0.5 =>  lib.sin.gain;
+0.6 =>  lib.sqr.gain;
+
+spork~ lib.predation(lib.bd, lib.bass, 500::ms);
 //spork~ lib.predation(lib.sqr, lib.sin, 50::ms);
 
 //spork~ lib.bassLine(1, 4);
-spork~ drums();
+//spork~ test();
+
+
+spork~ drumsImpulse(lib.euclideangenerator(4,16), lib.bd);
+spork~ drums(lib.euclideangenerator(3,4), lib.hh);
+spork~ drums(lib.euclideangenerator(7,12), lib.sd); 
+
 //spork~ lib.bees(6);
+
+spork~ drums(lib.euclideangenerator(8,12), lib.bass);
 spork~ playBass();
-spork~ playSin();
+lib.revNR.mix(0.02);
+
+spork~ drums(lib.euclideangenerator(6,21), lib.sin);
+spork~ playSin(); 
+lib.sinWave.gain (0.03);
+
+spork~ drums(lib.euclideangenerator(5,16), lib.sqr);
 spork~ playSqr();
 //spork~ filter();
 beat*16 => now;
