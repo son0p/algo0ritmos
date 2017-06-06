@@ -38,7 +38,7 @@ fun void playSin()
   lib.sin.set      ( 0::ms, 200::ms, 0.0, 5::ms);
   lib.rev          (lib.sin);
   while(true){
-    1000+(Math.sin(now/ms*1.8))+Math.tan(now/ms*4)*1000=> float freq;
+    500+(Math.sin(now/ms*1.8))+Math.cos(now/ms*4)*100=> float freq;
     <<< "freq:"+freq+" "+"now"+now/ms>>>;
     lib.magneticGrid(ref,freq) => lib.sinWave.freq;
     //freq => lib.sinWave.freq;
