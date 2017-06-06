@@ -1,5 +1,5 @@
 Library lib;
-120::ms => dur beat;
+150::ms => dur beat;
 36 => int root;
 
 // frecuency center
@@ -59,11 +59,13 @@ fun void playBass()
 fun void playSin()
 {
   lib.revNR.mix    (0.2);
-  lib.sin.set      ( 0::ms, 100::ms, 0.0, 5::ms);
+  lib.sin.set      ( 0::ms, 200::ms, 0.0, 5::ms);
   lib.rev          (lib.sin);
   while(true){
-    Std.mtof(root + 32 + Math.cos( 10*Math.sin(now/ms)*10*(now/ms))*1.2001*(4*pi)) => float freq;
+    1000+(Math.sin(now/ms*1.3))+Math.cos(now/ms*4)*500=> float freq;
+    <<< "freq:"+freq+" "+"now"+now/ms>>>;
     lib.magneticGrid(ref,freq) => lib.sinWave.freq;
+    //freq => lib.sinWave.freq;
     lib.run(beat);
   }
 }
@@ -109,15 +111,15 @@ spork~ lib.predation(lib.bd, lib.bass, 500::ms);
 
 //spork~ lib.bassLine(1, 4);
 //spork~ test();
-spork~ play(lib.euclideangenerator(4,16), lib.bd);         // bd
- spork~ play(lib.euclideangenerator(7,15), lib.sd);        // sn
- spork~ play(lib.euclideangenerator(3,4), lib.hh);         // hh
- spork~ play(lib.euclideangenerator(5,12), lib.bass);      // bass
- spork~ playBass();
-spork~ play(lib.euclideangenerator(12,43), lib.sin);       // sine
+// spork~ play(lib.euclideangenerator(8,16), lib.bd);         // bd
+//  spork~ play(lib.euclideangenerator(7,15), lib.sd);        // sn
+//  spork~ play(lib.euclideangenerator(3,4), lib.hh);         // hh
+// spork~ play(lib.euclideangenerator(5,12), lib.bass);      // bass
+// spork~ playBass();
+spork~ play(lib.euclideangenerator(1,1), lib.sin);       // sine
 spork~ playSin();
-spork~ play(lib.euclideangenerator(2,6), lib.sqr);       // sqr
-spork~ playSqr();
+//spork~ play(lib.euclideangenerator(2,6), lib.sqr);       // sqr
+//spork~ playSqr();
 
 //spork~ filter();
 //spork~ lib.bees(6);
