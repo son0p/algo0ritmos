@@ -33,7 +33,7 @@ fun void playSin()
   while(true)
   {
     now/ms + root => float x;
-    root + Math.sin(x*1.3)/Math.exp(x/18)+Math.cos(x*4) * 1000=> float freq;
+    root + Math.sin(x)+Math.cos(x*4) * 1000=> float freq;
     lib.magneticGrid(ref,freq)/4 => lib.sinWave.freq;
     lib.run(beat);
   }
@@ -43,8 +43,8 @@ fun void playBass()
 {
   while(true)
   {
-    now/ms => float x;
-    root + Math.sin(x)+Math.sin(x/8)+Math.tan(x/4000) * 200 => float freq;
+    now/ms  => float x;
+    root + Math.sin(x/8)+Math.sin(x*80)+Math.cos(x*4000) * 200 => float freq;
     (lib.magneticGrid(ref,freq))/16 => lib.sawWave.freq;
     //chout <= lib.sawWave.freq();
     lib.run(beat);
@@ -80,25 +80,34 @@ spork~ readFunc(myFunc);
 
 // ======== mixer ===========
 lib.sin.gain     (0.05);
-lib.sin.set      ( 0::ms, 200::ms, 0.1, 100::ms);
+lib.sin.set      ( 0::ms, 200::ms, 0.0, 10::ms);
 lib.rev          (lib.sin);
-lib.revNR.mix    (0.1);
+lib.revNR.mix    (0.05);
 
 lib.sawWave.gain (0.02);
 lib.bass.set     ( 0::ms, 100::ms, .08, 10::ms);
 lib.rev          (lib.bass);
 
 // ========= tracks =================
+
+
+fun void climate( int p[][] )
+{
 //spork~ lib.predation(lib.bd, lib.bass, 500::ms);
 //spork~ lib.predation(lib.sqr, lib.sin, 50::ms);
-spork~ play(lib.euclideangenerator(4,16), lib.bd);         // bd
-spork~ play(lib.euclideangenerator(3,15), lib.sd);        // sn
-spork~ play(lib.euclideangenerator(3,4), lib.hh);         // hh
-spork~ play(lib.euclideangenerator(8,16), lib.bass);      // bass
-spork~ playBass();
-spork~ play(lib.euclideangenerator(3,12), lib.sin);
+  spork~ play(lib.euclideangenerator(p[0][0],p[0][1]), lib.bd);         // bd
+  spork~ play(lib.euclideangenerator(p[1][0],p[1][1]), lib.sd);        // sn
+  spork~ play(lib.euclideangenerator(p[2][0],p[2][1]), lib.hh);         // hh
+  spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.bass);      // bass
+  spork~ playBass();
+  spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin);
 //spork~ play(lib.euclideangenerator(4,12), lib.sin);       // sine
-spork~ playSin();
+    spork~ playSin();
+}
+
+// ------- climate -----------
+climate([[4,16],[1,15],[3,4],[3,12],[2,16]]); // drop
+
 
 // === transformations ====
 spork~ lib.predation(lib.bd, lib.bass, 500::ms);
