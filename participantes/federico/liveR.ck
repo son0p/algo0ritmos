@@ -1,5 +1,5 @@
 Library lib;
-FileIO fio;
+
 120::ms => dur beat;
 32 => int cicleSize;
 0 => int counter;
@@ -7,7 +7,9 @@ FileIO fio;
 // frecuencias armonicas
 [root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
 
-"myFunc.txt" => string myFunc ; // test
+
+
+
 
 fun void play( int seq[], ADSR instrument )
 {
@@ -49,79 +51,28 @@ fun void playSin()
 
 fun void playBass()
 {
-  while(true)
+  FileIO fio;
+  // open a file
+  me.dir()+"bass.txt" => string name;
+  fio.open(name, FileIO.READ);
+  // ensure it's ok
+  if(!fio.good()) {
+    cherr <= "can't open file: " <= name <= " for reading..." <= IO.newline();
+    me.exit();
+  }
+  while( fio.more() )
   {
     beat/ms * 16 => float fBeat; 
     now/ms % fBeat => float x;
-    root + Math.tan(x/8) * 100 => float freq;
-    //root + myFunc() => float freq;
-    (lib.magneticGrid(ref,freq))/16 => lib.sawWave.freq;
-    //chout <= lib.sawWave.freq();
+    root + Std.atoi(fio.readLine())+.0 => float freq;
+    lib.magneticGrid(ref,freq)/16 => lib.sawWave.freq;
     lib.run(beat);
   }
+  fio.close();
 }
 
 //==================== test =====================
 
-
-
-0 => int i;
-fun void readFunc(string name)
-{
-
-  while(true)
-  {
-    // open a file
-    fio.open(me.dir()+"bass.txt", FileIO.READ);
-    // ensure it's ok
-    if(!fio.good()) {
-      cherr <= "can't open file: " <= name <= " for reading..." <= IO.newline();
-      me.exit();
-    }
-    for( 0 => int i; i < 1; i++)
-    {
-      fio.readLine() => string myTrigo;
-      //<<< "read:"+ myTrigo >>>;
-    }
-    500::ms => now;
-  }
-}
-spork~ readFunc(myFunc);
-
-fun int quarterCounter()
-{
-  while(true)
-  {
-    beat  => now;
-    counter + 1 => counter;
-  }
-}
-
-fun void baseClimate()
-{
-  
-}
-fun void variClimate()
-{
-   
-}
-
-fun void conductor( int base[], int var[])
-{
-    while(true)
-    {
-        beat/ms * 16 => float fBeat; 
-        now/ms % fBeat  => float x;
-        if (x == 0){ climate(); }
-        <<< x >>>;
-        beat  => now;
-    }
-}
-[[4,16],[9,16],[3,4],[6,16],[7,16]] @=> int base[][];
-[[1,7],[6,16],[3,4],[1,12],[4,12]] @=> int var[][];
-
-
-spork~ conductor(base[],var[]);
 //======= end test ===========
 
 // ======== mixer ===========
@@ -156,10 +107,9 @@ fun void climate( int p[][] )
 }
 
 // ------- climate -----------
-climate([[4,16],[9,16],[3,4],[6,16],[7,16]]); // drop
-//climate([[4,16],[0,16],[3,4],[4,12],[3,8]]); // buildUp
+//climate([[4,16],[9,16],[3,4],[6,16],[7,16]]); 
+climate([[4,16],[0,16],[3,4],[4,12],[3,8]]); // buildUp
 
-spork~ quarterCounter();
 
 
 
@@ -170,7 +120,8 @@ spork~ quarterCounter();
 spork~ lib.predation(lib.bd, lib.bass, 1000::ms);
 
 // === live, die, and reborn ===
+
 beat*cicleSize => now;
-Machine.add(me.dir()+"/live2001");
+Machine.add(me.dir()+"/liveR");
 
 

@@ -16,7 +16,8 @@ public class Library
   //
   // instrumentos =========================================
 
-  SinOsc sinWave => ADSR sin => dac;
+  SinOsc sinWave => ADSR sin => Pan2 p1 => dac;
+    -0.7 => p1.pan;
   sin.set( 0::ms, 500::ms, .0, 100::ms );
   SqrOsc sqrWave => ADSR sqr => LPF sqrFilter => dac;
   sqr.set( 0::ms, 500::ms, .0, 500::ms );
@@ -40,8 +41,9 @@ public class Library
   0.15 => sawWave.gain;
   bass.set( 0::ms, 80::ms, sawWave.gain()/1.5, 100::ms );
   // --Melody
-  BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => dac;
-  0.35 => sin1.gain;
+  BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => Pan2 p2 => dac;
+  0.7 => p2.pan;
+  0.07 => sin1.gain;
   melody1.set( 0::ms, 80::ms, sin1.gain()/1.5, 100::ms );
   0.03 => melodyReverb.mix;
 
