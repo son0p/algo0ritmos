@@ -40,20 +40,20 @@ fun void playSin()
   {
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
-    root + Math.sin(x*2)*1000=> float param1;
+    root + Math.sin(x)*1000=> float param1;
     lib.magneticGrid(ref,param1)/4 => lib.sinWave.freq;
-    root + (Math.sin(x/2)*1000)  => float param2;
+    root + (Math.sin(x/2)*Math.sin(x)*1000)  => float param2;
     lib.magneticGrid(ref,param2)/4 => lib.sin1.freq;
     //param2 + root => lib.sin1.freq;
     lib.run(beat);
   }
 }
 
-fun void playBass()
+fun void playBass( string name)
 {
   FileIO fio;
   // open a file
-  me.dir()+"bass.txt" => string name;
+  me.dir()+ name;
   fio.open(name, FileIO.READ);
   // ensure it's ok
   if(!fio.good()) {
@@ -99,7 +99,7 @@ fun void climate( int p[][] )
   spork~ play(lib.euclideangenerator(p[1][0],p[1][1]), lib.sd);        // sn
   spork~ play(lib.euclideangenerator(p[2][0],p[2][1]), lib.hh);         // hh
   spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.bass);      // bass
-  spork~ playBass();
+  spork~ playBass("bass.txt");
   spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin);
   spork~ playSin();
   spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.melody1);
@@ -107,13 +107,9 @@ fun void climate( int p[][] )
 }
 
 // ------- climate -----------
-//climate([[4,16],[9,16],[3,4],[6,16],[7,16]]); 
-climate([[4,16],[0,16],[3,4],[4,12],[3,8]]); // buildUp
-
-
-
-
-
+climate([[4,16],[9,16],[3,4],[6,16],[7,16]]); 
+//climate([[1,16],[0,16],[3,4],[2,12],[4,8]]); // buildUp
+//climate([[7,16],[5,16],[7,7],[6,16],[1,12]]); 
 
 
 // === transformations ====
