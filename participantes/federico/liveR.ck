@@ -34,20 +34,7 @@ fun void play( int seq[], ADSR instrument )
   }
 }
 
-fun void playSin()
-{
-  while(true)
-  {
-    beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
-    now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
-    root + Math.sin(x)*1000=> float param1;
-    lib.magneticGrid(ref,param1)/4 => lib.sinWave.freq;
-    root + (Math.sin(x/2)*Math.sin(x)*1000)  => float param2;
-    lib.magneticGrid(ref,param2)/4 => lib.sin1.freq;
-    //param2 + root => lib.sin1.freq;
-    lib.run(beat);
-  }
-}
+
 
 fun void playBass( string name)
 {
@@ -69,6 +56,48 @@ fun void playBass( string name)
     lib.run(beat);
   }
   fio.close();
+}
+
+fun void playSin(string name)
+{
+  FileIO fio;
+  // open a file
+  me.dir()+ name;
+  fio.open(name, FileIO.READ);
+  // ensure it's ok
+  if(!fio.good()) {
+    cherr <= "can't open file: " <= name <= " for reading..." <= IO.newline();
+    me.exit();
+  }
+  while( fio.more() )
+  {
+    beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
+    now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
+    root + Std.atoi(fio.readLine())+.0=> float param1;
+    lib.magneticGrid(ref,param1)/4 => lib.sinWave.freq;
+    lib.run(beat);
+  }
+}
+
+fun void playL3(string name)
+{
+  FileIO fio;
+  // open a file
+  me.dir()+ name;
+  fio.open(name, FileIO.READ);
+  // ensure it's ok
+  if(!fio.good()) {
+    cherr <= "can't open file: " <= name <= " for reading..." <= IO.newline();
+    me.exit();
+  }
+  while( fio.more() )
+  {
+    beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
+    now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
+    root + Std.atoi(fio.readLine())+.0=> float param1;
+    lib.magneticGrid(ref,param1)/4 => lib.sin1.freq;
+    lib.run(beat);
+  }
 }
 
 //==================== test =====================
@@ -101,13 +130,14 @@ fun void climate( int p[][] )
   spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.bass);      // bass
   spork~ playBass("bass.txt");
   spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin);
-  spork~ playSin();
-  spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.melody1);
+  spork~ playSin("line2.txt");
+  spork~ play(lib.euclideangenerator(p[5][0],p[5][1]), lib.melody1);
+  spork~ playL3("line3.txt");
 //spork~ play(lib.euclideangenerator(4,12), lib.sin);       // sine
 }
 
 // ------- climate -----------
-climate([[4,16],[9,16],[3,4],[6,16],[7,16]]); 
+climate([[4,16],[9,16],[3,4],[6,16],[7,16], [7,12]]); 
 //climate([[1,16],[0,16],[3,4],[2,12],[4,8]]); // buildUp
 //climate([[7,16],[5,16],[7,7],[6,16],[1,12]]); 
 
