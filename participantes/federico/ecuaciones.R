@@ -16,14 +16,16 @@ plot(sin(x)+sin(x/8)+tan(x/400)*200, cex=0.1)
 plot(bass <- c(sin(x)/tan(x/40*x))) ## getting down
 plot(bass <- c(x*sin(x)/exp(x*x)*10000)) ## sigmoid alike
 
+## fabs
+plot(bass <- c(sin(x)/tan(x*40))*5000)
 
 
-bass <- c(sin(x)*100)
-line2 <- c(sin(x)*500)
-line3 <- c(sin(x)*1000)
+plot(bass <- c(sin(x)/tan(x*40))*5000, col="red")
+plot(line2 <- c(sin(x*x)+sin(x)*1000), col="green")
+plot(line3 <- c(sin(x)+sin(x*x)*2000), col="gray")
 
 write(bass, file="bass.txt", ncolumns=1)
 write(line2, file="line2.txt", ncolumns=1)
 write(line3, file="line3.txt", ncolumns=1)
 
-curve(line2)
+
