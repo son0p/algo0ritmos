@@ -5,7 +5,7 @@ Library lib;
 0 => int counter;
 1000.0 => float root; // frecuency center
 // frecuencias armonicas
-[root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
+[root/16,root/8, root/2, root/4, root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
 
 
 
@@ -51,8 +51,8 @@ fun void playBass( string name)
   {
     beat/ms * 16 => float fBeat; 
     now/ms % fBeat => float x;
-    root + Std.atoi(fio.readLine())+.0 => float freq;
-    lib.magneticGrid(ref,freq)/16 => lib.sawWave.freq;
+    Std.atoi(fio.readLine())+.0 => float freq;
+    lib.magneticGrid(ref,freq) => lib.sawWave.freq;
     lib.run(beat);
   }
   fio.close();
@@ -73,8 +73,8 @@ fun void playSin(string name)
   {
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
-    root + Std.atoi(fio.readLine())+.0=> float param1;
-    lib.magneticGrid(ref,param1)/4 => lib.sinWave.freq;
+    Std.atoi(fio.readLine())+.0=> float param1;
+    lib.magneticGrid(ref,param1) => lib.sinWave.freq;
     lib.run(beat);
   }
 }
@@ -94,8 +94,8 @@ fun void playL3(string name)
   {
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
-    root + Std.atoi(fio.readLine())+.0=> float param1;
-    lib.magneticGrid(ref,param1)/4 => lib.sin1.freq;
+    Std.atoi(fio.readLine())+.0=> float param1;
+    lib.magneticGrid(ref,param1) => lib.sin1.freq;
     lib.run(beat);
   }
 }

@@ -1,4 +1,4 @@
-x <- seq(0,1, 0.01)
+x <- seq(0,64, 1)
 
 plot(sin(x), cex=0.1)
 plot(sin(x)+sin(2*x), cex=0.1)
@@ -18,11 +18,24 @@ plot(bass <- c(x*sin(x)/exp(x*x)*10000)) ## sigmoid alike
 
 ## fabs
 plot(bass <- c(sin(x)/tan(x*40))*5000)
+plot(line2 <- c(sin(x/10)/sin(x*2)*4000), col="blue")
+
+## S1 
+plot(bass <- c(cos(x/16)*200), col="red")
+plot(line2 <- c(sin(x/10)/sin(x*2)*4000), col="blue")
+plot(line3 <- c(sin(x)+sin(x*x)*1024), col="brown")
+
+## S2
+plot(bass <- c(sin(x/162)+cos(x/16)*200), col="red")
+plot(line2 <- c(sin(x/10)/sin(x*4)*1000), col="blue")
+plot(line3 <- c(sin(x/10)+sin(x*2)*1000), col="brown")
+
+## S3 air
+plot(bass <- c(sin(x/20.8)+cos(x*4)*200), col="red")
+plot(line2 <- c(sin(x/10)/sin(x*4)*1000), col="blue")
+plot(line3 <- c(sin(x/10)+sin(x*2)*4000), col="brown")
 
 
-plot(bass <- c(sin(x)/tan(x*40))*5000, col="red")
-plot(line2 <- c(sin(x*x)+sin(x)*1000), col="green")
-plot(line3 <- c(sin(x)+sin(x*x)*2000), col="gray")
 
 write(bass, file="bass.txt", ncolumns=1)
 write(line2, file="line2.txt", ncolumns=1)
