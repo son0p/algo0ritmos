@@ -1,5 +1,30 @@
 public class Library
 {
+  // ================== ARRAYS ======================
+
+  fun void printArray( float array[] )
+  {
+    for( 0=> int i; i < array.cap(); i++)
+    {
+      <<<array[i]>>>;
+    }
+  }
+  fun void printArray( int array[] )
+  {
+    for( 0=> int i; i < array.cap(); i++)
+    {
+      <<<array[i]>>>;
+    }
+  }
+  fun void printArray( string array[] )
+  {
+    for( 0=> int i; i < array.cap(); i++)
+    {
+      <<<array[i]>>>;
+    }
+  }
+
+
   36 => float root;
   // función generar probabilidades según corpus
   fun static float floatChance( int percent, float value1, float value2)
