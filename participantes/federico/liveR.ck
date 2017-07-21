@@ -36,7 +36,7 @@ fun float[] semitonesGen(float freqFrom, float freqTo)
   return semitones;
 
 }
-semitonesGen(100, 10000) @=> float notes[];
+semitonesGen(20, 20000) @=> float notes[];
 
 // ERROR : array out of bounds
 fun float[] scaleGenerator(float notes[], int scaleJumps[])
@@ -51,8 +51,9 @@ fun float[] scaleGenerator(float notes[], int scaleJumps[])
   }
   return scale;
 }
-[2,1,2,2,2,1] @=> int lydian[];
-scaleGenerator(notes,lydian ) @=> ref;
+// [2,1,2,2,2,1] @=> int lydian[];
+[3,2,2,3,2] @=> int minorPenta[];
+scaleGenerator(notes,minorPenta ) @=> ref;
 
 
 
@@ -97,13 +98,13 @@ fun void playBass( string name)
     beat/ms * 16 => float fBeat; 
     now/ms % fBeat => float x;
     Std.atoi(fio.readLine())+.0 => float freq;
-    lib.magneticGrid(ref,freq) => lib.sawWave.freq;
+    lib.magneticGrid(ref,freq) => lib.sqr0.freq;
     lib.run(beat);
   }
   fio.close();
 }
 
-fun void playSin(string name)
+fun void playL2(string name)
 {
   FileIO fio;
   // open a file
@@ -119,7 +120,11 @@ fun void playSin(string name)
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    lib.magneticGrid(ref,param1) => lib.sinWave.freq;
+    if( param1 < 200 ){ lib.sin0.gain(0); }
+    if( param1 >= 200 ){
+      lib.sin0.gain(0.30); //TODO:fix
+      lib.magneticGrid(ref,param1) => lib.sin0.freq;
+    }
     lib.run(beat);
   }
 }
@@ -140,7 +145,11 @@ fun void playL3(string name)
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    lib.magneticGrid(ref,param1) => lib.sin1.freq;
+    if( param1 < 200 ){ lib.blit0.gain(0); }
+    if( param1 >= 200 ){
+      lib.blit0.gain(0.30); // TODO:fix
+      lib.magneticGrid(ref,param1) => lib.blit0.freq;
+      }
     lib.run(beat);
   }
 }
@@ -150,17 +159,17 @@ fun void playL3(string name)
 //======= end test ===========
 
 // ======== mixer ===========
-lib.sin.gain     (0.05);
-lib.sin.set      ( 0::ms, 200::ms, 0.0, 10::ms);
-lib.sin1.gain    (0.5);
+//lib.sin.gain     (0.05);
+lib.sin0env.set      ( 0::ms, 200::ms, 0.0, 10::ms);
+//lib.sin1.gain    (0.3);
 //lib.rev          (lib.sin);
-lib.revNR.mix    (0.05);
+lib.revNR.mix    (0.00);
 lib.sd.gain      (0.29);
 lib.hh.gain      (0.4);
 
-lib.sawWave.gain (0.08);
-lib.bass.set     ( 0::ms, 100::ms, .08, 10::ms);
-lib.rev          (lib.bass);
+lib.sqr0.gain (0.08);
+lib.sqr0env.set     ( 0::ms, 100::ms, .08, 10::ms);
+lib.rev          (lib.sqr0);
 
 // ========= tracks =================
 
@@ -172,25 +181,25 @@ fun void climate( int p[][] )
   spork~ play(lib.euclideangenerator(p[0][0],p[0][1]), lib.bd);         // bd
   spork~ play(lib.euclideangenerator(p[1][0],p[1][1]), lib.sd);        // sn
   spork~ play(lib.euclideangenerator(p[2][0],p[2][1]), lib.hh);         // hh
-  spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.bass);      // bass
+  spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.sqr0env);      // bass
   spork~ playBass("bass.txt");
-  spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin);
-  spork~ playSin("line2.txt");
-  spork~ play(lib.euclideangenerator(p[5][0],p[5][1]), lib.melody1);
+  spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin0env);
+  spork~ playL2("line2.txt");
+  spork~ play(lib.euclideangenerator(p[5][0],p[5][1]), lib.blit0env);
   spork~ playL3("line3.txt");
 //spork~ play(lib.euclideangenerator(4,12), lib.sin);       // sine
 }
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[2,16],[3,4],[7,16],[6,16], [64,64]]); //beat
+climate([[4,16],[2,16],[3,4],[4,16],[4,12], [4,16]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro
 
 
 // === transformations ====
-spork~ lib.predation(lib.bd, lib.bass, 1000::ms);
+spork~ lib.predation(lib.bd, lib.sqr0env, 1000::ms);
 
 // === live, die, and reborn ===
 
