@@ -1,7 +1,7 @@
 Library lib;
 
 120::ms => dur beat;
-64 => int cicleSize;
+32 => int cicleSize;
 0 => int counter;
 1000.0 => float root; // frecuency center
 // frecuencias armonicas
@@ -38,7 +38,6 @@ fun float[] semitonesGen(float freqFrom, float freqTo)
 }
 semitonesGen(20, 20000) @=> float notes[];
 
-// ERROR : array out of bounds
 fun float[] scaleGenerator(float notes[], int scaleJumps[])
 {
   float scale[400]; //TODO: fix
@@ -79,10 +78,7 @@ fun void play( int seq[], ADSR instrument )
     }
   }
 }
-
-
-
-fun void playBass( string name)
+fun void playBass( string name )
 {
   FileIO fio;
   // open a file
@@ -95,8 +91,8 @@ fun void playBass( string name)
   }
   while( fio.more() )
   {
-    beat/ms * 16 => float fBeat; 
-    now/ms % fBeat => float x;
+    // beat/ms * 16 => float fBeat; 
+    // now/ms % fBeat => float x;
     Std.atoi(fio.readLine())+.0 => float freq;
     lib.magneticGrid(ref,freq) => lib.sqr0.freq;
     lib.run(beat);
@@ -122,7 +118,6 @@ fun void playL2(string name)
     Std.atoi(fio.readLine())+.0=> float param1;
     if( param1 < 200 ){ lib.sin0.gain(0); }
     if( param1 >= 200 ){
-      lib.sin0.gain(0.30); //TODO:fix
       lib.magneticGrid(ref,param1) => lib.sin0.freq;
     }
     lib.run(beat);
@@ -147,7 +142,6 @@ fun void playL3(string name)
     Std.atoi(fio.readLine())+.0=> float param1;
     if( param1 < 200 ){ lib.blit0.gain(0); }
     if( param1 >= 200 ){
-      lib.blit0.gain(0.30); // TODO:fix
       lib.magneticGrid(ref,param1) => lib.blit0.freq;
       }
     lib.run(beat);
@@ -159,17 +153,16 @@ fun void playL3(string name)
 //======= end test ===========
 
 // ======== mixer ===========
-//lib.sin.gain     (0.05);
-lib.sin0env.set      ( 0::ms, 200::ms, 0.0, 10::ms);
-//lib.sin1.gain    (0.3);
-//lib.rev          (lib.sin);
-lib.revNR.mix    (0.00);
 lib.sd.gain      (0.29);
-lib.hh.gain      (0.4);
+lib.hh.gain       (0.4);
+lib.sqr0.gain    (0.03);
+//lib.sqr0env.set     ( 0::ms, 10::ms, .0, 1000::ms);
+lib.sin0.gain    (0.1);
+lib.sin0env.set  ( 0::ms, 200::ms, 0.0, 10::ms);
+lib.blit0.gain   (0.05);
+lib.blit0rev.mix      (0.1);
+//lib.rev          (lib.sqr0); // ERROR: se queda sonando
 
-lib.sqr0.gain (0.08);
-lib.sqr0env.set     ( 0::ms, 100::ms, .08, 10::ms);
-lib.rev          (lib.sqr0);
 
 // ========= tracks =================
 
@@ -192,14 +185,14 @@ fun void climate( int p[][] )
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[2,16],[3,4],[4,16],[4,12], [4,16]]); //beat
+climate([[4,16],[2,16],[3,4],[5,16],[8,12], [4,12]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro
 
 
 // === transformations ====
-spork~ lib.predation(lib.bd, lib.sqr0env, 1000::ms);
+//spork~ lib.predation(lib.bd, lib.sqr0env, 1000::ms);
 
 // === live, die, and reborn ===
 

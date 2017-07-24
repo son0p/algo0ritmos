@@ -1,5 +1,6 @@
 public class Library
 {
+  36 => float root;
   // ================== ARRAYS ======================
 
   fun void printArray( float array[] )
@@ -24,8 +25,6 @@ public class Library
     }
   }
 
-
-  36 => float root;
   // función generar probabilidades según corpus
   fun static float floatChance( int percent, float value1, float value2)
   {
@@ -40,8 +39,6 @@ public class Library
   }
   //
   // instrumentos =========================================
-
-  
     // --bassDrum
   Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
   1000 => bdImpulse.gain;
@@ -65,15 +62,14 @@ public class Library
   // Sqr
   SqrOsc sqr0 => ADSR sqr0env => dac;
   0.15 => sqr0.gain;
-  sqr0env.set( 0::ms, 80::ms, sqr0.gain()/1.5, 100::ms );
+  sqr0env.set( 0::ms, 300::ms, sqr0.gain()/1.5, 100::ms );
   SqrOsc sqr1 => ADSR sqr1env => LPF sqr1filter => dac;
   sqr1env.set( 0::ms, 500::ms, .0, 500::ms );
   // Blit
   BlitSaw blit0 => ADSR blit0env => NRev blit0rev => Pan2 blit0pan => dac;
   0.7 => blit0pan.pan;
-  0.07 => blit0.gain;
-  blit0env.set( 0::ms, 80::ms, blit0.gain()/1.5, 100::ms );
-  0.00 => blit0rev.mix;
+  blit0env.set( 0::ms, 200::ms, .0, 100::ms );
+  
 
   // modelado
 
@@ -124,6 +120,42 @@ public class Library
         values[i] => toFill[positions[i]];
       }
   }
+  // verifica la presencia en el array
+  fun int checkArray( int seq[], int iter )
+  {
+    int value;
+    for(int i; i < seq.cap();i++)
+    {
+      if( seq[i] == iter )
+      {
+        1 =>  value;
+      }
+    }
+    return value;
+  }
+  // aproximar según cercanía
+  fun float magneticGrid(float ref[], float src)
+  {
+    0 => int index;
+    Std.fabs( src - ref[0] ) => float difference;
+    for( 0 => int i; i < ref.cap(); i++)
+    {
+      if( difference > Std.fabs( src - ref[i]))
+      {
+        Std.fabs( src - ref[i]) => difference;
+        i => index;
+      }
+    }
+    return ref[index];
+  }
+  // evalua la presencia de <target> en un array <seed[]>
+  fun float evalFor(float seed[], float target)
+  {
+    for(0 => int i; i < seed.cap(); i++)
+    {
+      if( target == seed[i]){ return target;}
+    }
+  }
   // ---- Players
   //.............. playDrums
 
@@ -143,21 +175,6 @@ public class Library
     instrument.keyOff();
     if( active == 1 ){ instrument.keyOn();  }
   }
-  // verifica la presencia en el array
-  fun int checkArray( int seq[], int iter )
-  {
-    int value;
-    for(int i; i < seq.cap();i++)
-      {
-        if( seq[i] == iter )
-          {
-            1 =>  value;
-          }
-      }
-    return value;
-  }
-  120::ms => dur beat;
-
 
   // bees=================
   //Math.srandom(33679);   ////////  INTERESTING to control randomnes
@@ -186,32 +203,33 @@ public class Library
     return NewValue;
   }
   // ==== bass pulse arpegiator
-  PulseOsc pulse => ADSR ePulse => NRev rPulse=> dac;
-  rPulse.mix(0.0);
-  pulse.gain(0.2);
-  pulse.width(0.1);
-  fun void bassPulse(float freq, dur duration, float width)
-  {
-    (ms, duration, 0.01, 100::ms) => ePulse.set;
-    pulse.freq(freq);
-    width => pulse.width;
-    ePulse.keyOn();
-    duration => now;
-    ePulse.keyOff();
-  }
+  // PulseOsc pulse => ADSR ePulse => NRev rPulse=> dac;
+  // rPulse.mix(0.0);
+  // pulse.gain(0.2);
+  // pulse.width(0.1);
+  // fun void bassPulse(float freq, dur duration, float width)
+  // {
+  //   (ms, duration, 0.01, 100::ms) => ePulse.set;
+  //   pulse.freq(freq);
+  //   width => pulse.width;
+  //   ePulse.keyOn();
+  //   duration => now;l
+  //   ePulse.keyOff();
+  // }
 
-  fun void bassLine(int metro, int loopSize)
-  {
-    while(true)
-      {
-        changeRange(metro, 0, loopSize, 0.1, 1.0) => float newWidth;
-        floatChance(90 - metro*4/loopSize, 0, root/Math.random2(2,4)) => float tone;
-        floatChance(70 - metro*2, 4, 16) $ int => int division;
-        floatChance(70 - metro  , newWidth, 0.05) => float width;
-        spork ~ bassPulse( root + tone , beat/division, width );
-        beat/4 => now;
-      }
-  }
+  // fun void bassLine(int metro, int loopSize)
+  // {
+  //   120::ms => dur beat;
+  //   while(true)
+  //     {
+  //       changeRange(metro, 0, loopSize, 0.1, 1.0) => float newWidth;
+  //       floatChance(90 - metro*4/loopSize, 0, root/Math.random2(2,4)) => float tone;
+  //       floatChance(70 - metro*2, 4, 16) $ int => int division;
+  //       floatChance(70 - metro  , newWidth, 0.05) => float width;
+  //       spork ~ bassPulse( root + tone , beat/division, width );
+  //       beat/4 => now;
+  //     }
+  // }
 
   // funcion para mutar los arreglos aleatorios
   // TODO: la base de la mutación debe adaptarse a un nuevo arreglo que
@@ -232,29 +250,7 @@ public class Library
         <<< "muta melodía ",seqToMutate,"\n">>>;
       }
   }
-  // aproximar según cercanía
-  fun float magneticGrid(float ref[], float src)
-  {
-    0 => int index;
-    Std.fabs( src - ref[0] ) => float difference;
-    for( 0 => int i; i < ref.cap(); i++)
-    {
-      if( difference > Std.fabs( src - ref[i]))
-      {
-        Std.fabs( src - ref[i]) => difference;
-        i => index;
-      }
-    }
-    return ref[index];
-  }
-  // evalua la presencia de <target> en un array <seed[]>
-  fun float evalFor(float seed[], float target)
-  {
-    for(0 => int i; i < seed.cap(); i++)
-    {
-      if( target == seed[i]){ return target;}
-    }
-  }
+ 
 
   // establece la relación entre dos ADSR en sporks depredador/presa
   // con una estructura de control excluyente y un valor de
