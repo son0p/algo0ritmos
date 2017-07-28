@@ -156,6 +156,35 @@ public class Library
       if( target == seed[i]){ return target;}
     }
   }
+  fun float[] semitonesGen(float freqFrom, float freqTo)
+  {
+    float semitones[300]; // TODO: log(f1/f2)/log(sqr(2;12))
+    for( 0 => int i;  i < 299; i++)
+    {
+      freqFrom * 1.05946309436 => semitones[i] => freqFrom;
+    }
+    return semitones;
+
+  }
+  fun float[] scaleGenerator(float notes[], int scaleJumps[])
+  {
+    float scale[400]; //TODO: fix
+    for(0 => int i; i < notes.cap()-1; i++ )
+    {
+      for (0 => int j; j < scaleJumps.cap()-1; j++)
+      {
+        notes[i]+scaleJumps[j] => scale[i];
+      }
+    }
+    return scale;
+  }
+
+  // how many semintores between two freqs
+// fun float semitonesFinder(float freqFrom, float freqTo)
+//   {
+//     log(freqFrom/freqTo)/log(1.05946309436)float howManySemiTones;
+//   }
+
   // ---- Players
   //.............. playDrums
 

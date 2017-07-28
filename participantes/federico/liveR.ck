@@ -4,57 +4,21 @@ Library lib;
 32 => int cicleSize;
 0 => int counter;
 1000.0 => float root; // frecuency center
-// frecuencias armonicas
+
+//  // --------  generación de escalas
 //[root/16,root/8, root/2, root/4, root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
-float ref[400];
-
-
+float scale1[400];
+float scale2[400];
+float scale3[400];
 // [2,1,4,1,4] @=> int aeolianPent[];
 // scaleGenerator(65.406391, aeolianPent);
-
-// how many semintores between two freqs
-// fun float semitonesFinder(float freqFrom, float freqTo)
-//   {
-//     log(freqFrom/freqTo)/log(1.05946309436)float howManySemiTones;
-//   }
-
-// fun void semitonesGen(float freqFrom, float freqTo)
-// {
-//   for( 0 => int i;  freqFrom < freqTo; i++)
-//   {
-//     freqFrom * 1.05946309436 => semitones[i] => freqFrom;
-//   }
-//   //return semitones;
-// }
-fun float[] semitonesGen(float freqFrom, float freqTo)
-{
-  float semitones[300]; // TODO: log(f1/f2)/log(sqr(2;12))
-  for( 0 => int i;  i < 299; i++)
-  {
-    freqFrom * 1.05946309436 => semitones[i] => freqFrom;
-  }
-  return semitones;
-
-}
-semitonesGen(20, 20000) @=> float notes[];
-
-fun float[] scaleGenerator(float notes[], int scaleJumps[])
-{
-  float scale[400]; //TODO: fix
-  for(0 => int i; i < notes.cap()-1; i++ )
-  {
-    for (0 => int j; j < scaleJumps.cap()-1; j++)
-    {
-      notes[i]+scaleJumps[j] => scale[i];
-    }
-  }
-  return scale;
-}
-// [2,1,2,2,2,1] @=> int lydian[];
+lib.semitonesGen(20, 20000) @=> float notes1[];
+lib.semitonesGen(200, 800) @=> float notes2[];
+lib.semitonesGen(400, 5000) @=> float notes3[];
 [3,2,2,3,2] @=> int minorPenta[];
-scaleGenerator(notes,minorPenta ) @=> ref;
-
-
+lib.scaleGenerator(notes1,minorPenta ) @=> scale1;
+lib.scaleGenerator(notes2,minorPenta ) @=> scale2;
+lib.scaleGenerator(notes3,minorPenta ) @=> scale3;
 
 fun void play( int seq[], ADSR instrument )
 {
@@ -78,7 +42,7 @@ fun void play( int seq[], ADSR instrument )
     }
   }
 }
-fun void playBass( string name )
+fun void playBass( string name, float scale[] )
 {
   FileIO fio;
   // open a file
@@ -94,13 +58,13 @@ fun void playBass( string name )
     // beat/ms * 16 => float fBeat; 
     // now/ms % fBeat => float x;
     Std.atoi(fio.readLine())+.0 => float freq;
-    lib.magneticGrid(ref,freq) => lib.sqr0.freq;
+    lib.magneticGrid(scale,freq) => lib.sqr0.freq;
     lib.run(beat);
   }
   fio.close();
 }
 
-fun void playL2(string name)
+fun void playL2(string name, float scale[])
 {
   FileIO fio;
   // open a file
@@ -118,13 +82,13 @@ fun void playL2(string name)
     Std.atoi(fio.readLine())+.0=> float param1;
     if( param1 < 200 ){ lib.sin0.gain(0); }
     if( param1 >= 200 ){
-      lib.magneticGrid(ref,param1) => lib.sin0.freq;
+      lib.magneticGrid(scale,param1) => lib.sin0.freq;
     }
     lib.run(beat);
   }
 }
 
-fun void playL3(string name)
+fun void playL3(string name, float scale[])
 {
   FileIO fio;
   // open a file
@@ -142,7 +106,7 @@ fun void playL3(string name)
     Std.atoi(fio.readLine())+.0=> float param1;
     if( param1 < 200 ){ lib.blit0.gain(0); }
     if( param1 >= 200 ){
-      lib.magneticGrid(ref,param1) => lib.blit0.freq;
+      lib.magneticGrid(scale,param1) => lib.blit0.freq;
       }
     lib.run(beat);
   }
@@ -175,11 +139,11 @@ fun void climate( int p[][] )
   spork~ play(lib.euclideangenerator(p[1][0],p[1][1]), lib.sd);        // sn
   spork~ play(lib.euclideangenerator(p[2][0],p[2][1]), lib.hh);         // hh
   spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.sqr0env);      // bass
-  spork~ playBass("bass.txt");
+  spork~ playBass("bass.txt", scale1);
   spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin0env);
-  spork~ playL2("line2.txt");
+  spork~ playL2("line2.txt", scale2);
   spork~ play(lib.euclideangenerator(p[5][0],p[5][1]), lib.blit0env);
-  spork~ playL3("line3.txt");
+  spork~ playL3("line3.txt", scale3);
 //spork~ play(lib.euclideangenerator(4,12), lib.sin);       // sine
 }
 
