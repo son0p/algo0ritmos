@@ -1,7 +1,7 @@
 Library lib;
 
-120::ms => dur beat;
-32 => int cicleSize;
+220::ms => dur beat;
+64 => int cicleSize;
 0 => int counter;
 1000.0 => float root; // frecuency center
 
@@ -12,9 +12,9 @@ float scale2[400];
 float scale3[400];
 // [2,1,4,1,4] @=> int aeolianPent[];
 // scaleGenerator(65.406391, aeolianPent);
-lib.semitonesGen(20, 20000) @=> float notes1[];
+lib.semitonesGen(20, 400) @=> float notes1[];
 lib.semitonesGen(200, 800) @=> float notes2[];
-lib.semitonesGen(400, 5000) @=> float notes3[];
+lib.semitonesGen(40, 5000) @=> float notes3[];
 [3,2,2,3,2] @=> int minorPenta[];
 lib.scaleGenerator(notes1,minorPenta ) @=> scale1;
 lib.scaleGenerator(notes2,minorPenta ) @=> scale2;
@@ -80,8 +80,8 @@ fun void playL2(string name, float scale[])
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    if( param1 < 200 ){ lib.sin0.gain(0); }
-    if( param1 >= 200 ){
+    if( param1 < 0 ){ lib.sin0.gain(0); }
+    if( param1 >= 0 ){
       lib.magneticGrid(scale,param1) => lib.sin0.freq;
     }
     lib.run(beat);
@@ -102,10 +102,11 @@ fun void playL3(string name, float scale[])
   while( fio.more() )
   {
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
-    now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
+    // now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
+    now/ms => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    if( param1 < 200 ){ lib.blit0.gain(0); }
-    if( param1 >= 200 ){
+    if( param1 < 0 ){ lib.blit0.gain(0); }
+    if( param1 >= 0 ){
       lib.magneticGrid(scale,param1) => lib.blit0.freq;
       }
     lib.run(beat);
@@ -121,10 +122,10 @@ lib.sd.gain      (0.29);
 lib.hh.gain       (0.4);
 lib.sqr0.gain    (0.03);
 //lib.sqr0env.set     ( 0::ms, 10::ms, .0, 1000::ms);
-lib.sin0.gain    (0.1);
+lib.sin0.gain    (0.03);
 lib.sin0env.set  ( 0::ms, 200::ms, 0.0, 10::ms);
 lib.blit0.gain   (0.05);
-lib.blit0rev.mix      (0.1);
+lib.blit0rev.mix  (0.1);
 //lib.rev          (lib.sqr0); // ERROR: se queda sonando
 
 
@@ -149,7 +150,7 @@ fun void climate( int p[][] )
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[2,16],[3,4],[5,16],[8,12], [4,12]]); //beat
+climate([[4,16],[2,16],[3,4],[2,16],[2,6], [12,12]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro

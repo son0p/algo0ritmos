@@ -1,0 +1,40 @@
+---
+title: "Functions as melody generators"
+output: html_document
+---
+
+Why? bored of arrays, less code lines, let's ear the math.
+
+## Trigonometric functions
+Let's make a 64 points vector
+
+```{r}
+x <- seq(0,64, 1)
+```
+
+### How to modify melody expansion (amplitude)?
+Multiply by k: sin(x)*k
+
+```{r}
+plot(c(sin(x/6)*10000), pch=16, col=rainbow(10+sin(x), alpha=1), fg=3)
+```
+
+### How to modify start point (phase)?
+Add some angle to x: sin(x+(pi*k))
+
+```{r}
+plot(c(1000+sin((x+pi*1)/5)*1000), pch=16)
+```
+
+### How to modify  frequency?
+Divide x to some value: sin(x/k)
+
+```{r}
+plot (c(1000+sin(x/20)*1000), pch=16)
+```
+
+### What about Tangent?
+
+```{r}
+plot (c(1000+tan(x/20)*10), pch=16)
+```
