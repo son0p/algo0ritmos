@@ -158,8 +158,9 @@ public class Library
   }
   fun float[] semitonesGen(float freqFrom, float freqTo)
   {
-    float semitones[300]; // TODO: log(f1/f2)/log(sqr(2;12))
-    for( 0 => int i;  i < 299; i++)
+    Math.floor(Math.log(freqTo/freqFrom)/Math.log(1.05946309436)) $ int => int posibleSemitones;
+    float semitones[posibleSemitones]; // TODO: log(f1/f2)/log(sqr(2;12))  so Math.log(880/440)/Math.log(1.05946309436) = 12.0
+    for( 0 => int i;  i < posibleSemitones; i++)
     {
       if (freqFrom < freqTo)
       {
@@ -170,7 +171,7 @@ public class Library
   }
   fun float[] scaleGenerator(float notes[], int scaleJumps[])
   {
-    float scale[400]; //TODO: fix
+    float scale[notes.cap()-1]; 
     for(0 => int i; i < notes.cap()-1; i++ )
     {
       for (0 => int j; j < scaleJumps.cap()-1; j++)

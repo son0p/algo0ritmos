@@ -1,6 +1,6 @@
 Library lib;
 
-220::ms => dur beat;
+120::ms => dur beat;
 64 => int cicleSize;
 0 => int counter;
 1000.0 => float root; // frecuency center
@@ -12,9 +12,11 @@ float scale2[400];
 float scale3[400];
 // [2,1,4,1,4] @=> int aeolianPent[];
 // scaleGenerator(65.406391, aeolianPent);
-lib.semitonesGen(20, 400) @=> float notes1[];
-lib.semitonesGen(200, 800) @=> float notes2[];
+
+lib.semitonesGen(20, 100) @=> float notes1[]; 
+lib.semitonesGen(200, 20000) @=> float notes2[];
 lib.semitonesGen(40, 5000) @=> float notes3[];
+
 [3,2,2,3,2] @=> int minorPenta[];
 lib.scaleGenerator(notes1,minorPenta ) @=> scale1;
 lib.scaleGenerator(notes2,minorPenta ) @=> scale2;
@@ -55,8 +57,8 @@ fun void playBass( string name, float scale[] )
   }
   while( fio.more() )
   {
-    // beat/ms * 16 => float fBeat; 
-    // now/ms % fBeat => float x;
+    beat/ms * 16 => float fBeat; 
+    now/ms % fBeat => float x;
     Std.atoi(fio.readLine())+.0 => float freq;
     lib.magneticGrid(scale,freq) => lib.sqr0.freq;
     lib.run(beat);
@@ -80,8 +82,8 @@ fun void playL2(string name, float scale[])
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    if( param1 < 0 ){ lib.sin0.gain(0); }
-    if( param1 >= 0 ){
+    if( param1 < scale[0] ){ lib.sin0.gain(0); }
+    if( param1 >= 1000 ){
       lib.magneticGrid(scale,param1) => lib.sin0.freq;
     }
     lib.run(beat);
@@ -150,7 +152,7 @@ fun void climate( int p[][] )
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[2,16],[3,4],[2,16],[2,6], [12,12]]); //beat
+climate([[4,16],[2,16],[3,4],[6,16],[2,6], [7,12]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro
