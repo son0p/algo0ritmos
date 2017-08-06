@@ -62,7 +62,7 @@ public class Library
   // Sqr
   SqrOsc sqr0 => ADSR sqr0env => dac;
   0.15 => sqr0.gain;
-  sqr0env.set( 0::ms, 300::ms, sqr0.gain()/1.5, 100::ms );
+  sqr0env.set( 0::ms, 300::ms, .0, 100::ms );
   SqrOsc sqr1 => ADSR sqr1env => LPF sqr1filter => dac;
   sqr1env.set( 0::ms, 500::ms, .0, 500::ms );
   // Blit
@@ -161,10 +161,12 @@ public class Library
     float semitones[300]; // TODO: log(f1/f2)/log(sqr(2;12))
     for( 0 => int i;  i < 299; i++)
     {
-      freqFrom * 1.05946309436 => semitones[i] => freqFrom;
+      if (freqFrom < freqTo)
+      {
+        freqFrom * 1.05946309436 => semitones[i] => freqFrom;
+      }
     }
     return semitones;
-
   }
   fun float[] scaleGenerator(float notes[], int scaleJumps[])
   {
