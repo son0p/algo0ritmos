@@ -13,9 +13,9 @@ float scale3[400];
 // [2,1,4,1,4] @=> int aeolianPent[];
 // scaleGenerator(65.406391, aeolianPent);
 
-lib.semitonesGen(20, 100) @=> float notes1[]; 
-lib.semitonesGen(200, 20000) @=> float notes2[];
-lib.semitonesGen(40, 5000) @=> float notes3[];
+lib.semitonesGen(55,110 ) @=> float notes1[]; 
+lib.semitonesGen(220, 2640/2) @=> float notes2[];
+lib.semitonesGen(440,4400 ) @=> float notes3[];
 
 [3,2,2,3,2] @=> int minorPenta[];
 lib.scaleGenerator(notes1,minorPenta ) @=> scale1;
@@ -82,10 +82,7 @@ fun void playL2(string name, float scale[])
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1;
-    if( param1 < scale[0] ){ lib.sin0.gain(0); }
-    if( param1 >= 1000 ){
-      lib.magneticGrid(scale,param1) => lib.sin0.freq;
-    }
+    lib.magneticGrid(scale,param1) => lib.sin0.freq;
     lib.run(beat);
   }
 }
@@ -104,11 +101,10 @@ fun void playL3(string name, float scale[])
   while( fio.more() )
   {
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
-    // now/ms % fBeat => float x;  // now/ms % (fBeat*100) breaks
     now/ms => float x;  // now/ms % (fBeat*100) breaks
-    Std.atoi(fio.readLine())+.0=> float param1;
-    if( param1 < 0 ){ lib.blit0.gain(0); }
-    if( param1 >= 0 ){
+    Std.atoi(fio.readLine())+.0=> float param1; 
+    if( param1 < scale[0] ){ lib.blit0.gain(0); }
+    else{
       lib.magneticGrid(scale,param1) => lib.blit0.freq;
       }
     lib.run(beat);
@@ -120,9 +116,9 @@ fun void playL3(string name, float scale[])
 //======= end test ===========
 
 // ======== mixer ===========
-lib.sd.gain      (0.29);
+lib.sd.gain      (0.20);
 lib.hh.gain       (0.4);
-lib.sqr0.gain    (0.03);
+lib.sqr0.gain    (0.02);
 //lib.sqr0env.set     ( 0::ms, 10::ms, .0, 1000::ms);
 lib.sin0.gain    (0.03);
 lib.sin0env.set  ( 0::ms, 200::ms, 0.0, 10::ms);
@@ -152,7 +148,7 @@ fun void climate( int p[][] )
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[2,16],[3,4],[6,16],[2,6], [7,12]]); //beat
+climate([[4,16],[9,16],[3,4],[6,16],[6,24], [7,12]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro
