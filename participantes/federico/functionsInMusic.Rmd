@@ -44,3 +44,11 @@ plot (c(1000+tan(x/20)*10), pch=16)
 ```{r}
 plot(c(sinh(x/10)*100), pch=16)
 ```
+
+
+
+### Tan Pi?
+
+```{r}
+plot(c(tanpi(x/10)*100), pch=16)
+```
