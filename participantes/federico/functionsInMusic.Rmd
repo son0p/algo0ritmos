@@ -42,5 +42,5 @@ plot (c(1000+tan(x/20)*10), pch=16)
 ### Hiperbolic Sine?
 
 ```{r}
-plot(bass <- c(3/4*(sin(x))*1/4*(sin(3*x)),  col="red"))
+plot(c(sinh(x/10)*100), pch=16)
 ```
