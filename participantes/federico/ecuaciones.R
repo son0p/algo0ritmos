@@ -1,7 +1,8 @@
 install.packages("rmarkdown")
 library(ggplot2)
+library(pracma)
 
-x <- seq(0,640, 1)
+x <- seq(0,64, 1)
 
 ## change amplitude: sin(x)*a
 plot(line3 <- c(1000+sin(x/8)*10000), pch=16,col=rainbow(10+sin(x*0), alpha=1), fg=3)
@@ -16,10 +17,30 @@ write(bass, file="bass.txt", ncolumns=1)
 write(line2, file="line2.txt", ncolumns=1)
 write(line3, file="line3.txt", ncolumns=1)
 
+## musical 1
+plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x)/20)+sin((x)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
+plot(line2 <- c(sin(x/210)+sin(x/10)+cos(x/40)*1000), col="blue", pch=14)
+plot(line3 <- c(880+asin(x/4)*100), col="brown")
+
+## musical 2
+plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+sin((x+10)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
+plot(line2 <- c(asin((x+3)/64)+atan(x/64)*10000), col="blue", pch=14)
+plot(line3 <- c(1000+sin(x/5)+tan(x/10)*200), col="brown")
+
+## musical 3
+plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+sin((x+10)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
+plot(line2 <- c(440+cot(x/4)*440), col="blue", pch=14)
+plot(line3 <- c(1500+csc(x/4)*100), col="brown")
+
+## no trigonometricas
+
+
 ## from video
 plot(bass <- c(3/4*(sin(x))*1/4*(sin(3*x)),  col="red"))
 ## plot(line2 <- c(sin(x/210)+sin(2*x/10)*1000), col="blue")
-## plot(line3 <- c(440+sin(x)/10), col="brown")
+plot(line3 <- c(440+sin(x)/10), col="brown")
+
+
 
 
 ## pony jump
@@ -30,6 +51,7 @@ plot(line3 <- c(440+sin(x)/10), col="brown")
 ## steady
 plot(bass <- c(55+sin(x/20)))
 plot(line2 <- c(440+sin(x/20)))
+ plot(line3 <- c(440+sin(x)/10), col="brown")
 
 ## ------------- tools
 ## --- colors
