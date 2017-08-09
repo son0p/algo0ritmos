@@ -14,8 +14,8 @@ float scale3[400];
 // scaleGenerator(65.406391, aeolianPent);
 
 lib.semitonesGen(55,110 ) @=> float notes1[]; 
-lib.semitonesGen(220, 2640/2) @=> float notes2[];
-lib.semitonesGen(440,4400 ) @=> float notes3[];
+lib.semitonesGen(220, 8800) @=> float notes2[];
+lib.semitonesGen(220,8800 ) @=> float notes3[];
 
 [3,2,2,3,2] @=> int minorPenta[];
 lib.scaleGenerator(notes1,minorPenta ) @=> scale1;
@@ -103,10 +103,7 @@ fun void playL3(string name, float scale[])
     beat/ms * 8 => float fBeat; // to sync period of the trig function try 16, 4, 2
     now/ms => float x;  // now/ms % (fBeat*100) breaks
     Std.atoi(fio.readLine())+.0=> float param1; 
-    if( param1 < scale[0] ){ lib.blit0.gain(0); }
-    else{
-      lib.magneticGrid(scale,param1) => lib.blit0.freq;
-      }
+    lib.magneticGrid(scale,param1) => lib.blit0.freq;
     lib.run(beat);
   }
 }
