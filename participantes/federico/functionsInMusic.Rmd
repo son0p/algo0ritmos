@@ -54,9 +54,10 @@ plot(c(tanpi(x/10)*100), pch=16)
 ```
 
 ### Cosecant? via pracma package
-install.packages("pracma")
-library("pracma")
+
 
 ```{r}
+install.packages("pracma")
+library("pracma")
 plot(c(csc(x/10)*10), pch=16)
 ```
