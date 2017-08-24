@@ -159,7 +159,7 @@ public class Library
   fun float[] semitonesGen(float freqFrom, float freqTo)
   {
     Math.floor(Math.log(freqTo/freqFrom)/Math.log(1.05946309436)) $ int => int posibleSemitones;
-    float semitones[posibleSemitones]; // TODO: log(f1/f2)/log(sqr(2;12))  so Math.log(880/440)/Math.log(1.05946309436) = 12.0
+    float semitones[posibleSemitones]; // TODO: log(f1/f2)/log(sqr(2;12))  so Math.log(880/440)/Math.log(1 <<<.05946309436) = 12.0
     for( 0 => int i;  i < posibleSemitones; i++)
     {
       if (freqFrom < freqTo)
@@ -171,13 +171,12 @@ public class Library
   }
   fun float[] scaleGenerator(float notes[], int scaleJumps[])
   {
-    float scale[notes.cap()-1]; 
-    for(0 => int i; i < notes.cap()-1; i++ )
+    float scale[notes.cap()-1];
+    // iterate below maximum posible scaleJumps shift
+    for(0 => int i; i < notes.cap()-scaleJumps[scaleJumps.cap()-1]; i++ )
     {
-      for (0 => int j; j < scaleJumps.cap()-1; j++)
-      {
-        notes[i]+scaleJumps[j] => scale[i];
-      }
+      scaleJumps.cap() => int cicle; // try module i positions by scaleJumps Size
+      notes[i + scaleJumps[i % cicle]] => scale[i];
     }
     return scale;
   }
