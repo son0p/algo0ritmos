@@ -17,7 +17,7 @@ lib.semitonesGen(25,110) @=> float notes1[];
 lib.semitonesGen(220,2200) @=> float notes2[]; <<< lib.printArray(notes1)>>>;
 lib.semitonesGen(440,4400) @=> float notes3[];
 
-[0,3,5,7,10,12] @=> int minorPenta[];
+[0,3,5,7,10] @=> int minorPenta[];
 lib.scaleGenerator(notes1,minorPenta) @=> scale1; <<<"scale:">>>; <<< lib.printArray(scale1)>>>;
 lib.scaleGenerator(notes2,minorPenta) @=> scale2;
 lib.scaleGenerator(notes3,minorPenta) @=> scale3;
@@ -162,7 +162,7 @@ fun void climate( int p[][] )
 
 // // ------- climate -----------
 // //climate([[1,16],[7,16],[0,4],[0,16],[8,16], [1,12]]); // intro
-climate([[4,16],[9,16],[3,4],[6,16],[10,24], [7,12]]); //beat
+climate([[4,16],[9,16],[3,4],[6,16],[3,8], [7,12]]); //beat
 // //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]); // buildUp
 // //climate([[7,16],[5,16],[7,7],[6,16],[1,12],[7,16]]);
 // climate([[0,16],[1,16],[1,3],[1,16],[1,16], [7,12]]); //outro

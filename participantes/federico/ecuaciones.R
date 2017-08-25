@@ -13,9 +13,33 @@ plot (line3 <- c(1000+sin(x/20)*1000))
 
 curve(sin(x)-sin(x)) # reset graph
 
-write(bass, file="bass.txt", ncolumns=1)
-write(line2, file="line2.txt", ncolumns=1)
-write(line3, file="line3.txt", ncolumns=1)
+write(l1, file="bass.txt", ncolumns=1)
+write(l2, file="line2.txt", ncolumns=1)
+write(l3, file="line3.txt", ncolumns=1)
+
+## basic
+l1 <- c(55+sin(x)+tan(x*2/10)*50)
+l2 <- c(440+tan(x)*1)
+l3 <- c(880+sin(x/4)*200)
+draw(x,l1,l2,l3)
+writeFiles(l1,l2,l3)
+
+
+draw <- function(x,l1,l2,l3){
+  df <- data.frame(x,l1,l2,l3)
+  ggplot(df, aes(x))+
+    geom_line(aes(y=l1), colour="green")+
+    geom_line(aes(y=l2), colour="blue")+
+    geom_line(aes(y=l3), colour="brown")
+}
+
+writeFiles <- function(l1,l2,l3){
+  write(l1, file="bass.txt", ncolumns=1)
+  write(l2, file="line2.txt", ncolumns=1)
+  write(l3, file="line3.txt", ncolumns=1)
+}
+
+
 
 ## musical 1
 plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x)/20)+sin((x)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
@@ -32,13 +56,15 @@ plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+
 plot(line2 <- c(440+cot(x/4)*440), col="blue", pch=14)
 plot(line3 <- c(1500+csc(x/4)*100), col="brown")
 
+
+
 ## no trigonometricas
 
 
 ## from video
 plot(bass <- c(3/4*(sin(x))*1/4*(sin(3*x)),  col="red"))
 ## plot(line2 <- c(sin(x/210)+sin(2*x/10)*1000), col="blue")
-plot(line3 <- c(440+sin(x)/10), col="brown")
+plot(line3 <- c(440+sin(x)/5), col="brown")
 
 
 
@@ -61,6 +87,18 @@ qplot(mpg, data=as.data.frame(c(1000+sin(x/8)*10000)), geom="density", fill=65, 
 
 
 ## -------- Legacy
+
+## experimental
+plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+sin((x+10)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
+x <- x+pi*1.
+plot(line2 <- c(250+csc((x+(pi*0.1)/tan(x/2))*1000)), col="blue", pch=19) 
+plot(line3 <- c(440+csc((x+(pi*0.2))/sin(x))*10), col="brown", pch=19) ## interesante
+
+## basic
+plot(bass <- c(55+sin(x)+tan(x*2/10)*50), col="green")
+plot(line2 <- c(440+tan(x/4)*10), col="blue")
+(line2 <- c(880+tan(x/4)*.5), col="green")
+
 
 plot(sin(x), cex=0.1)
 plot(sin(x)+sin(2*x), cex=0.1)
