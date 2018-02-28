@@ -1,6 +1,7 @@
 install.packages("rmarkdown")
 library(ggplot2)
 library(pracma)
+library(binhf)
 
 x <- seq(0,64, 1)
 
@@ -13,16 +14,161 @@ plot (line3 <- c(1000+sin(x/20)*1000))
 
 curve(sin(x)-sin(x)) # reset graph
 
-write(l1, file="bass.txt", ncolumns=1)
-write(l2, file="line2.txt", ncolumns=1)
-write(l3, file="line3.txt", ncolumns=1)
+
+## bassDrum
+bd <- numeric(16)
+bd[c(1,5,9,13)] <- 1
+write(bd, file="bd.txt", ncolumns=1)
+bd
+
+## snareDrum
+sd <- numeric(16)
+sd[c(5,13,21)] <- 1
+write(sd, file="sd.txt", ncolumns=1)
+sd
+
+## hiHat
+hh <- numeric(16)
+hh[c(1,2,3,5,6,7,9,10,11,13,14,15)] <- 1
+write(hh, file="hh.txt", ncolumns=1)
+hh
+
+## clave  ## clave [1,0,0,0,5,0,7,0,0,0,11,0,13,0,0,0]
+activate.steps <- function(activeSteps, value, filename){
+  steps <- numeric(16)
+  steps[activeSteps] <- value
+  write(steps, file=filename, ncolumns=1)
+  steps
+}
+
+write(c(1,2,3),c(4,5,6), file="foo.txt", ncolumns = 2)
+
+## sincopas nivel 1: 1,5,9,13
+## sincopas nivel 2: 3,7,11,15
+## síncopas nivel 3: 2,6,10,14
+## síncopas nivel 4: 4,8,12,16
+
+sincopa.level.4 <- c(  1,  5,  9, 13)
+sincopa.level.1 <- c(  4,  8, 12, 16)
+
+## pseudo code
+sincopaGenerator <- function(vector, step.to.sincopate, level, value){
+  step <- sample(level.generator(level), 1)
+  print(step)
+  vector[step] <- value
+  vector[step + level] <- 0
+  return(vector)
+}
+level.generator <- function(level){
+  if(level == 1 ) {vector <- c(  4,  8, 12, 16)}
+  if(level == 2 ) {vector <- c(  2,  6, 10, 14)}
+  if(level == 3 ) {vector <- c(  3,  7, 11, 15)}
+  if(level == 4 ) {vector <- c(  1,  5,  9, 13)}
+  return(vector)
+}
+
+level <- level.generator(1)
+
+
+
+
+## sincopa generation
+d1 <- sincopaGenerator(d1, 11, 1, 1 )
+write(d1, file="d1.txt", ncolumns = 1)
+
+############## PATTERN FUNCTIONS ###########################
+
+## base generation
+d0 <- activate.steps(c(  1,  5,  7, 11, 13), 1, "d0.txt") ## clave
+
+pattern.A <- function(){
+  d1 <- activate.steps(c(  1,  7),     1, "d1.txt")
+  d2 <- activate.steps(c(   7,  13),     1, "d2.txt")
+  d3 <- activate.steps(c(  1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
+
+  l1 <- activate.steps(c(  1,  4, 10, 11, 16 ), 1, "l1.txt")
+  l2 <- activate.steps(c(  4, 10 ), 1, "l2.txt")
+  l3 <- activate.steps(c(   7,  9, 11, 12), 1, "l3.txt")
+}
+pattern.B <- function(){
+  d1 <- activate.steps(c(  1,  9, 13),     1, "d1.txt")
+  d2 <- activate.steps(c(  4,  12),     1, "d2.txt")
+  d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+
+  l1 <- activate.steps(c(  7,  11, 15, 16  ), 1, "l1.txt")
+  l2 <- activate.steps(c(  3,  7, 11, 13), 1, "l2.txt")
+  l3 <- activate.steps(c(   9, 11), 1, "l3.txt") 
+}
+
+pattern.C <- function(){
+  d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
+  d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
+  d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+
+  l1 <- activate.steps(c(  7,  11, 15, 16  ), 1, "l1.txt")
+  l2 <- activate.steps(c(  4,  8, 15), 1, "l2.txt")
+  l3 <- activate.steps(c(   11, 12), 1, "l3.txt")
+}
+pattern.D <- function(){
+  d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
+  l1 <- activate.steps(c(  6, 7, 10, 11, 15, 16  ), 1, "l1.txt")
+  d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
+  l2 <- activate.steps(c(  4,  8, 15), 1, "l2.txt")
+  d3 <- activate.steps(c(  3,  7,  11, 14, 15, 16 ), 1, "d3.txt")
+  l3 <- activate.steps(c(  5,  7,  9, 11, 12,16), 1, "l3.txt")
+}
+
+pattern <- function(){
+  vector <- activate.steps(steps, value, file)
+}
+
+pattern.A()
+pattern.B()
+pattern.C()
+pattern.D()
+
+## mutes
+
+d0 <- activate.steps(c(0), 0, "d0.txt")
+
+d1 <- activate.steps(c(0), 0, "d1.txt")
+d2 <- activate.steps(c(0), 0, "d2.txt")
+d3 <- activate.steps(c(0), 0, "d3.txt")
+
+l1 <- activate.steps(c(0), 0, "l1.txt")
+l2 <- activate.steps(c(0), 0, "l2.txt")
+l3 <- activate.steps(c(0), 0, "l3.txt")
+
+
+pattern <- 
+
+
+
+
+## write files  
+write(l1, file="bass.txt", ncolumns = 1)
+write(l2, file="line2.txt", ncolumns = 1)
+write(l3, file="line3.txt", ncolumns = 1)
+
+## visualization
+## mbd <- replace("1", as.character(bd), "X") ## TODO
+matrix <- data.frame(d0, d1, d2, d3, l1, l2, l3)
+matrix
+
+
+
 
 ## basic
-l1 <- c(55+sin(x)+tan(x*2/10)*50)
+x <- c(1:16)
+freqL1 <- c(55+sin(x*20)+tan(x*2/10)*50)
+write(freqL1, file="freqL2.txt", ncolumns = 1)
+
+l1 <- c(55+sin(x*2)+tan(x*2/10)*50)
 l2 <- c(440+tan(x)*1)
 l3 <- c(880+sin(x/4)*200)
-draw(x,l1,l2,l3)
-writeFiles(l1,l2,l3)
+writeFiles(l1,l2,l3,d1)
+
+## functions  
 
 
 draw <- function(x,l1,l2,l3){
@@ -33,11 +179,66 @@ draw <- function(x,l1,l2,l3){
     geom_line(aes(y=l3), colour="brown")
 }
 
-writeFiles <- function(l1,l2,l3){
+writeFiles <- function(l1,l2,l3,d1){
+  write(d1, file="bd.txt", ncolumns=1)
   write(l1, file="bass.txt", ncolumns=1)
   write(l2, file="line2.txt", ncolumns=1)
   write(l3, file="line3.txt", ncolumns=1)
 }
+
+## Se necesita saber los semitonos posibles en un rango de frecuencias dado
+## TODO: try recursion
+semitonesGen <- function( freqFrom, freqTo){
+  posibleSemitones <- floor(log(freqTo/freqFrom)/log(1.0594630943))
+  semitones <- numeric(length <- posibleSemitones)
+  semitones[1] <- freqFrom 
+  for(i in 2:posibleSemitones){
+    if(freqFrom < freqTo){
+      freqFrom <- semitones[i] <- freqFrom * 1.05946309436
+    }
+  }
+  return(semitones)
+}
+
+## TODO: entender modulo y venctores que no tienen posición 0
+scaleGenerator <- function(notes, scaleJumps){
+  scale <- numeric(length <- (length(notes)-1))
+  ## iterate below maximum posible scaleJumps shift
+  scale[1] <- notes[1]
+  for(i in 2:length(notes)){
+    scale[i] <- notes[i+(scaleJumps[i])] ## es necesario sumar 1 al parecer porque scaleJumps inicia en la posición 1
+  }
+  return(scale)
+}
+
+## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala
+magneticGrid <- function(ref, src){
+  index <- 1
+  difference <- abs(src - ref[1])
+  for(i in 1:length(ref)){
+    if( difference > abs(src - ref[i])){
+      difference <- abs(src - ref[i])
+      index <- i
+    }
+  }
+  return(ref[index])
+}
+
+
+## test functions
+x <- numeric(length <- 5)
+magneticGrid(c(201,103,14.5, 111.7), 111)
+
+notes <- semitonesGen(32.7031956626, 20000)
+scaleJumps <- c(2,2,1,2,2,2,1)
+length(minorPenta)
+length(semitones)
+semitones[1+minorPenta]
+scaleGenerator(notes,scaleJumps )
+notes + notes[scaleJumps]
+
+shift(notes, scaleJumps, dir="right")
+
 
 
 

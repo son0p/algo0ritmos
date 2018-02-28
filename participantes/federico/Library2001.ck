@@ -1,7 +1,7 @@
 public class Library
 {
-  36 => float root;
-  // ================== ARRAYS ======================
+    36 => float root;
+   // ================== ARRAYS ======================
 
   fun void printArray( float array[] )
   {
@@ -69,6 +69,10 @@ public class Library
   BlitSaw blit0 => ADSR blit0env => NRev blit0rev => Pan2 blit0pan => dac;
   0.7 => blit0pan.pan;
   blit0env.set( 0::ms, 200::ms, .0, 100::ms );
+    // Tri
+    TriOsc tri0 => ADSR tri0env => Pan2 tri0Pan => dac;
+    -0.0 => tri0Pan.pan;
+    tri0env.set( 0::ms, 500::ms, .0, 100::ms );
   
 
   // modelado
@@ -206,7 +210,7 @@ public class Library
     instrument.keyOff();
     if( active == 1 ){ instrument.keyOn();  }
   }
-
+  
   // bees=================
   //Math.srandom(33679);   ////////  INTERESTING to control randomnes
   fun int bees(int C)
@@ -331,3 +335,4 @@ public class Library
         return seq; 
     }
 }
+
