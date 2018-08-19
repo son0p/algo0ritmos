@@ -1,7 +1,81 @@
+## actualmente funciona con liveDany.ck
+
 install.packages("rmarkdown")
 library(ggplot2)
 library(pracma)
 library(binhf)
+
+## functions  
+
+
+draw <- function(x,l1,l2,l3){
+  df <- data.frame(x,l1,l2,l3)
+  ggplot(df, aes(x))+
+    geom_line(aes(y=l1), colour="green")+
+    geom_line(aes(y=l2), colour="blue")+
+    geom_line(aes(y=l3), colour="brown")
+}
+
+writeFiles <- function(l1,l2,l3,d1){
+  write(d1, file="bd.txt", ncolumns=1)
+  write(l1, file="bass.txt", ncolumns=1)
+  write(l2, file="line2.txt", ncolumns=1)
+  write(l3, file="line3.txt", ncolumns=1)
+}
+
+## Se necesita saber los semitonos posibles en un rango de frecuencias dado
+## TODO: try recursion
+semitonesGen <- function( freqFrom, freqTo){
+  posibleSemitones <- floor(log(freqTo/freqFrom)/log(1.0594630943))
+  semitones <- numeric(length <- posibleSemitones)
+  semitones[1] <- freqFrom 
+  for(i in 2:posibleSemitones){
+    if(freqFrom < freqTo){
+      freqFrom <- semitones[i] <- freqFrom * 1.05946309436
+    }
+  }
+  return(semitones)
+}
+
+## TODO: entender modulo y venctores que no tienen posición 0
+scaleGenerator <- function(notes, scaleJumps){
+  scale <- numeric(length <- (length(notes)-1))
+  ## iterate below maximum posible scaleJumps shift
+  scale[1] <- notes[1]
+  for(i in 2:length(notes)){
+    scale[i] <- notes[i+(scaleJumps[i])] ## es necesario sumar 1 al parecer porque scaleJumps inicia en la posición 1
+  }
+  return(scale)
+}
+
+
+
+## alternativa para magneticGrid DONE
+magneticGrid <- function(ref, src){
+  unlist(lapply(src, function(x)ref[which.min(abs(x-ref))]) )
+}
+
+
+## test functions
+x <- numeric(length <- 5)
+testRef <- notes
+testSrc <- c(33,455,555)
+magneticGrid(notes, c(33,455,555))
+lapply(testSrc, function(x)notes[which.min(abs(x-notes))])
+
+
+
+
+notes <- semitonesGen(32.7031956626, 20000)
+scaleJumps <- c(2,2,1,2,2,2,1)
+length(minorPenta)
+length(semitones)
+semitones[1+minorPenta]
+scaleGenerator(notes,scaleJumps )
+notes + notes[scaleJumps]
+
+shift(notes, scaleJumps, dir="right")
+
 
 x <- seq(0,64, 1)
 
@@ -82,22 +156,22 @@ write(d1, file="d1.txt", ncolumns = 1)
 d0 <- activate.steps(c(  1,  5,  7, 11, 13), 1, "d0.txt") ## clave
 
 pattern.A <- function(){
-  d1 <- activate.steps(c(  1,  7),     1, "d1.txt")
+  d1 <- activate.steps(c(  1,  9),     1, "d1.txt")
   d2 <- activate.steps(c(   7,  13),     1, "d2.txt")
-  d3 <- activate.steps(c(  1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
+  d3 <- activate.steps(c(  0, 1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
 
-  l1 <- activate.steps(c(  1,  4, 10, 11, 16 ), 1, "l1.txt")
-  l2 <- activate.steps(c(  4, 10 ), 1, "l2.txt")
+  l1 <- activate.steps(c(  1,  4, 10, 13, 16 ), 1, "l1.txt")
+  l2 <- activate.steps(c(  1, 2, 4, 7, 10, 12, ,15), 1, "l2.txt")
   l3 <- activate.steps(c(   7,  9, 11, 12), 1, "l3.txt")
 }
 pattern.B <- function(){
   d1 <- activate.steps(c(  1,  9, 13),     1, "d1.txt")
   d2 <- activate.steps(c(  4,  12),     1, "d2.txt")
-  d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+  d3 <- activate.steps(c(  0, 1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
 
   l1 <- activate.steps(c(  7,  11, 15, 16  ), 1, "l1.txt")
   l2 <- activate.steps(c(  3,  7, 11, 13), 1, "l2.txt")
-  l3 <- activate.steps(c(   9, 11), 1, "l3.txt") 
+  l3 <- activate.steps(c(   9, 11), 1, "l3.txt")
 }
 
 pattern.C <- function(){
@@ -142,9 +216,6 @@ l3 <- activate.steps(c(0), 0, "l3.txt")
 
 pattern <- 
 
-
-
-
 ## write files  
 write(l1, file="bass.txt", ncolumns = 1)
 write(l2, file="line2.txt", ncolumns = 1)
@@ -159,8 +230,9 @@ matrix
 
 
 ## basic
-x <- c(1:16)
-freqL1 <- c(55+sin(x*20)+tan(x*2/10)*50)
+x <- c(1:32)
+plot(curve <- c(440+sin(x*9)+tan(x*2/100)*500), col= "grey")
+points(freqL1 <- magneticGrid(notes, curve), col = "darkgreen")
 write(freqL1, file="freqL2.txt", ncolumns = 1)
 
 l1 <- c(55+sin(x*2)+tan(x*2/10)*50)
@@ -168,76 +240,6 @@ l2 <- c(440+tan(x)*1)
 l3 <- c(880+sin(x/4)*200)
 writeFiles(l1,l2,l3,d1)
 
-## functions  
-
-
-draw <- function(x,l1,l2,l3){
-  df <- data.frame(x,l1,l2,l3)
-  ggplot(df, aes(x))+
-    geom_line(aes(y=l1), colour="green")+
-    geom_line(aes(y=l2), colour="blue")+
-    geom_line(aes(y=l3), colour="brown")
-}
-
-writeFiles <- function(l1,l2,l3,d1){
-  write(d1, file="bd.txt", ncolumns=1)
-  write(l1, file="bass.txt", ncolumns=1)
-  write(l2, file="line2.txt", ncolumns=1)
-  write(l3, file="line3.txt", ncolumns=1)
-}
-
-## Se necesita saber los semitonos posibles en un rango de frecuencias dado
-## TODO: try recursion
-semitonesGen <- function( freqFrom, freqTo){
-  posibleSemitones <- floor(log(freqTo/freqFrom)/log(1.0594630943))
-  semitones <- numeric(length <- posibleSemitones)
-  semitones[1] <- freqFrom 
-  for(i in 2:posibleSemitones){
-    if(freqFrom < freqTo){
-      freqFrom <- semitones[i] <- freqFrom * 1.05946309436
-    }
-  }
-  return(semitones)
-}
-
-## TODO: entender modulo y venctores que no tienen posición 0
-scaleGenerator <- function(notes, scaleJumps){
-  scale <- numeric(length <- (length(notes)-1))
-  ## iterate below maximum posible scaleJumps shift
-  scale[1] <- notes[1]
-  for(i in 2:length(notes)){
-    scale[i] <- notes[i+(scaleJumps[i])] ## es necesario sumar 1 al parecer porque scaleJumps inicia en la posición 1
-  }
-  return(scale)
-}
-
-## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala
-magneticGrid <- function(ref, src){
-  index <- 1
-  difference <- abs(src - ref[1])
-  for(i in 1:length(ref)){
-    if( difference > abs(src - ref[i])){
-      difference <- abs(src - ref[i])
-      index <- i
-    }
-  }
-  return(ref[index])
-}
-
-
-## test functions
-x <- numeric(length <- 5)
-magneticGrid(c(201,103,14.5, 111.7), 111)
-
-notes <- semitonesGen(32.7031956626, 20000)
-scaleJumps <- c(2,2,1,2,2,2,1)
-length(minorPenta)
-length(semitones)
-semitones[1+minorPenta]
-scaleGenerator(notes,scaleJumps )
-notes + notes[scaleJumps]
-
-shift(notes, scaleJumps, dir="right")
 
 
 
@@ -362,5 +364,34 @@ plot(bass <- c(100+sin(x/100),  col="red"))
 plot(line2 <- c(sin(x/210)+sin(2*x/10)*1000), col="blue")
 plot(line3 <- c(440+sin(x)/10000), col="brown")
 
+## legado
+## informacion del archivo viejo de chuck
+##//  // --------  generación de escalas
+## //[root/16,root/8, root/2, root/4, root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
+
+// [2,1,4,1,4] @=> int aeolianPent[];
+// scaleGenerator(65.406391, aeolianPent);
+// [2,1,4,1,4] @=> int aeolianPent[];
+// scaleGenerator(65.406391, aeolianPent);
 
 
+lib.semitonesGen(220,2200) @=> float notes2[]; 
+lib.semitonesGen(440,4400) @=> float notes3[];
+
+[0,3,5,7,10] @=> int minorPenta[];
+lib.scaleGenerator(notes1,minorPenta) @=> scale1;
+lib.scaleGenerator(notes2,minorPenta) @=> scale2;
+lib.scaleGenerator(notes3,minorPenta) @=> scale3;
+
+## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala
+magneticGrid2 <- function(ref, src){
+  index <- 1
+  difference <- abs(src - ref[1])
+  for(i in 1:length(ref)){
+    if( difference > abs(src - ref[i])){
+      difference <- abs(src - ref[i])
+      index <- i
+    }
+  }
+  return(ref[index])
+}
