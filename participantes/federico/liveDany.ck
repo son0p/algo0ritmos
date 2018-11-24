@@ -36,7 +36,7 @@ fun void playDrum(string name, ADSR instrument)
   }
 }
 
-fun void playFreq(string name, SinOsc u)
+fun void playFreq(string name, Osc u)
 {
     FileIO fio;
     // open a file
@@ -63,7 +63,7 @@ fun void playFreq(string name, SinOsc u)
 }
 
 // ======== mixer ===========
-lib.sd.gain      (0.50);
+lib.sd.gain      (0.70);
 lib.hh.gain       (0.2);
 lib.sqr0.gain    (0.02);
 lib.sin0.gain    (0.3);
@@ -77,10 +77,7 @@ lib.tri0env.set       ( 0::ms, 80::ms, 0.0, 10::ms);
 
 lib.blit0rev.mix  (0.00);
 
-lib.sqr0.freq    (3520); 
-lib.sin0.freq     (440);
-lib.blit0.freq     (880);
-lib.tri0.freq     (55);
+
 
 // ========= tracks =================
 
@@ -89,8 +86,11 @@ spork~ playDrum("d2.txt",lib.sd);
 spork~ playDrum("d3.txt",lib.hh);
 //spork~ playDrum("d0.txt", lib.sqr0env);
 // a line is composed of Drum = step on off and freq
+spork~ playDrum("l1.txt", lib.tri0env);
+spork~ playFreq("freqL1.txt", lib.tri0);
 spork~ playDrum("l2.txt", lib.sin0env);
 spork~ playFreq("freqL2.txt", lib.sin0);
+
 //spork~ playDrum("l1.txt", lib.tri0env);
 //spork~ playDrum("l3.txt", lib.blit0env);
 

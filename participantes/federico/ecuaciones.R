@@ -1,9 +1,15 @@
 ## actualmente funciona con liveDany.ck
 
 install.packages("rmarkdown")
+library(devtools)
+devtools::install_github("tidyverse/ggplot2")
 library(ggplot2)
+library(ggthemes)
+install.packages("ggthemes") # Install
+library(ggthemes) # Load
 library(pracma)
 library(binhf)
+library(reshape)
 
 ## functions  
 
@@ -54,7 +60,10 @@ scaleGenerator <- function(notes, scaleJumps){
 magneticGrid <- function(ref, src){
   unlist(lapply(src, function(x)ref[which.min(abs(x-ref))]) )
 }
-
+offsetTrigo <- function(offsetX, data, offsetY){
+  fun <- c(offsetX + data * offsetY)
+  return(fun)
+  }
 
 ## test functions
 x <- numeric(length <- 5)
@@ -65,7 +74,7 @@ lapply(testSrc, function(x)notes[which.min(abs(x-notes))])
 
 
 
-
+## INITIALIZE!! 
 notes <- semitonesGen(32.7031956626, 20000)
 scaleJumps <- c(2,2,1,2,2,2,1)
 length(minorPenta)
@@ -161,7 +170,7 @@ pattern.A <- function(){
   d3 <- activate.steps(c(  0, 1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
 
   l1 <- activate.steps(c(  1,  4, 10, 13, 16 ), 1, "l1.txt")
-  l2 <- activate.steps(c(  1, 2, 4, 7, 10, 12, ,15), 1, "l2.txt")
+  l2 <- activate.steps(c(  1, 2, 4, 7, 10, 12, 15), 1, "l2.txt")
   l3 <- activate.steps(c(   7,  9, 11, 12), 1, "l3.txt")
 }
 pattern.B <- function(){
@@ -230,15 +239,37 @@ matrix
 
 
 ## basic
-x <- c(1:32)
-plot(curve <- c(440+sin(x*9)+tan(x*2/100)*500), col= "grey")
-points(freqL1 <- magneticGrid(notes, curve), col = "darkgreen")
-write(freqL1, file="freqL2.txt", ncolumns = 1)
+xAxis <- c(1:16)
+x <- xAxis/20
+## se intenta hacer más visibles las ecuaciones 
+freqL1 <- sin(x*8)*asin(x)^10
+freqL2 <- sin(x*4)*acos(x)^10
+freqL1 <- offsetTrigo(110,freqL1,128)
+freqL2 <- offsetTrigo(440,freqL2,128)
+harmonized <- magneticGrid(notes, freqL1)
+harmonized2 <- magneticGrid(notes, freqL2)
+## TODO como dibujar las dos lineas?
+points <- as.data.frame(cbind(freqL1, freqL2, harmonized, harmonized2, xAxis))
+points.long <- melt(points, id="xAxis", measure =c("freqL1", "freqL2", "harmonized","harmonized2"))
+ggplot(points.long, aes(xAxis, value, colour = variable)  ) +
+  geom_point()+
+  facet_wrap(points.long$variable ~ ., scales="free_y")+
+  theme_stata()+
+  scale_colour_canva(palette = "Sunny and calm")+
+  labs(x="Time", y="Value")
+write(harmonized, file="freqL1.txt", ncolumns = 1)
+write(harmonized2, file="freqL2.txt", ncolumns = 1)
 
-l1 <- c(55+sin(x*2)+tan(x*2/10)*50)
-l2 <- c(440+tan(x)*1)
-l3 <- c(880+sin(x/4)*200)
-writeFiles(l1,l2,l3,d1)
+## experimental
+
+
+
+
+
+l1 <- c(550+sin(x*2)+tan(x*2/10)*50)
+l2 <- c(440+tan(x)*10)
+l3 <- c(880+sin(x/16)*200)
+writeFiles(l1,l2,l3,d1) 
 
 
 
@@ -290,6 +321,11 @@ qplot(mpg, data=as.data.frame(c(1000+sin(x/8)*10000)), geom="density", fill=65, 
 
 
 ## -------- Legacy
+
+##
+plot(curve <- c(440+(sin(x/2)+sin(x))*64), col= "grey")+ theme(plot.background = element_rect(fill = "darkblue"))
+points(freqL1 <- magneticGrid(notes, curve), col = "darkgreen")
+write(freqL1, file="freqL2.txt", ncolumns = 1)
 
 ## experimental
 plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+sin((x+10)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
@@ -383,7 +419,7 @@ lib.scaleGenerator(notes1,minorPenta) @=> scale1;
 lib.scaleGenerator(notes2,minorPenta) @=> scale2;
 lib.scaleGenerator(notes3,minorPenta) @=> scale3;
 
-## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala
+## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala FAIL 
 magneticGrid2 <- function(ref, src){
   index <- 1
   difference <- abs(src - ref[1])
