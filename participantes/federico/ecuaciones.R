@@ -1,18 +1,15 @@
 ## actualmente funciona con liveDany.ck
 
-install.packages("rmarkdown")
-library(devtools)
 devtools::install_github("tidyverse/ggplot2")
+library(devtools)
 library(ggplot2)
-library(ggthemes)
-install.packages("ggthemes") # Install
-library(ggthemes) # Load
+library(ggthemes) 
 library(pracma)
 library(binhf)
 library(reshape)
+library(dplyr)
 
 ## functions  
-
 
 draw <- function(x,l1,l2,l3){
   df <- data.frame(x,l1,l2,l3)
@@ -43,9 +40,9 @@ semitonesGen <- function( freqFrom, freqTo){
   return(semitones)
 }
 
-## TODO: entender modulo y venctores que no tienen posición 0
+## TODO: entender modulo y vectores que no tienen posición 0
 scaleGenerator <- function(notes, scaleJumps){
-  scale <- numeric(length <- (length(notes)-1))
+  scale <-https://twitter.com/ numeric(length <- (length(notes)-1))
   ## iterate below maximum posible scaleJumps shift
   scale[1] <- notes[1]
   for(i in 2:length(notes)){
@@ -53,8 +50,6 @@ scaleGenerator <- function(notes, scaleJumps){
   }
   return(scale)
 }
-
-
 
 ## alternativa para magneticGrid DONE
 magneticGrid <- function(ref, src){
@@ -86,16 +81,6 @@ notes + notes[scaleJumps]
 shift(notes, scaleJumps, dir="right")
 
 
-x <- seq(0,64, 1)
-
-## change amplitude: sin(x)*a
-plot(line3 <- c(1000+sin(x/8)*10000), pch=16,col=rainbow(10+sin(x*0), alpha=1), fg=3)
- ## change phase: sin(x+pi)
-plot(line3 <- c(1000+sin((x+pi*1)/5)*1000))
-## change frequency sin(x/b)
-plot (line3 <- c(1000+sin(x/20)*1000))
-
-curve(sin(x)-sin(x)) # reset graph
 
 
 ## bassDrum
@@ -152,12 +137,47 @@ level.generator <- function(level){
 
 level <- level.generator(1)
 
+## PLAYGROUND =====================
+##  steps to play
+##   drums
+d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
+d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
+d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+##   melodic lines
+l1 <- activate.steps(c(  1, 2, 5, 9, 13, 16  ), 1, "l1.txt")
+l2 <- activate.steps(c(  3,  7,  11, 13, 14), 1, "l2.txt")
+l3 <- activate.steps(c(   11, 12), 1, "l3.txt")
+
+## construction of melodic lines with trigonometrics
+xAxis <- c(1:16) ## TODO: mas puntos para ver la función pero se escogen puntos dividiendo en 16 o 32 steps
+x <- xAxis
+## se intenta hacer más visibles las ecuaciones 
+freqL1 <- sin(x)+csc(x)
+freqL2 <- sin(x)-cos(x)
+freqL1 <- offsetTrigo(110,freqL1,128)
+freqL2 <- offsetTrigo(440,freqL2,128)
+harmonized <- magneticGrid(notes, freqL1)
+harmonized2 <- magneticGrid(notes, freqL2)
+## build dataframe
+points <- as.data.frame(cbind(freqL1, freqL2, harmonized, harmonized2, xAxis))
+## melt los junta en una columna y hace un factor 
+points.long <- melt(points, id="xAxis", measure =c("freqL1", "freqL2", "harmonized","harmonized2"))
+## draw
+ggplot(points.long, aes(xAxis, value, colour = variable)  ) +
+  geom_line()+
+  facet_wrap(points.long$variable ~ ., scales="free_y", ncol=1)+
+  theme_stata()+
+  scale_colour_canva(palette = "Sunny and calm")+
+  labs(x="Time", y="Value")
+## reduce to 16 points
+harmonized[c(TRUE,FALSE)] ## TODO find a less ugly solution
+## escribo los archivos que va a leer ChucK
+write(harmonized, file="freqL1.txt", ncolumns = 1)
+write(harmonized2, file="freqL2.txt", ncolumns = 1)
 
 
 
-## sincopa generation
-d1 <- sincopaGenerator(d1, 11, 1, 1 )
-write(d1, file="d1.txt", ncolumns = 1)
+## LEGACY =================
 
 ############## PATTERN FUNCTIONS ###########################
 
@@ -236,44 +256,15 @@ matrix <- data.frame(d0, d1, d2, d3, l1, l2, l3)
 matrix
 
 
-
-
-## basic
-xAxis <- c(1:16)
-x <- xAxis/20
-## se intenta hacer más visibles las ecuaciones 
-freqL1 <- sin(x*8)*asin(x)^10
-freqL2 <- sin(x*4)*acos(x)^10
-freqL1 <- offsetTrigo(110,freqL1,128)
-freqL2 <- offsetTrigo(440,freqL2,128)
-harmonized <- magneticGrid(notes, freqL1)
-harmonized2 <- magneticGrid(notes, freqL2)
-## TODO como dibujar las dos lineas?
-points <- as.data.frame(cbind(freqL1, freqL2, harmonized, harmonized2, xAxis))
-points.long <- melt(points, id="xAxis", measure =c("freqL1", "freqL2", "harmonized","harmonized2"))
-ggplot(points.long, aes(xAxis, value, colour = variable)  ) +
-  geom_point()+
-  facet_wrap(points.long$variable ~ ., scales="free_y")+
-  theme_stata()+
-  scale_colour_canva(palette = "Sunny and calm")+
-  labs(x="Time", y="Value")
-write(harmonized, file="freqL1.txt", ncolumns = 1)
-write(harmonized2, file="freqL2.txt", ncolumns = 1)
+## sincopa generation
+d1 <- sincopaGenerator(d1, 11, 1, 1 )
+write(d1, file="d1.txt", ncolumns = 1)
 
 ## experimental
-
-
-
-
-
 l1 <- c(550+sin(x*2)+tan(x*2/10)*50)
 l2 <- c(440+tan(x)*10)
 l3 <- c(880+sin(x/16)*200)
 writeFiles(l1,l2,l3,d1) 
-
-
-
-
 
 ## musical 1
 plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x)/20)+sin((x)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
@@ -320,7 +311,17 @@ plot(line3 <- c(1000+sin(x/8)*10000), pch=16,col=rainbow(10+sin(x*0), alpha=1), 
 qplot(mpg, data=as.data.frame(c(1000+sin(x/8)*10000)), geom="density", fill=65, alpha=0.5, colour=1)
 
 
-## -------- Legacy
+x <- seq(0,64, 1)
+
+## change amplitude: sin(x)*a
+plot(line3 <- c(1000+sin(x/8)*10000), pch=16,col=rainbow(10+sin(x*0), alpha=1), fg=3)
+## change phase: sin(x+pi)
+plot(line3 <- c(1000+sin((x+pi*1)/5)*1000))
+## change frequency sin(x/b)
+plot (line3 <- c(1000+sin(x/20)*1000))
+
+curve(sin(x)-sin(x)) # reset graph
+
 
 ##
 plot(curve <- c(440+(sin(x/2)+sin(x))*64), col= "grey")+ theme(plot.background = element_rect(fill = "darkblue"))

@@ -128,7 +128,7 @@ spork~ playMarkov();
 // mantiene vivos los sporks
 beat * 16 => now;
 // antes de morir se crea a sí mismo
-Machine.add(me.dir()+"/liveCode.ck"); 
+Machine.add(me.dir()+"liveCode.ck"); 
 
 
 
