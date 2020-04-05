@@ -1,3 +1,6 @@
+120::ms => dur beat;
+16 => int cicleSize;
+
 // create our OSC receiver
 OscRecv recv;
 // use port 6449
@@ -10,47 +13,40 @@ recv.event( "/audio/1/foo, s" ) @=> OscEvent oe;
 recv.event( "/audio/1/foo, f" ) @=> OscEvent oi;
 
 float loop[16];
-int intNotes[15];
-float floatNotes[15];
-// infinite event loop
-while ( true )
+int intNotes[16];
+float floatNotes[16];
+0=> int i;
+fun void oscRx()
 {
-    // TODO cambie oe por oi
-    // wait for event to arrive
-    //oi => now;
-    for(0 => int i; i < 15; i++){
-        while ( oi.nextMsg() != 0 )
+    while ( true )
+    {
+         // wait for event to arrive
+        oi => now;
+        //for(0 => int i; i < 15; i++){
+            while ( oi.nextMsg() != 0 )
             {
-                oi.getInt() => int foo;
-                oi.getFloat() => float see;
-                <<< foo>>>; <<< see>>>;
-                foo => intNotes[i];
-                see => floatNotes[i];
+                oi.getInt() =>  intNotes[i%16];
+                oi.getFloat() => floatNotes[i%16];
+                i++;
             }
-          1::second => now;
     }
-    // [20, 25, 30, 55] @=> int notes[];
-// int melody[notes.cap()];
-// for (0 => int i; i < notes.cap(); i++)
-// {
-//    math.random2(1, notes.cap())-1 => int notesselector;
-//    notes[notesselector] => int pushnote;
-//    pushnote =>  melody[i];
-//    <<<pushnote>>>;
-// }
-
-    
-
-
-    // grab the next message from the queue.
-    // while ( oi.nextMsg() != 0 )
-    // {
-    //     // getFloat fetches the expected float (as indicated by "f")
-    //     oi.getInt() => int foo;
-    //     oi.getFloat() => float see;
-    //     // print
-    //     //<<< "got (via OSC):", foo >>>;
-    //     <<< foo>>>;
-    //             <<< see>>>;
-    // }
 }
+
+fun void playArray()
+{
+    while(true)
+    {
+        <<<"start">>>;
+        for(0 => int i; i < 16; i++)
+        {
+            <<< floatNotes[i]>>>;
+        }
+        1::second => now;
+    }
+}
+
+spork~ playArray();
+spork~ oscRx();
+
+beat*cicleSize*10 => now;
+Machine.add(me.dir()+"ChuckOSCreciever.ck");
