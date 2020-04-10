@@ -2,10 +2,11 @@ library(ROSC)
 
 ## Example OSC address patterns
 address <- "/audio/1/foo"
+address2 <- "/audio/1/bar"
 address.with.wildcards <- "/{th,s}ing/n[2-4]/red*"
 
 ## Example data to pack into OSC messages
-data1 <-  12.9
+data1 <-  12.5
 data2 <- 6:8
 data3 <- list(list(3:4,"apple"), TRUE, list(list(5.1,"foo"),NULL))
 
@@ -53,4 +54,13 @@ data8 <- 0:15*0.01
 lapply(data8, function(x){
    OSC8 <- oscMessage(address = address, data = x, double="f") 
    oscchief.send(host=HOST, port=PORT, osc=OSC8)
-    })
+})
+
+## TEST:send an integer array
+data9 <- as.integer(0:15*1)
+lapply(data9, function(x){
+    OSC9 <- oscMessage(address = address2, data = x, integer = "i") 
+    oscchief.send(host=HOST, port=PORT, osc=OSC9)
+})
+
+
