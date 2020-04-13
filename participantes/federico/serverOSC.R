@@ -57,11 +57,20 @@ lapply(data8, function(x){
 })
 
 ## TEST:send an integer array
-data9 <- as.integer(seq(100, 4000, length.out=16))
-lapply(data9, function(x){
-    OSC9 <- oscMessage(address = address2, data = x, integer = "i") 
-    oscchief.send(host=HOST, port=PORT, osc=OSC9)
-})
+x <- 1
+repeat {
+    print(x)
+    x = x+1
+    data9 <- as.integer(seq(190,runif(1, min=300, max=5000), length.out=16))
+    lapply(data9, function(x){
+        OSC9 <- oscMessage(address = address2, data = x, integer = "i") 
+        oscchief.send(host=HOST, port=PORT, osc=OSC9)
+    })
+    Sys.sleep(60);
+    if (x == 6){
+        break
+    }
+}
 
 
 
