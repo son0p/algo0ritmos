@@ -1,13 +1,16 @@
 ## actualmente funciona con liveDany.ck
 
 devtools::install_github("tidyverse/ggplot2")
-library(devtools)
+llibrary(devtools)
 library(ggplot2)
 library(ggthemes) 
 library(pracma)
 library(binhf)
 library(reshape)
 library(dplyr)
+
+
+## Encadenamiento de funciones Seed - grid 
 
 ## functions  
 
@@ -42,7 +45,7 @@ semitonesGen <- function( freqFrom, freqTo){
 
 ## TODO: entender modulo y vectores que no tienen posición 0
 scaleGenerator <- function(notes, scaleJumps){
-  scale <-https://twitter.com/ numeric(length <- (length(notes)-1))
+  scale <- numeric(length <- (length(notes)-1))
   ## iterate below maximum posible scaleJumps shift
   scale[1] <- notes[1]
   for(i in 2:length(notes)){

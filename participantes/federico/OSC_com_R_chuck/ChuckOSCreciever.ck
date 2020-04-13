@@ -9,27 +9,43 @@ OscRecv recv;
 recv.listen();
 
 // create an address in the receiver, store in new variable
-recv.event( "/audio/1/foo, s" ) @=> OscEvent oe;
+recv.event( "/audio/1/bar, i" ) @=> OscEvent oe;
 recv.event( "/audio/1/foo, f" ) @=> OscEvent oi;
 
 float loop[16];
 int intNotes[16];
 float floatNotes[16];
-0=> int i;
-fun void oscRx()
+0 => int i;
+0 => int j;
+fun void oscRxFloat()
 {
     while ( true )
     {
          // wait for event to arrive
-        oi => now;
+         oi => now;
         //for(0 => int i; i < 15; i++){
             while ( oi.nextMsg() != 0 )
             {
-                oi.getInt() =>  intNotes[i%16];
                 oi.getFloat() => floatNotes[i%16];
                 i++;
             }
     }
+
+}
+fun void oscRxInt()
+{
+    while ( true )
+    {
+        // wait for event to arrive
+        oe => now;
+        //for(0 => int i; i < 15; i++){
+        while ( oe.nextMsg() != 0 )
+        {
+            oe.getInt() =>  intNotes[j%16];
+            j++;
+        }
+    }
+
 }
 
 fun void playArray()
@@ -39,14 +55,15 @@ fun void playArray()
         <<<"start">>>;
         for(0 => int i; i < 16; i++)
         {
-            <<< floatNotes[i]>>>;
+            <<< intNotes[i]>>>;
         }
         1::second => now;
     }
 }
 
 spork~ playArray();
-spork~ oscRx();
+spork~ oscRxFloat();
+spork~ oscRxInt();
 
 beat*cicleSize*10 => now;
 Machine.add(me.dir()+"ChuckOSCreciever.ck");

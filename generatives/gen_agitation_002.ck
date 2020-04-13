@@ -3,9 +3,9 @@
 36 => int root;
 
 // Probabilidad de un corpus
-[100,  0,  0, 0,100,  0, 10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
+[100,  0,  0, 0,100,  0, 50,  0, 30,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
 [  0,  0,  0, 0,100,  0,  0,  0,  0,  0,  0,  0,100,  0,  0, 15] @=> int chanceSd[];
-[  0,  0,100, 0,  0,  3,100,  0,  5,  5,100,  3,  0,  0,100, 20] @=> int chanceHh[];
+[ 100, 80,100, 0,100, 83,100,  0,100, 80,100,  0,100, 70, 90, 0] @=> int chanceHh[];
 [ 13,  3, 90, 3, 10,  3, 90, 15,  5,  5, 90,  3,  5,  5, 90,  3] @=> int chanceBass[];
 [  0,  0,  0, 0,  0,  3,  3,  3,  7,  0, 10, 12, 24,  0,  0, -2] @=> int chanceBassNotes[];
 [ 10,  15, 5, 30, 15, 10, 10, 30, 90,  5,  0,  3, 30,  15, 0, 30] @=> int chanceMelody[];
@@ -46,16 +46,16 @@ sdFilter.set(400.0, 1.0);
 sd.set( 0::ms, 50::ms, .1, 100::ms );
 // --hiHat
 Noise hhImpulse => ResonZ hhFilter => ADSR hh => dac;
-0.5 => hhImpulse.gain;
+0.2 => hhImpulse.gain;
 hhFilter.set(10000.0, 5.0);
 hh.set( 0::ms, 50::ms, .1, 100::ms );
 // --bass
 SqrOsc saw => ADSR bass => dac;
-0.15 => saw.gain;
+0.07 => saw.gain;
 bass.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
 // --Melody
 BlitSaw sin1 => ADSR melody1 => NRev melodyReverb => dac;
-0.35 => sin1.gain;
+0.15 => sin1.gain;
 melody1.set( 0::ms, 80::ms, saw.gain()/1.5, 100::ms );
 0.03 => melodyReverb.mix;
 
@@ -140,9 +140,9 @@ fun void playMelody()
 }
 
 // llama funciones
-//spork~ playDrums();
-//spork~ playBass();
-//spork~ playMelody();
+spork~ playDrums();
+spork~ playBass();
+spork~ playMelody();
 
 // vive un tiempo
 beat*16 => now;

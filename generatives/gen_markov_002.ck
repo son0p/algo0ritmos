@@ -124,6 +124,7 @@ floatChance2(50, 1.1);
 for(0 => int k; k < 100; k++){<<< percentArray[k], "position2:",k >>>;}
 
 
+
 // mantiene vivas las funciones un ciclo
 loop => now;
 // al terminar se llama a si mismo

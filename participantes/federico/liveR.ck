@@ -1,4 +1,5 @@
 Library lib;
+Inmutable inmutable;
 
 120::ms => dur beat;
 16 => int cicleSize;
@@ -18,11 +19,12 @@ recv.event( "/audio/1/int, i" ) @=>  OscEvent oi;
 recv.event( "/audio/1/float, f" ) @=>  OscEvent of;
 
 int intNotes[16];
+inmutable.inmutableArray @=>  intNotes;
 float floatNotes[16];
 
 fun  void oscRxFloat()
 {
-    0 => int i;
+    int i;
     while ( true )
     {
         // wait for event to arrive
@@ -36,14 +38,14 @@ fun  void oscRxFloat()
 }
 fun void oscRxInt()
 {
-    0 => int j;
+    int j;
     while ( true )
     {
         // wait for event to arrive
         oi => now;
         while ( oi.nextMsg() != 0 )
         {
-            oi.getInt() =>  intNotes[j%16];
+            oi.getInt() =>  inmutable.inmutableArray[j%16];
             j++;
         }
     }
@@ -87,6 +89,16 @@ fun void playArray()
    }
 }
 // ######## END OSC test ###########
+SinOsc sin7 => dac;
+
+fun void simplePlay(){
+    while(true){
+        for(0 => int i; i < 15; i++){
+             intNotes[i] => sin7.freq;  
+             lib.run(beat);
+        }
+    }
+}
 fun void playBass( string name, float scale[] )
 {
   FileIO fio;
@@ -215,12 +227,12 @@ lib.blit0rev.mix  (0.1);
 fun void climate( int p[][] )
 {
 //  spork~ play(lib.euclideangenerator(p[0][0],p[0][1]), lib.bd);         // bd
-  spork~ playDrum("bd.txt",lib.bd);
+ // spork~ playDrum("bd.txt",lib.bd);
   // spork~ play(lib.euclideangenerator(p[1][0],p[1][1]), lib.sd);        // sn
-  spork~ playDrum("sd.txt",lib.sd);
+ // spork~ playDrum("sd.txt",lib.sd);
   //spork~ play(lib.euclideangenerator(p[2][0],p[2][1]), lib.hh);         // hh
-  spork~ playDrum("hh.txt",lib.hh);
-  spork~ play(lib.euclideangenerator(p[3][0],p[3][1]), lib.sqr0env);      // bass
+  //spork~ playDrum("hh.txt",lib.hh);
+  spork~ play(lib.euclideangenerator(p[3][0],p[2][1]), lib.sqr0env);      // bass
  // spork~ playBass("bass.txt", scale1);
   spork~ play(lib.euclideangenerator(p[4][0],p[4][1]), lib.sin0env);
  // spork~ playL2("line2.txt", scale2);
@@ -239,14 +251,34 @@ fun void climate( int p[][] )
 
 // === transformations ====
 //spork~ lib.predation(lib.bd, lib.sqr0env, 1000::ms);
+fun void runningOSC(){
+    spork~ oscRxInt();
+    1::week => now;
+}
 
-spork~ oscRxInt();
-spork~ playArray();
+fun void playSounds(){
+    while(true){
+        //climate([[1,16],[0,16],[3,4],[2,12],[4,8], [13,24]]);
+        spork~ playArray();
+        beat*cicleSize => now;
+        spork~ simplePlay();
+        //me.yield();
+    }
+}
+
+spork~ runningOSC();
+spork~ playSounds();
+spork~ simplePlay();
+
+
+
 //spork~ osc.oscRxInt();
 //spork~ osc.playArray();
 
 // === live, die, and reborn ===
-beat*cicleSize => now;
-Machine.add(me.dir()+"liveR");
+while(true){
+    beat*cicleSize => now;
+    }
+//Machine.add(me.dir()+"liveR");
 
 

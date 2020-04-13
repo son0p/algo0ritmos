@@ -29,7 +29,8 @@ function void meter(SndBuf target){
     // upchuck: take fft then rms
     rms.upchuck() @=> UAnaBlob blob;
     // muestra el RMS
-    <<< target+":"+ blob.fval(0) >>>;
+    <<<target+":"+ blob.fval(0) >>>;
+    chout <= {blob.fval(0) }
     // advance time
     fft.size()::samp => now;
   }

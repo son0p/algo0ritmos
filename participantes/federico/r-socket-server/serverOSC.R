@@ -49,8 +49,13 @@ oscchief.send(host=HOST, port=PORT, osc=OSC5)
 
 oscchief.send(host=HOST, port=PORT, osc=test)
 
-data8 <- 1:10*0.1
+data8 <- 1:16*0.1
+data9 <- 1:16
 lapply(data8, function(x){
    OSC8 <- oscMessage(address = address, data = x, double="f") 
    oscchief.send(host=HOST, port=PORT, osc=OSC8)
-    })
+})
+lapply(data9, function(x){
+    OSC9 <- oscMessage(address = address, data = x, integer="i") 
+    oscchief.send(host=HOST, port=PORT, osc=OSC9)
+})
