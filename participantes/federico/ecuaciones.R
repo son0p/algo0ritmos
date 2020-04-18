@@ -1,14 +1,14 @@
 ## actualmente funciona con liveDany.ck
 
 devtools::install_github("tidyverse/ggplot2")
-llibrary(devtools)
+library(devtools)
 library(ggplot2)
-library(ggthemes) 
-library(pracma)
-library(binhf)
-library(reshape)
-library(dplyr)
-
+##library(ggthemes)
+if(!require(ggthemes)){install.packages("ggthemes")}
+if(!require(pracma)){install.packages("pracma")}
+if(!require(binhf)){install.packages("binhf")}
+if(!require(reshape)){install.packages("reshape")}
+if(!require(dplyr)){install.packages("dplyr")}
 
 ## Encadenamiento de funciones Seed - grid 
 
@@ -61,7 +61,19 @@ magneticGrid <- function(ref, src){
 offsetTrigo <- function(offsetX, data, offsetY){
   fun <- c(offsetX + data * offsetY)
   return(fun)
-  }
+}
+
+## INITIALIZE!!
+minorPenta <- c(0,3,5,7,10)
+notes <- semitonesGen(32.7031956626, 20000)
+scaleJumps <- c(2,2,1,2,2,2,1)
+##length(minorPenta)
+##length(semitones)
+##semitones[1+minorPenta]
+scaleGenerator(notes,scaleJumps )
+notes + notes[scaleJumps]
+
+##shift(notes, scaleJumps, dir="right")
 
 ## test functions
 x <- numeric(length <- 5)
@@ -72,16 +84,7 @@ lapply(testSrc, function(x)notes[which.min(abs(x-notes))])
 
 
 
-## INITIALIZE!! 
-notes <- semitonesGen(32.7031956626, 20000)
-scaleJumps <- c(2,2,1,2,2,2,1)
-length(minorPenta)
-length(semitones)
-semitones[1+minorPenta]
-scaleGenerator(notes,scaleJumps )
-notes + notes[scaleJumps]
 
-shift(notes, scaleJumps, dir="right")
 
 
 
@@ -340,7 +343,7 @@ plot(line3 <- c(440+csc((x+(pi*0.2))/sin(x))*10), col="brown", pch=19) ## intere
 ## basic
 plot(bass <- c(55+sin(x)+tan(x*2/10)*50), col="green")
 plot(line2 <- c(440+tan(x/4)*10), col="blue")
-(line2 <- c(880+tan(x/4)*.5), col="green")
+##(line2 <- c(880+tan(x/4)*0.5), col="green"))
 
 
 plot(sin(x), cex=0.1)
@@ -361,7 +364,7 @@ plot(bass <- c(x*sin(x)/exp(x*x)*10000)) ## sigmoid alike
 
 ## fabs
 plot(bass <- c(sin(x)/tan(x*40))*5000)
-plot(line2 <- c(sin(x/10)/sin(x*2)*4000), col="blue")http://son0p.net/functions/functionsInMusic.html
+plot(line2 <- c(sin(x/10)/sin(x*2)*4000), col="blue")
 
 ## S1 
 plot(bass <- c(cos(x/16)*100), col="red")
@@ -409,29 +412,29 @@ plot(line3 <- c(440+sin(x)/10000), col="brown")
 ##//  // --------  generación de escalas
 ## //[root/16,root/8, root/2, root/4, root, root*4, root*2, root*1.189207115, root*1.3348398542, root*1.4983070769, root*1.7817974363, root*1.6817928305] @=> float ref[];
 
-// [2,1,4,1,4] @=> int aeolianPent[];
-// scaleGenerator(65.406391, aeolianPent);
-// [2,1,4,1,4] @=> int aeolianPent[];
-// scaleGenerator(65.406391, aeolianPent);
+## [2,1,4,1,4] @=> int aeolianPent[];
+## scaleGenerator(65.406391, aeolianPent);
+## [2,1,4,1,4] @=> int aeolianPent[];
+## scaleGenerator(65.406391, aeolianPent);
 
 
-lib.semitonesGen(220,2200) @=> float notes2[]; 
-lib.semitonesGen(440,4400) @=> float notes3[];
+## lib.semitonesGen(220,2200) @=> float notes2[]; 
+## lib.semitonesGen(440,4400) @=> float notes3[];
 
-[0,3,5,7,10] @=> int minorPenta[];
-lib.scaleGenerator(notes1,minorPenta) @=> scale1;
-lib.scaleGenerator(notes2,minorPenta) @=> scale2;
-lib.scaleGenerator(notes3,minorPenta) @=> scale3;
+## [0,3,5,7,10] @=> int minorPenta[];
+## lib.scaleGenerator(notes1,minorPenta) @=> scale1;
+## lib.scaleGenerator(notes2,minorPenta) @=> scale2;
+## lib.scaleGenerator(notes3,minorPenta) @=> scale3;
 
 ## como las frecuencias vienen de una función trigonometrica que es continua, se necesita que cada frecuencia de un vector src  se convierta en la frecuencia válida mas cercana a un vector ref que esta definido por la escala FAIL 
-magneticGrid2 <- function(ref, src){
-  index <- 1
-  difference <- abs(src - ref[1])
-  for(i in 1:length(ref)){
-    if( difference > abs(src - ref[i])){
-      difference <- abs(src - ref[i])
-      index <- i
-    }
-  }
-  return(ref[index])
-}
+## magneticGrid2 <- function(ref, src){
+##   index <- 1
+##   difference <- abs(src - ref[1])
+##   for(i in 1:length(ref)){
+##     if( difference > abs(src - ref[i])){
+##       difference <- abs(src - ref[i])
+##       index <- i
+##     }
+##   }
+##   return(ref[index])
+## }
