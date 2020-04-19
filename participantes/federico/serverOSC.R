@@ -1,8 +1,10 @@
 library(ROSC)
 source("ecuaciones.R")
-## Example OSC address patternsaddress <- "/audio/1/float"
+## Example OSC address patterns
+address <- "/audio/1/float"
 address2 <- "/audio/1/int"
 bass <- "/audio/2/bass"
+bd <- "/audio/2/bd"
 address.with.wildcards <- "/{th,s}ing/n[2-4]/red*"
 
 ## Example data to pack into OSC messages
@@ -80,35 +82,49 @@ dataBass <-  as.integer(sample(subset(notes, x > 200 ),16))
 
 x <- c(1:16)
 xAxis <- c(1:16)
-data9 <-  tan(x-16) %>%
-    offsetTrigo(410, . ,128) %>%
-    as.integer(magneticGrid(notes, data9))
 
-dataBass <-  sin(x/8) %>%
-    offsetTrigo(50, . ,128) %>%
-    as.integer(magneticGrid(notes, dataBass))
+data9 <-  200+sin(x)*choose((x*2),2)
+data9 <-   offsetTrigo(410, . ,128)
+data9 <-   as.integer(magneticGrid(notes, data9))
+draw()
+
+dataBass <-  sin(x/8)*sin(x/4)*sin(x)
+dataBass <-  offsetTrigo(50, dataBass ,128)
+dataBass <-  as.integer(magneticGrid(notes, dataBass))
+draw()
+
+dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
+draw()
 
 
 ## chart
-points <- as.data.frame(cbind(data9, dataBass, xAxis))
-points.long <- melt(points, id="xAxis", measure =c("data9", "dataBass"))
+
 ## draw
-ggplot(points.long, aes(xAxis, value, colour = variable)  ) +
-  geom_point()+
-  facet_wrap(points.long$variable ~ ., scales="free_y", ncol=1)+
-  theme_stata()+
-  scale_colour_canva(palette = "Sunny and calm")+
-    labs(x="Time", y="Value")
+draw  <- function(){
+    points <- as.data.frame(cbind(data9, dataBass, dataBD, xAxis))
+    points.long <- melt(points, id="xAxis", measure =c("data9", "dataBass", "dataBD"))
+    ggplot(points.long, aes(xAxis, value, colour = variable, size = 4)  ) +
+        geom_point()+
+        facet_wrap(points.long$variable ~ ., scales="free_y", ncol=1)+
+        theme_wsj()+
+        scale_color_stata(scheme = "s2color")+
+        labs(x="Time", y="Value")
+}
 ## send OSC
 
 lapply(data9, function(x){
-    OSC9 <- oscMessage(address = address2, data = x, integer = "i") 
+    OSC9 <- oscMessage(address = address2, data = x, integer = "i")
     oscchief.send(host=HOST, port=PORT, osc=OSC9)
 })
 
 lapply(dataBass, function(x){
-    oscBass <- oscMessage(address = bass, data = x, integer = "i") 
+    oscBass <- oscMessage(address = bass, data = x, integer = "i")
     oscchief.send(host=HOST, port=PORT, osc=oscBass)
+})
+
+lapply(dataBD, function(x){
+    oscBD <- oscMessage(address = bd, data = x, integer = "i")
+    oscchief.send(host=HOST, port=PORT, osc=oscBD)
 })
 
 
