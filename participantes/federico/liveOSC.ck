@@ -17,8 +17,8 @@ recv.event( "/audio/2/bass, i" )  @=>    OscEvent oscBass;
 recv.event( "/audio/2/bd, i" )    @=>    OscEvent oscBD;
 
 int intNotes[16];
-int intBass[16];
-int intBD[16];
+int  intBass[16];
+int    intBD[16];
 inmutable.inmutableArray @=> intNotes;
 inmutable.inmutableBass  @=> intBass;
 inmutable.inmutableBD    @=> intBD;
@@ -64,7 +64,7 @@ fun void oscRxBD(){
     while(true){
         oscBD => now;
         while( oscBD.nextMsg() != 0 ){
-            oscBD.getInt() => inmutable.inmutableBD[i%16]; <<< intBD[i]>>>;
+            oscBD.getInt() => inmutable.inmutableBD[i];
             i++;
         }
     }
@@ -82,7 +82,7 @@ SqrOsc sqr =>  dac;
 
 fun void simplePlay(){
     while(true){
-        for(0 => int i; i < 15; i++){
+        for(0 => int i; i < 16; i++){
             intNotes[i] => sin6.freq;
             lib.run(beat);
         }
@@ -90,7 +90,7 @@ fun void simplePlay(){
 }
 fun void bassPlay(){
     while(true){
-        for(0 => int i; i < 15; i++){
+        for(0 => int i; i < 16; i++){
             intBass[i] => sqr.freq;
             lib.run(beat);
         }
@@ -99,7 +99,7 @@ fun void bassPlay(){
 
 fun void playDrum(ADSR instrument){
   while(true){
-      for(0 => int i; i < 15; i++){
+      for(0 => int i; i < 16; i++){
       intBD[i] => int value; 
       if( value != 0 && instrument == lib.bd ){
           lib.playDrums(instrument, lib.bdImpulse);
@@ -126,10 +126,10 @@ fun void runningOSC(){
 spork~ runningOSC();
 spork~ simplePlay();
 spork~ bassPlay();
-spork~ playDrum(lib.hh);
+spork~ playDrum(lib.bd);
 
 while(true){
-    beat => now;
+    1000*beat => now;
 }
 
 

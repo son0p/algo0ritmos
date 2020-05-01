@@ -35,7 +35,7 @@ euclide <- function(c, k, n, r){
 euclidean.generator <- function(hitsPerBar, barLength, rotation){
     i <- 0
     vec <- c()
-    while (i < 12){
+    while (i < 16){
         vec <- c(vec, euclide(i, hitsPerBar, barLength, rotation))
         i <- i+1
     }
@@ -59,18 +59,20 @@ dataBass <-  as.integer(sample(subset(notes, x > 200 ),16))
 x <- c(1:16)
 xAxis <- c(1:16)
 
-data9 <-  200+sin(x)*choose((x*2),2)
-data9 <-   offsetTrigo(410, . ,128)
+data9 <-  200+sin(x/4)*choose((x*2),2)
+data9 <-   offsetTrigo(410, data9 ,128)
 data9 <-   as.integer(magneticGrid(notes, data9))
-draw()
+#draw()
 
-dataBass <-  sin(x/8)*sin(x/4)*sin(x)
+dataBass <-  tan(x*2)
 dataBass <-  offsetTrigo(50, dataBass ,128)
 dataBass <-  as.integer(magneticGrid(notes, dataBass))
-draw()
+#draw()
 
 dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
-draw()
+
+dataBD <- as.integer(euclidean.generator(4, 16, 0))
+
 
 ## == APPLY CHANGES
 ## send OSC
