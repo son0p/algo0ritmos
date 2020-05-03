@@ -15,13 +15,19 @@ recv.event( "/audio/1/int, i" )   @=>    OscEvent oi;
 recv.event( "/audio/1/float, f" ) @=>    OscEvent of;
 recv.event( "/audio/2/bass, i" )  @=>    OscEvent oscBass;
 recv.event( "/audio/2/bd, i" )    @=>    OscEvent oscBD;
+recv.event( "/audio/2/sn, i" )    @=>    OscEvent oscSN;
+recv.event( "/audio/2/hh, i" )    @=>    OscEvent oscHH;
 
 int intNotes[16];
 int  intBass[16];
 int    intBD[16];
+int    intSN[16];
+int    intHH[16];
 inmutable.inmutableArray @=> intNotes;
 inmutable.inmutableBass  @=> intBass;
 inmutable.inmutableBD    @=> intBD;
+inmutable.inmutableSN    @=> intSN;
+inmutable.inmutableHH    @=> intHH;
 float floatNotes[16];
 
 fun  void oscRxFloat()
@@ -64,7 +70,27 @@ fun void oscRxBD(){
     while(true){
         oscBD => now;
         while( oscBD.nextMsg() != 0 ){
-            oscBD.getInt() => inmutable.inmutableBD[i];
+            oscBD.getInt() => inmutable.inmutableBD[i%16];
+            i++;
+        }
+    }
+}
+fun void oscRxSN(){
+    int i;
+    while(true){
+        oscSN => now;
+        while( oscSN.nextMsg() != 0 ){
+            oscSN.getInt() => inmutable.inmutableSN[i%16];
+            i++;
+        }
+    }
+}
+fun void oscRxHH(){
+    int i;
+    while(true){
+        oscHH => now;
+        while( oscHH.nextMsg() != 0 ){
+            oscHH.getInt() => inmutable.inmutableHH[i%16];
             i++;
         }
     }
@@ -97,10 +123,10 @@ fun void bassPlay(){
     }
 }
 
-fun void playDrum(ADSR instrument){
+fun void playDrum(ADSR instrument, int seq[]){
   while(true){
       for(0 => int i; i < 16; i++){
-      intBD[i] => int value; 
+      seq[i] => int value; 
       if( value != 0 && instrument == lib.bd ){
           lib.playDrums(instrument, lib.bdImpulse);
       }
@@ -120,13 +146,17 @@ fun void runningOSC(){
     spork~ oscRxInt();
     spork~ oscRxBass();
     spork~ oscRxBD();
+    spork~ oscRxSN();
+    spork~ oscRxHH();
     1::week => now;
 }
 
 spork~ runningOSC();
 spork~ simplePlay();
 spork~ bassPlay();
-spork~ playDrum(lib.bd);
+spork~ playDrum(lib.bd, intBD);
+spork~ playDrum(lib.sd, intSN);
+spork~ playDrum(lib.hh, intHH);
 
 while(true){
     1000*beat => now;

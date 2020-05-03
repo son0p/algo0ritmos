@@ -7,6 +7,9 @@ address <- "/audio/1/float"
 address2 <- "/audio/1/int"
 bass <- "/audio/2/bass"
 bd <- "/audio/2/bd"
+sn <- "/audio/2/sn"
+hh <- "/audio/2/hh"
+
 address.with.wildcards <- "/{th,s}ing/n[2-4]/red*"
 ## Define host and port
 HOST <- "255.255.255.255" # this ip address means "all ip addresses on the local subnet"
@@ -72,6 +75,8 @@ dataBass <-  as.integer(magneticGrid(notes, dataBass))
 dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
 
 dataBD <- as.integer(euclidean.generator(4, 16, 0))
+dataSN <- as.integer(euclidean.generator(7, 16, 0))
+dataHH <- as.integer(euclidean.generator(8, 16, 2))
 
 
 ## == APPLY CHANGES
@@ -89,6 +94,14 @@ lapply(dataBass, function(x){
 lapply(dataBD, function(x){
     oscBD <- oscMessage(address = bd, data = x, integer = "i")
     oscchief.send(host=HOST, port=PORT, osc=oscBD)
+})
+lapply(dataSN, function(x){
+    oscSN <- oscMessage(address = sn, data = x, integer = "i")
+    oscchief.send(host=HOST, port=PORT, osc=oscSN)
+})
+lapply(dataHH, function(x){
+    oscHH <- oscMessage(address = hh, data = x, integer = "i")
+    oscchief.send(host=HOST, port=PORT, osc=oscHH)
 })
 
 ## == MUTES ==
