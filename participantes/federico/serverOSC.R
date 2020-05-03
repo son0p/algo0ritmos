@@ -5,10 +5,13 @@ source("ecuaciones.R")
 ## Example OSC address patterns
 address <- "/audio/1/float"
 address2 <- "/audio/1/int"
+envNotes <- "/audio/1/envNotes"
 bass <- "/audio/2/bass"
+envBass <- "/audio/2/envBass"
 bd <- "/audio/2/bd"
 sn <- "/audio/2/sn"
 hh <- "/audio/2/hh"
+
 
 address.with.wildcards <- "/{th,s}ing/n[2-4]/red*"
 ## Define host and port
@@ -62,56 +65,73 @@ dataBass <-  as.integer(sample(subset(notes, x > 200 ),16))
 x <- c(1:16)
 xAxis <- c(1:16)
 
-data9 <-  200+sin(x/4)*choose((x*2),2)
-data9 <-   offsetTrigo(410, data9 ,128)
+data9 <-  sin(x/2)/16*sin(x)
+data9 <-   offsetTrigo(0, data9 ,20000)
 data9 <-   as.integer(magneticGrid(notes, data9))
-#draw()
+draw()
+Update.all()
 
-dataBass <-  tan(x*2)
-dataBass <-  offsetTrigo(50, dataBass ,128)
+dataBass <-  sin(x/8)/32
+dataBass <-  offsetTrigo(0, dataBass ,20000)
 dataBass <-  as.integer(magneticGrid(notes, dataBass))
-#draw()
+draw()
+Update.all()
 
 dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
 
-dataBD <- as.integer(euclidean.generator(4, 16, 0))
-dataSN <- as.integer(euclidean.generator(7, 16, 0))
-dataHH <- as.integer(euclidean.generator(8, 16, 2))
-
+dataBD       <- as.integer(euclidean.generator(4, 16, 0))
+dataSN       <- as.integer(euclidean.generator(2, 16, 4))
+dataHH       <- as.integer(euclidean.generator(4, 16, 2))
+dataEnvBass  <- as.integer(euclidean.generator(7, 16, 0))
+dataEnvNotes <- as.integer(euclidean.generator(14, 16, 4))
+Update.all()
 
 ## == APPLY CHANGES
 ## send OSC
-lapply(data9, function(x){
-    OSC9 <- oscMessage(address = address2, data = x, integer = "i")
-    oscchief.send(host=HOST, port=PORT, osc=OSC9)
-})
+Update.all <- function (){
+    lapply(data9, function(x){
+        OSC9 <- oscMessage(address = address2, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=OSC9)
+    })
 
-lapply(dataBass, function(x){
-    oscBass <- oscMessage(address = bass, data = x, integer = "i")
-    oscchief.send(host=HOST, port=PORT, osc=oscBass)
-})
+    lapply(dataEnvNotes, function(x){
+        oscEnvNotes <- oscMessage(address = envNotes, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscEnvNotes)
+    })
 
-lapply(dataBD, function(x){
-    oscBD <- oscMessage(address = bd, data = x, integer = "i")
-    oscchief.send(host=HOST, port=PORT, osc=oscBD)
-})
-lapply(dataSN, function(x){
-    oscSN <- oscMessage(address = sn, data = x, integer = "i")
-    oscchief.send(host=HOST, port=PORT, osc=oscSN)
-})
-lapply(dataHH, function(x){
-    oscHH <- oscMessage(address = hh, data = x, integer = "i")
-    oscchief.send(host=HOST, port=PORT, osc=oscHH)
-})
+    lapply(dataBass, function(x){
+        oscBass <- oscMessage(address = bass, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscBass)
+    })
 
+    lapply(dataBD, function(x){
+        oscBD <- oscMessage(address = bd, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscBD)
+    })
+    lapply(dataSN, function(x){
+        oscSN <- oscMessage(address = sn, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscSN)
+    })
+    lapply(dataHH, function(x){
+        oscHH <- oscMessage(address = hh, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscHH)
+    })
+    lapply(dataEnvBass, function(x){
+        oscEnvBass <- oscMessage(address = envBass, data = x, integer = "i")
+        oscchief.send(host=HOST, port=PORT, osc=oscEnvBass)
+    })
+}
 ## == MUTES ==
 ## mutes
 data9 <-  as.integer(rep(0, 16))
 dataBass <- as.integer(rep(0, 16))
+Update.all()
 
 ## == CAPTURE FAVORITES ==
-rec1 <-data9
+rec1 <- data9
 rec1bass <-dataBass
+rec2 <- data9
+rec2bass <-dataBass
 ## favs
 data9 <- rec1
 dataBass <- rec1bass
@@ -121,8 +141,8 @@ dataBass <- rec1bass
 
 ## draw
 draw  <- function(){
-    points <- as.data.frame(cbind(data9, dataBass, dataBD, xAxis))
-    points.long <- melt(points, id="xAxis", measure =c("data9", "dataBass", "dataBD"))
+    points <- as.data.frame(cbind(data9, dataBass, dataBD, dataSN, dataHH, xAxis))
+    points.long <- melt(points, id="xAxis", measure =c("data9", "dataBass", "dataBD", "dataSN", "dataHH"))
     ggplot(points.long, aes(xAxis, value, colour = variable, size = 4)  ) +
         geom_point()+
         facet_wrap(points.long$variable ~ ., scales="free_y", ncol=1)+
