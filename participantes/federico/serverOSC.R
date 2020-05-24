@@ -65,14 +65,14 @@ dataBass <-  as.integer(sample(subset(notes, x > 200 ),16))
 x <- c(1:16)
 xAxis <- c(1:16)
 
-data9 <-  sin(x/2)/16*sin(x)
-data9 <-   offsetTrigo(0, data9 ,20000)
+data9 <-  sin(x*0.5)/24
+data9 <-   offsetTrigo(20, data9 ,20000)
 data9 <-   as.integer(magneticGrid(notes, data9))
 draw()
 Update.all()
 
-dataBass <-  sin(x/8)/32
-dataBass <-  offsetTrigo(0, dataBass ,20000)
+dataBass <-  tan(x/0.8)/8*tan(x)
+dataBass <-  offsetTrigo(20, dataBass ,20000)
 dataBass <-  as.integer(magneticGrid(notes, dataBass))
 draw()
 Update.all()
@@ -83,7 +83,7 @@ dataBD       <- as.integer(euclidean.generator(4, 16, 0))
 dataSN       <- as.integer(euclidean.generator(2, 16, 4))
 dataHH       <- as.integer(euclidean.generator(4, 16, 2))
 dataEnvBass  <- as.integer(euclidean.generator(7, 16, 0))
-dataEnvNotes <- as.integer(euclidean.generator(14, 16, 4))
+dataEnvNotes <- as.integer(euclidean.generator(14, 16, 8))
 Update.all()
 
 ## == APPLY CHANGES
@@ -143,11 +143,12 @@ dataBass <- rec1bass
 draw  <- function(){
     points <- as.data.frame(cbind(data9, dataBass, dataBD, dataSN, dataHH, xAxis))
     points.long <- melt(points, id="xAxis", measure =c("data9", "dataBass", "dataBD", "dataSN", "dataHH"))
-    ggplot(points.long, aes(xAxis, value, colour = variable, size = 4)  ) +
+    ggplot(points.long, aes(xAxis, value, colour = variable, size = 3)  ) +
         geom_point()+
         facet_wrap(points.long$variable ~ ., scales="free_y", ncol=1)+
         theme_wsj()+
         scale_color_stata(scheme = "s2color")+
+       ## markers = points.long$value+
         labs(x="Time", y="Value")
 }
 

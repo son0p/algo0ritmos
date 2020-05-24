@@ -211,8 +211,8 @@ fun void runningOSC(){
 spork~ runningOSC();
 //spork~ simplePlay();
 //spork~ bassPlay();
-spork~ playDrum(lib.sin0env, envNotes);
-spork~ playFreq(lib.sin0, intNotes);
+spork~ playDrum(lib.blit0env, envNotes);
+spork~ playFreq(lib.blit0, intNotes);
 spork~ playDrum(lib.sqr0env, envBass );
 spork~ playFreq(lib.sqr0, intBass);
 spork~ playDrum(lib.bd, intBD);
