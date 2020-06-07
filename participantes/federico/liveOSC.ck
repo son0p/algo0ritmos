@@ -186,16 +186,16 @@ fun void playFreq(Osc inst, int seq[] ){
 }
 
 lib.sd.gain      (0.70);
-lib.hh.gain       (0.2);
-lib.sqr0.gain    (0.02);
-lib.sin0.gain    (0.3);
+lib.hh.gain       (0.5);
+lib.sqr0.gain    (0.05);
+lib.sin0.gain     (0.3);
 lib.blit0.gain   (0.05);
 lib.tri0.gain    (0.20);
 
 lib.sqr0env.set     ( 0::ms, 100::ms, .0, 1000::ms);
-lib.sin0env.set       ( 0::ms, 80::ms, 0.0, 10::ms);
-lib.blit0env.set      ( 0::ms, 60::ms, 0.0, 10::ms);
-lib.tri0env.set       ( 0::ms, 80::ms, 0.0, 10::ms);
+lib.sin0env.set     ( 0::ms, 80::ms, 0.0, 10::ms);
+lib.blit0env.set    ( 0::ms, 60::ms, 0.0, 10::ms);
+lib.tri0env.set     ( 0::ms, 80::ms, 0.0, 10::ms);
 /// end TEST sound
 fun void runningOSC(){
     spork~ oscRxInt();
@@ -209,10 +209,10 @@ fun void runningOSC(){
 }
 
 spork~ runningOSC();
-//spork~ simplePlay();
-//spork~ bassPlay();
-spork~ playDrum(lib.blit0env, envNotes);
-spork~ playFreq(lib.blit0, intNotes);
+//spork~ simplePlay();  // test
+//spork~ bassPlay();   // test
+spork~ playDrum(lib.sin0env, envNotes);
+spork~ playFreq(lib.sin0, intNotes);
 spork~ playDrum(lib.sqr0env, envBass );
 spork~ playFreq(lib.sqr0, intBass);
 spork~ playDrum(lib.bd, intBD);
