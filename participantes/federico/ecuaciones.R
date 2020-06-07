@@ -115,7 +115,7 @@ activate.steps <- function(activeSteps, value, filename){
   steps
 }
 
-write(c(1,2,3),c(4,5,6), file="foo.txt", ncolumns = 2)
+#write(c(1,2,3),c(4,5,6), file="foo.txt", ncolumns = 2)
 
 ## sincopas nivel 1: 1,5,9,13
 ## sincopas nivel 2: 3,7,11,15
@@ -314,7 +314,7 @@ plot(line2 <- c(440+sin(x/20)))
 ## --- colors
 plot(line3 <- c(1000+sin(x/8)*10000), pch=16,col=rainbow(10+sin(x*0), alpha=1), fg=3)
 ## --- draws
-qplot(mpg, data=as.data.frame(c(1000+sin(x/8)*10000)), geom="density", fill=65, alpha=0.5, colour=1)
+#qplot(mpg, data=as.data.frame(c(1000+sin(x/8)*10000)), geom="density", fill=65, alpha=0.5, colour=1)
 
 
 x <- seq(0,64, 1)
