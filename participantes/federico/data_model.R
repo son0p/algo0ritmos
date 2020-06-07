@@ -1,89 +1,106 @@
-
 devtools::install_github("bergant/datamodelr")
-library(RPostgreSQL)
 library(datamodelr)
 library(DiagrammeR)
 
-#> Loading required package: DBI
-con <- dbConnect(dbDriver("PostgreSQL"), dbname="dvdrental", user ="postgres")
-sQuery <- dm_re_query("postgres")
-dm_dvdrental <- dbGetQuery(con, sQuery) 
-dbDisconnect(con)
-#> [1] TRUE
+#file_path <- system.file("~/builds/algo0ritmos/participantes/federico/data_model_YAML.yml")
+#dm <- datamodelr::dm_read_yaml(file_path)
 
-file_path <- system.file("~/builds/algo0ritmos/participantes/federico/data_model_YAML.yml")
-dm <- datamodelr::dm_read_yaml(file_path)
-
+A data model not array, relational.how to traverse
+ledger?
 dm <-
-  datamodelr::dm_read_yaml(text = "
+    dm_read_yaml(text = "
 # data model segments
-- segment: &gen Generation
-- segment: &coo Coordination
-- segment: &inter Interpretation
+- segment: &Gen Generation
+- segment: &Coo Coordination
+- segment: &Inter Interpretation
 # Tables and columns
 - table: Intruments
-  segment: *inter
+  segment: *Inter
   columns:
     Intrument ID: {key: yes}
-    Ecuation:
-- table: MachineLearning
-  segment: *gen
+    Filter:
+    ADRS:
+- table: Modifiers
+  segment: *Inter
+  columns:
+    Modifier ID: {key: yes}
+    Filter:
+    ADRS:
+- table: MachineLearnings
+  segment: *Gen
   columns:
     corpus ID: {key: yes}
     Ecuation:
-- table: Inspiration
-  segment: *gen
+    Larry: {ref: Arrays}
+- table: Inspirations
+  segment: *Gen
   columns:
-    storm ID: {key: yes}
+    Inspiration ID: {key: yes}
     Instrument:
-    mood: {ref: mood}
-- table: eucli
-  segment: *gen
+    mood: {ref: moods}
+    Larry: {ref: Arrays}
+- table: euclideans
+  segment: *Gen
   columns:
-    ADRS ID: {key: yes}
+    Euclidean ID: {key: yes}
     Config: {ref: Intrument}
     Alter config: {ref: Intrument}
     Order date:
     Requested ship date:
     Status:
-- table: mood
-  segment: *coo
+    Larry: {ref: Arrays}
+- table: Ecuations
+  segment: *Gen
   columns:
-    mood ID: {key: yes}
-    join: {ref: Intrument}
-    Alter join: {ref: Intrument}
+    ecuations ID: {key: yes}
+    ecuation:
+    latex:
+    Status:
+    Larry: {ref: Arrays}
+- table: Conterpoints
+  segment: *Gen
+  columns:
+    Contrapunto ID: {key: yes}
+    Contrapunto law:
+    Status:
+    Larry: {ref: Arrays}
+- table: Moods
+  segment: *Coo
+  columns:
+    Mood ID: {key: yes}
+    Join: {ref: Intruments}
+    Alter join: {ref: Intruments}
     Order date:
     Requested ship date:
     Status:
-- table: part
-  segment: *coo
+- table: Parts
+  segment: *Coo
   columns:
     Part ID: {key: yes, ref: Order}
     Line number: {key: yes}
-    Order item: {ref: larry}
+    Order item: {ref: arrays}
     Quantity:
     Price:
-- table: larry
-  segment: *coo
-  display: accent1
+- table: Arrays
+  segment: *Coo
+  display: accent2
   columns:
-    larry ID: {key: yes}
-    Player: {ref: Instrument}
+    ArrayID: {key: yes}
+    Player: {ref: Players}
     Description:
     Category:
     Size:
     Color:
-    mood: {ref: mood}
-- table: player
-  segment: *inter
+    Mood: {ref: Moods}
+- table: Players
+  segment: *Inter
   columns:
     Player ID: {key: yes, ref: Order}
     Line number: {key: yes}
-    Order item: {ref: part}
-    Quantity:
-    Price:
 ")
 dm <- datamodelr::as.data_model(dm)
 dm_dvdrental_seg <- dm_set_segment(dm, table_segments)
 graph <- dm_create_graph(dm, rankdir = "RL", view_type = "keys_only")
 dm_render_graph(graph)
+
+
