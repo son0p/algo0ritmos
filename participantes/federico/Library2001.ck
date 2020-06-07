@@ -38,6 +38,14 @@ public class Library
     return selected;
   }
   //
+    // ==================== FX-s
+    NRev revNR;
+    revNR.mix(0.02);
+    fun void rev(UGen ob)
+    {
+        ob => revNR => dac;
+    }
+
   // instrumentos =========================================
     // --bassDrum
   Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
@@ -56,8 +64,8 @@ public class Library
   hh.set( 0::ms, 50::ms, .0, 100::ms );
   // === Melodic
   // Sin
-  SinOsc sin0 => ADSR sin0env => Pan2 sin0Pan => dac;
-  -0.7 => sin0Pan.pan;
+  SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => dac;
+  -0.5 => sin0Pan.pan;
   sin0env.set( 0::ms, 500::ms, .0, 100::ms );
   // Sqr
   SqrOsc sqr0 => ADSR sqr0env => dac;
@@ -308,12 +316,7 @@ public class Library
     time => now;
   }
 
-  // ==================== FX-s
-  NRev revNR;
-  fun void rev(UGen ob)
-  {
-    ob => revNR => dac;
-  }
+ 
     // ================ Generators
     // ------- Rythm Generators
     // .... Euclidean
