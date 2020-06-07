@@ -1,3 +1,4 @@
+library(tuneR)
 library(ROSC)
 source("ecuaciones.R")
 
@@ -29,6 +30,8 @@ oscchief.send <- function (host="localhost", port=12345, osc="/") {
 
 test <- c("f", "59.99999")
 
+## GENERATORS
+
 ## - Euclidean Generator
 ## from aggaz http://electro-music.com/forum/topic-62215.html
 ## c: current step number
@@ -47,7 +50,13 @@ euclidean.generator <- function(hitsPerBar, barLength, rotation){
     }
     return(as.numeric(vec))
 }
-## euclidean.generator( 7, 12, 4) ## TEST  
+## euclidean.generator( 7, 12, 4) ## TEST
+
+## - Read MIDI
+midi1 <- readMidi("/home/ffx1/Projects/caminar_sin_ti_ardour/interchange/caminar_sin_ti_ardour/midifiles/gtr2-6.mid")
+midi1Notes <- midi1$parameter1[!is.na(midi1$parameter1)]
+data9 <- midi1Notes^2
+data9 <- data9[32:64]
 
 ## == MUSIC CONSTRUCTION ==
 notes <- semitonesGen(32.7031956626, 20000)
@@ -61,29 +70,31 @@ data9 <- as.integer(sample(notes,16))
 
 dataBass <- as.integer(seq(runif(1, min=50 , max=5000),runif(1, min=30, max=100), length.out=16))
 dataBass <-  as.integer(sample(subset(notes, x > 200 ),16))
+dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
 
 x <- c(1:16)
 xAxis <- c(1:16)
 
-data9 <-  sin(x*0.5)/24
+data9 <-  cos(x*0.2)/32
 data9 <-   offsetTrigo(20, data9 ,20000)
 data9 <-   as.integer(magneticGrid(notes, data9))
-draw()
+##draw()
 Update.all()
 
-dataBass <-  tan(x/0.8)/8*tan(x)
+dataBass <-  tan(x/0.1)/8*tan(x)/24
 dataBass <-  offsetTrigo(20, dataBass ,20000)
 dataBass <-  as.integer(magneticGrid(notes, dataBass))
-draw()
+##draw()
 Update.all()
 
-dataBD <-  as.integer(c(1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0))
+
 
 dataBD       <- as.integer(euclidean.generator(4, 16, 0))
 dataSN       <- as.integer(euclidean.generator(2, 16, 4))
 dataHH       <- as.integer(euclidean.generator(4, 16, 2))
-dataEnvBass  <- as.integer(euclidean.generator(7, 16, 0))
-dataEnvNotes <- as.integer(euclidean.generator(14, 16, 8))
+dataEnvBass  <- as.integer(euclidean.generator(12, 16, 0))
+dataEnvNotes <- as.integer(euclidean.generator(12, 24, 4))
+##draw()
 Update.all()
 
 ## == APPLY CHANGES
