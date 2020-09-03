@@ -280,9 +280,9 @@ while(true){
         lib.insertRandomInt(4, chanceBd, 0, 99) @=>  chanceBd;
         lib.insertRandomInt(4, chanceT1, 0, 90) @=>  chanceT1;
         lib.insertRandomInt(4, chanceHh, 0, 99) @=>  chanceHh;
-    } 
+    }
 
-    beat => now; 
+    beat => now;
 }
 // ==== cambios al final del array
 
@@ -291,50 +291,62 @@ while(true){
 }
 
 //==== SECTIONS ( Breaks and Samples in InmutableLiveCode)=======
+
+[ "a", "b", "c", "d", "e", "f", "g","h"] @=> string Names[];
+
+// == SONG STRUCTURE
 4 => int scale;
 16 * scale => int section;
 [0, 1, 2, 3, 4, 5, 6, 7] @=> int structureMultiplicators[];
 int iIntro; int oIntro; int iBreakDown1; int oBreakDown1; int iBuildUp1; int oBuildUp1; int iDropA; int oDropB;
-[ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[];
-
+[ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[]; // TODO assign values to var names
+// -- Populate sections borders
 for (int i; i < structureMultiplicators.cap(); i++){
     structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
 }
-lib.print(structureParts);
 
-
-// ----- INTRO  VOY aca
-if(Inmutable.mod256 >= iIntro && Inmutable.mod256 < oIntro){
-    spork~ playDrums() @=> Shred  offspring;
-    <<< offspring>>>;
+// ----- INTRO  
+if(Inmutable.mod256 >= structureParts[0] && Inmutable.mod256 < structureParts[1]){
+  //  spork~ playDrums() @=> Shred  offspring;
+   // <<< offspring>>>;
     spork~ playBass();
+    spork~ four();
 }
 // ---- BREAKDOWN 1
-
-// --- BuildUp 
-if(Inmutable.mod256 >= 32 && Inmutable.mod256 < 128){
+if(Inmutable.mod256 >= structureParts[1] && Inmutable.mod256 < structureParts[2]){
+    spork~ playDrums();
+    spork~ playBass();
+}
+// --- BuildUp
+if(Inmutable.mod256 >= structureParts[2] && Inmutable.mod256 < structureParts[3]){
     spork~ playMarkov();
 }
-
-// DROP A 
-if(Inmutable.mod256 >= 132 && Inmutable.mod256 < 196){
+// DROP A
+if(Inmutable.mod256 >= structureParts[3] && Inmutable.mod256 < structureParts[4]){
     spork~ playMarkov2(); // not markov yet
     spork~ four();
     spork~ playBassDrop();
 }
-
 // BREAKDOWN 2
-if(Inmutable.mod256 >= 196){
+if(Inmutable.mod256 >= structureParts[4] && structureParts[5] ){
     spork~ playMarkov2(); // not markov yet
     spork~ playDrums();
     spork~ playBassDrop();
 }
-
 // --- BUILDUP
-
+if(Inmutable.mod256 >= structureParts[5] && Inmutable.mod256 < structureParts[6]){
+    spork~ playMarkov();
+}
 // --- DROP B
-
+if(Inmutable.mod256 >= structureParts[6] && Inmutable.mod256 < structureParts[7]){
+    spork~ playMarkov2(); // not markov yet
+    spork~ four();
+    spork~ playBassDrop();
+}
 // --- OUTRO
+if(Inmutable.mod256 >= structureParts[7] && Inmutable.mod256 < structureParts[8]){
+    spork~ four();
+}
 
 spork~ rollCounter();
 spork~ variations();
