@@ -1,44 +1,88 @@
 public class Library
 {
     36 => float root;
+    0 => static int counter;
    // ================== ARRAYS ======================
 
-  fun void printArray( float array[] )
+  fun void print( float array[] )
   {
     for( 0=> int i; i < array.cap(); i++)
     {
       <<<array[i]>>>;
     }
   }
-  fun void printArray( int array[] )
+  fun void print( int array[] )
   {
     for( 0=> int i; i < array.cap(); i++)
     {
       <<<array[i]>>>;
     }
   }
-  fun void printArray( string array[] )
+  fun void print( string array[] )
   {
     for( 0=> int i; i < array.cap(); i++)
     {
       <<<array[i]>>>;
     }
   }
+   
+    // función generar probabilidades según corpus
+    fun static float floatChance( int percent, float value1, float value2)
+    {
+        float percentArray[100];
+        for( 0 => int i; i < 100; i++)
+        {
+            if( i < percent ) value1 => percentArray[i];
+            if( i >= percent ) value2 => percentArray[i];
+        }
+        percentArray[Math.random2(0, percentArray.cap()-1)] => float selected;
+        return selected;
+    }
+    // Recibe un array de 100, retorna un array con el porcentaje descrito en
+    // percent del valor a insertar 
+    fun static float[] insertChance( int percent, float actual[], float valueToInsert)
+    {
+        //float transitionArray[100];
+        for( 0 => int i; i < 100; i++)
+        {
+            if( i < percent ) valueToInsert => actual[i];
+            if( i >= percent ) actual[i] => actual[i];
+        }
+        return actual;
+    }
 
-  // función generar probabilidades según corpus
-  fun static float floatChance( int percent, float value1, float value2)
-  {
-    float percentArray[100];
-    for( 0 => int i; i < 100; i++)
-      {
-        if( i < percent ) value1 => percentArray[i];
-        if( i >= percent ) value2 => percentArray[i];
-      }
-    percentArray[Math.random2(0, percentArray.cap()-1)] => float selected;
-    return selected;
-  }
-  //
-    // ==================== FX-s
+   // // ===test  insertChance
+   //    float testPercent[100];
+   //    insertChance(99, testPercent, 5.0) @=> testPercent;
+
+    // Inserta aleatoriedad a partir de una posición del array
+    fun static float[] insertRandom( int position, float actual[], float lowerLimit, float upperLimit)
+    {
+        float transitionArray[100];
+        for( position => int i; i < 100; i++)
+        {
+            if( i >= position ) Math.random2f(lowerLimit, upperLimit) => transitionArray[i];
+            if( i < position ) actual[i] => transitionArray[i];
+        }
+        return transitionArray;
+    }
+    // // ===== TEST insertRandom()
+    // float testB[100];
+    // insertRandom(50, testB, 100.0, 3000.9) @=> float testC[];
+    // print(testC);
+
+    fun static int[] insertRandomInt( int position, int actual[], int lowerLimit, int upperLimit)
+    {
+        //int transitionArray[100];
+        for( position => int i; i < actual.cap(); i++)
+        {
+            if( i >= position ) Math.random2(lowerLimit, upperLimit) => actual[i];
+            if( i < position ) actual[i] => actual[i];
+        }
+        return actual;
+    }
+
+// ==================== FX-s
     NRev revNR;
     revNR.mix(0.02);
     fun void rev(UGen ob)
@@ -48,10 +92,11 @@ public class Library
 
   // instrumentos =========================================
     // --bassDrum
-  Impulse bdImpulse => ResonZ bdFilter => ADSR bd => dac;
+  Impulse bdImpulse => ResonZ bdFilter => ADSR bd => HPF hpfBD => dac;
   1000 => bdImpulse.gain;
   bdFilter.set(50.0, 10.0);
   bd.set( 1::ms, 150::ms, .50, 100::ms );
+  70.0 => hpfBD.freq;
   // --snareDrum
   Noise sdImpulse => ResonZ sdFilter => ADSR sd => dac;
   0.9 => sdImpulse.gain;
@@ -62,6 +107,7 @@ public class Library
   0.5 => hhImpulse.gain;
   hhFilter.set(10000.0, 5.0);
   hh.set( 0::ms, 50::ms, .0, 100::ms );
+
   // === Melodic
   // Sin
   SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => dac;
@@ -81,7 +127,6 @@ public class Library
     TriOsc tri0 => ADSR tri0env => Pan2 tri0Pan => dac;
     -0.0 => tri0Pan.pan;
     tri0env.set( 0::ms, 500::ms, .0, 100::ms );
-  
 
   // modelado
 
