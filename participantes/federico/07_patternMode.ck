@@ -45,6 +45,12 @@ pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
 0.19 => pulseRev2.mix;
 Math.random2f(0.1, 0.99)=> pulse2.width;
 
+PulseOsc pulse3 => ADSR pulseADSR3 => NRev pulseRev3 => dac;
+0.03 => pulse3.gain;
+pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
+0.19 => pulseRev3.mix;
+Math.random2f(0.1, 0.99)=> pulse3.width;
+
 
 
 
@@ -268,9 +274,8 @@ fun void playMarkov2()
 
 
 // switch chance for each step
-[ 0,  0, 0, 100, 0,  80, 100, 0, 100,  5, 0 ,  100, 0,  0, 10,  10] @=> int chanceM3[];
+[ 0, 0, 0, 95,  0, 10,0,0,   40,5,0,100,   0,0,80,30] @=> int chanceM3[];
 //  percent distribution of distances
-
 float step1[100];
 float step2[100];
 float step3[100];
@@ -289,9 +294,14 @@ float step15[100];
 float step16[100];
 lib.insertChance(50, step1, 12.0) @=> step1;
 lib.insertChance(50, step2, 7.0) @=> step2;
-lib.insertChance(50, step2, 7.0) @=> step4;
-
-
+lib.insertChance(50, step4, 0.0) @=> step4;
+lib.insertChance(50, step7, 5.0) @=> step7;
+lib.insertChance(20, step7, 4.0) @=> step7;
+lib.insertChance(20, step9, 4.0) @=> step9;
+lib.insertChance(40, step12, 12.0) @=> step12;
+lib.insertChance(40, step15, 7.0) @=> step15;
+lib.insertChance(40, step16, 4.0) @=> step16;
+// Index steps in a mutidimensional array
 [ step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13, step14, step15, step16
     ] @=> float multiTest[][];
 
@@ -300,11 +310,11 @@ fun void playDistPercent()
 {
     while(true)
     {
-        pulseADSR2.keyOff();
+        pulseADSR3.keyOff();
         floatChance( chanceM3[Global.mod16], 1, 0 )   => float M3Switch;
-        // recorre la cantidad de estados posibles
-        Std.mtof(Global.root + 24 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse2.freq;
-        if( M3Switch == 1 ){ pulseADSR2.keyOn();  }
+         if( M3Switch == 1 ){
+            Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
+            pulseADSR3.keyOn();  }
         Global.beat => now;
     }
 }
@@ -355,56 +365,55 @@ while(true){
 [0, 1, 2, 3, 4, 5, 6, 7] @=> int structureMultiplicators[];
 int iIntro; int oIntro; int iBreakDown1; int oBreakDown1; int iBuildUp1; int oBuildUp1; int iDropA; int oDropB;
 [ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[]; // TODO assign values to var names
-// // -- Populate sections borders
-// for (int i; i < structureMultiplicators.cap(); i++){
-//     structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
-// }
+// -- Populate sections borders
+for (int i; i < structureMultiplicators.cap(); i++){
+    structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
+}
 
-// // ----- INTRO
-// if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1]){
-//   //  spork~ playDrums() @=> Shred  offspring;
-//    // <<< offspring>>>;
-//     spork~ playBass();
-//     spork~ four();
-// }
-// // ---- BREAKDOWN 1
-// if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
-//     spork~ playDrums();
-//     spork~ playBass();
-// }
-// // --- BuildUp
-// if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
-//     spork~ playMarkov();
-//     spork~ pitchUp();
-// }
-// // DROP A
-// if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
-//     spork~ playMarkov2(); // not markov yet
-//     spork~ four();
-//     spork~ playBassDrop();
-// }
-// // BREAKDOWN 2
-// if(Global.mod256 >= structureParts[4] && structureParts[5] ){
-//     spork~ playMarkov2(); // not markov yet
-//     spork~ playDrums();
-//     spork~ playBassDrop();
-// }
-// // --- BUILDUP
-// if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
-//     spork~ playMarkov();
-// }
-// // --- DROP B
-// if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
-//     spork~ playMarkov2(); // not markov yet
-//     spork~ four();
-//     spork~ playBassDrop();
-// }
-// // --- OUTRO
-// if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
-//     spork~ four();
-// }
+// ----- INTRO
+if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1]){
+  //  spork~ playDrums() @=> Shred  offspring;
+   // <<< offspring>>>;
+    spork~ playBass();
+    spork~ four();
+}
+// ---- BREAKDOWN 1
+if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
+    spork~ playDrums();
+    spork~ playBass();
+}
+// --- BuildUp
+if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
+    spork~ playMarkov();
+    spork~ pitchUp();
+}
+// DROP A
+if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
+    spork~ playMarkov2(); // not markov yet
+    spork~ four();
+    spork~ playBassDrop();
+}
+// BREAKDOWN 2
+if(Global.mod256 >= structureParts[4] && structureParts[5] ){
+    spork~ playMarkov2(); // not markov yet
+    spork~ playDrums();
+    spork~ playBassDrop();
+}
+// --- BUILDUP
+if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
+    spork~ playMarkov();
+}
+// --- DROP B
+if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
+    spork~ playMarkov2(); // not markov yet
+    spork~ four();
+    spork~ playBassDrop();
+}
+// --- OUTRO
+if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
+    spork~ four();
+}
 // test
-spork~ playDrums();
 spork~ playDistPercent();
 
 spork~ rollCounter();
@@ -414,11 +423,3 @@ spork~ variations();
 Global.beat * 16 => now;
 // antes de morir se crea a sí mismo
 Machine.add(me.dir()+"07_patternMode.ck");
-
-
-
-
-
-
-
-
