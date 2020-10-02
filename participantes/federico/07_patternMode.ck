@@ -305,7 +305,7 @@ lib.insertChance(40, step16, 4.0) @=> step16;
 [ step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13, step14, step15, step16
     ] @=> float multiTest[][];
 
-// TODO cambiar la lógica para que primero evalue el switch y si es 1 busque la nota
+
 fun void playDistPercent()
 {
     while(true)
@@ -319,6 +319,27 @@ fun void playDistPercent()
     }
 }
 
+// ========= break ============
+[100,0,0,100, 0,0,100,0, 0,100,100,0,  100,100,0,0] @=> int chanceBreak[];
+// Envolventes participantes
+[pulseADSR, pulseADSR2, bass, lib.bd, lib.sd, lib.hh, pulseADSR3] @=> ADSR envs[];
+
+fun void playBreak()
+{
+    while(true)
+    {
+        // apaga todas las envolventes antes de empezar (falta el kick)
+        for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
+        floatChance( chanceBreak[Global.mod16], 1, 0 )   => float breakSwitch;
+        if( breakSwitch == 1 ){
+            // asigna frecuencia
+            Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
+            // siendo 1 enciende todas las envolventes
+            for(0 => int i; i < envs.cap(); i++){ envs[i].keyOn(); }
+            }
+        Global.beat => now;
+    }
+}
 fun void rollCounter(){
     while(true){
         Global.counter + 1 @=> Global.counter;
@@ -371,51 +392,51 @@ for (int i; i < structureMultiplicators.cap(); i++){
 }
 
 // ----- INTRO
-if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1]){
-  //  spork~ playDrums() @=> Shred  offspring;
-   // <<< offspring>>>;
-    spork~ playBass();
-    spork~ four();
-}
+    if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1]){
+        //  spork~ playDrums() @=> Shred  offspring;
+        // <<< offspring>>>;
+        spork~ playBass();
+        spork~ four();
+    }
 // ---- BREAKDOWN 1
-if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
-    spork~ playDrums();
-    spork~ playBass();
-}
+    if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
+        spork~ playDrums();
+        spork~ playBass();
+    }
 // --- BuildUp
-if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
-    spork~ playMarkov();
-    spork~ pitchUp();
-}
+    if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
+        spork~ playMarkov();
+        spork~ pitchUp();
+    }
 // DROP A
-if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
-    spork~ playMarkov2(); // not markov yet
-    spork~ four();
-    spork~ playBassDrop();
-}
+    if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
+        spork~ playMarkov2(); // not markov yet
+        spork~ four();
+        spork~ playBassDrop();
+    }
 // BREAKDOWN 2
-if(Global.mod256 >= structureParts[4] && structureParts[5] ){
-    spork~ playMarkov2(); // not markov yet
-    spork~ playDrums();
-    spork~ playBassDrop();
-}
+    if(Global.mod256 >= structureParts[4] && structureParts[5] ){
+        spork~ playMarkov2(); // not markov yet
+        spork~ playDrums();
+        spork~ playBassDrop();
+    }
 // --- BUILDUP
-if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
-    spork~ playMarkov();
-}
+    if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
+        spork~ playMarkov();
+    }
 // --- DROP B
-if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
-    spork~ playMarkov2(); // not markov yet
-    spork~ four();
-    spork~ playBassDrop();
-}
+    if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
+        spork~ playMarkov2(); // not markov yet
+        spork~ four();
+        spork~ playBassDrop();
+    }
 // --- OUTRO
-if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
-    spork~ four();
-}
-// test
-spork~ playDistPercent();
+    if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
+        spork~ four();
+    }
 
+spork~ playDistPercent();
+//spork~ playBreak();
 spork~ rollCounter();
 spork~ variations();
 
