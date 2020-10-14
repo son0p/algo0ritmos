@@ -1,9 +1,11 @@
 Library lib;
+OSC_Read osc;
+osc.setPort(6449);
+osc.makePar("gain","/1/fader1, f" );
 
 // Establece valores globales
 200::ms => Global.beat;
 36 => Global.root;
-
 
 // cadena de audio -- drums
 Gain master => dac;
@@ -51,15 +53,17 @@ pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
 0.19 => pulseRev3.mix;
 Math.random2f(0.1, 0.99)=> pulse3.width;
 
-
-
-
-
 /*
 ---------- Floor---------------
 TODO: debe permitir cambiar de estados globales según tres estados
 expo, buildUp, y drop
 */
+
+fun void oscRun(){
+   osc.values["gain"] => pulse3.gain;
+   //<<< "OSC value GAIN:", osc.values["gain"]>>>;
+   1::sample => now;
+}
 
 // función generar probabilidades según corpus
 fun float floatChance( int percent, float value1, float value2)
@@ -439,6 +443,8 @@ spork~ playDistPercent();
 //spork~ playBreak();
 spork~ rollCounter();
 spork~ variations();
+spork~ playDrums();
+spork~ oscRun();
 
 // mantiene vivos los sporks
 Global.beat * 16 => now;

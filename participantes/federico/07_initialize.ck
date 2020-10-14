@@ -2,6 +2,7 @@
 Machine.add(me.dir()+"07_Global.ck");
 // Libraries
 Machine.add(me.dir()+"Library2001.ck");
+Machine.add(me.dir()+"OSC_Read.ck");
 // Instruments
 Machine.add(me.dir()+"inst_kjzTT101.ck");
 Machine.add("/home/ffx1/buildsNoBkup/lick/lick/fn/FloatFunction.ck");
