@@ -11,19 +11,9 @@ osc.makePar("gain","/1/fader1, f" );
 Gain master => dac;
 // instrumentos
 
-// --snareDrum
-// Noise sdImpulse => ResonZ sdFilter => ADSR sd => master;
-// 0.7 => sdImpulse.gain; sdFilter.set(400.0, 1.0); sd.set( 0::ms, 100::ms, .01, 100::ms );
-// // --T1
-// //Noise t1Impulse => ResonZ t1Filter => ADSR t1 => master;
-// //0.7 => t1Impulse.gain; t1Filter.set(50.0, 1.0); t1.set( 0::ms, 100::ms, .01, 100::ms );
  kjzTT101 t1;
 
-// t1.output => Gain t1Gain => master;
-// // --hiHat
-// Noise hhImpulse => ResonZ hhFilter => ADSR hh => master;
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
-// hhGain => hhImpulse.gain; hhFilter.set(10000.0, 5.0); hh.set( 0::ms, 50::ms, .01, 10::ms );
 
 // --bass
 Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => dac;
@@ -53,16 +43,11 @@ pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
 0.19 => pulseRev3.mix;
 Math.random2f(0.1, 0.99)=> pulse3.width;
 
-/*
----------- Floor---------------
-TODO: debe permitir cambiar de estados globales según tres estados
-expo, buildUp, y drop
-*/
-
+// === Functions
 fun void oscRun(){
    osc.values["gain"] => pulse3.gain;
    //<<< "OSC value GAIN:", osc.values["gain"]>>>;
-   1::sample => now;
+   1::samp => now;
 }
 
 // función generar probabilidades según corpus
@@ -93,8 +78,6 @@ fun float[] insertChance( int percent, float actual[], float valueToInsert)
 float testPercent[100];
 lib.insertChance(99, testPercent, 5.0) @=> testPercent;
 
-
-
 // ============= DRUMS =================
 // Probabilidad de un corpus -- drums
 [100,  0,  0,  0,100,  0,  10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[];
@@ -104,8 +87,6 @@ lib.insertChance(99, testPercent, 5.0) @=> testPercent;
 
 // curva de dinámica fija
 [1.0,1.0,0.4,0.8,1.0,1.0,0.4,0.8,1.0,0.7,0.4,0.8,1.0,1.0,0.4,0.8] @=> float dynamicsFixed[];
-
-
 
 // función que usa probabilidades para activar los instrumentos
 fun void playDrums()
@@ -218,13 +199,12 @@ fun void pitchUp()
 // estado actual solo se usa al iniciar
 12.0 => float currentState;
 
-
-
 // si el estado actual es igual a al estado que hay en la posición i
 // trae el porcentaje correspondiente de la matríz de transición
 // para usarlo al llamar la función de probabilidad y renovar
 // el estado actual, luego suma el estado actual a la nota raiz
 // y asigna la frecuencia al instrumento sine
+
 fun void playMarkov()
 {
   while(true)
@@ -275,7 +255,6 @@ fun void playMarkov2()
         }
     }
 }
-
 
 // switch chance for each step
 [ 0, 0, 0, 95,  0, 10,0,0,   40,5,0,100,   0,0,80,30] @=> int chanceM3[];
@@ -375,9 +354,7 @@ while(true){
     Global.beat => now;
 }
 // ==== cambios al final del array
-
 //lib.print(chanceSd);
-
 }
 
 //==== SECTIONS ( Breaks and Samples in InmutableLiveCode)=======
