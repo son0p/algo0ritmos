@@ -3,17 +3,6 @@ library(ROSC)
 source("ecuaciones.R")
 
 ## ====== VARIABLES ====
-## Example OSC address patterns
-address <- "/audio/1/float"
-address2 <- "/audio/1/int"
-envNotes <- "/audio/1/envNotes"
-bass <- "/audio/2/bass"
-envBass <- "/audio/2/envBass"
-bd <- "/audio/2/bd"
-sn <- "/audio/2/sn"
-hh <- "/audio/2/hh"
-
-
 address.with.wildcards <- "/{th,s}ing/n[2-4]/red*"
 ## Define host and port
 HOST <- "255.255.255.255" # this ip address means "all ip addresses on the local subnet"
@@ -22,18 +11,37 @@ PORT <- 6449 # recipient must listen on this port number.  Use any number in the
 
 ## ==== FUNCTIONS ====
 # Wrapper for system("oscchief send")
-oscchief.send <- function (host="localhost", port=12345, osc="/") {
+oscchief.send <- function (host="localhost", port=6449, osc="/") {
     osc <- gsub(",","",osc) # strip type tag comma for compatibility with oscchief
+    #print(osc)
     command <- paste("oscchief send", host, port, osc)
     system(command)
 }
+##test <- c("f", "59.99999")
 
-test <- c("f", "59.99999")
+toOsc <- function(dataToOsc, address){
+    lapply(dataToOsc, function(x){
+        msg <- oscMessage(address = address, data = x, double =  "f")
+        oscchief.send(host=LOCALHOST, port=PORT, osc= msg)
+    })
+}
+
+toOscTyped <- function(dataToOsc, address, type){
+        msg <- paste(address, type, dataToOsc)
+        command <-  paste("oscchief send", "localhost", 6449, address, type, dataTest )
+        system(command)
+}
+
+## === TEST ==
+dataTest <- ((0:100))/100
+dataTest <- paste(as.character(dataTest),collapse=" ")
+type <- paste(rep("f", 100), collapse = "")
+toOscTyped(dataTest, "/ffxf/step1", type)
+## =END TEST=
 
 ## GENERATORS
-
 ## - Euclidean Generator
-## from aggaz http://electro-music.com/forum/topic-62215.html
+## from aggaz http://electro-music.com/forum/topic-62215.htm
 ## c: current step number
 ## k: hits per bar
 ## n: bar length
@@ -41,6 +49,7 @@ test <- c("f", "59.99999")
 euclide <- function(c, k, n, r){
   return((((c+r) * k) %% n) < k)
 }
+
 euclidean.generator <- function(hitsPerBar, barLength, rotation){
     i <- 0
     vec <- c()
@@ -58,7 +67,7 @@ midi1Notes <- midi1$parameter1[!is.na(midi1$parameter1)]
 data9 <- midi1Notes^2
 data9 <- data9[32:64]
 
-## == MUSIC CONSTRUCTION ==
+## == ARRAY CONSTRUCTION ==
 notes <- semitonesGen(32.7031956626, 20000)
 scaleJumps <- c(2,2,1,2,2,2,1)
 scaleGenerator(notes,scaleJumps )
@@ -87,8 +96,6 @@ dataBass <-  as.integer(magneticGrid(notes, dataBass))
 ##draw()
 Update.all()
 
-
-
 dataBD       <- as.integer(euclidean.generator(4, 16, 0))
 dataSN       <- as.integer(euclidean.generator(2, 16, 4))
 dataHH       <- as.integer(euclidean.generator(4, 16, 2))
@@ -100,38 +107,14 @@ Update.all()
 ## == APPLY CHANGES
 ## send OSC
 Update.all <- function (){
-    lapply(data9, function(x){
-        OSC9 <- oscMessage(address = address2, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=OSC9)
-    })
-
-    lapply(dataEnvNotes, function(x){
-        oscEnvNotes <- oscMessage(address = envNotes, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscEnvNotes)
-    })
-
-    lapply(dataBass, function(x){
-        oscBass <- oscMessage(address = bass, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscBass)
-    })
-
-    lapply(dataBD, function(x){
-        oscBD <- oscMessage(address = bd, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscBD)
-    })
-    lapply(dataSN, function(x){
-        oscSN <- oscMessage(address = sn, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscSN)
-    })
-    lapply(dataHH, function(x){
-        oscHH <- oscMessage(address = hh, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscHH)
-    })
-    lapply(dataEnvBass, function(x){
-        oscEnvBass <- oscMessage(address = envBass, data = x, integer = "i")
-        oscchief.send(host=HOST, port=PORT, osc=oscEnvBass)
-    })
+    toOsc(data9, "/audio/1/int")
+    toOsc(dataEnvNotes, "/audio/1/envNotes")
+    toOsc(dataBass, "/audio/2/bass" )
+    toOsc(dataBD, "/audio/2/bd ")
+    toOsc(dataSN, "/audio/2/sn")
+    toOsc(dataHH, "/audio/2/hh")
 }
+
 ## == MUTES ==
 ## mutes
 data9 <-  as.integer(rep(0, 16))
@@ -147,6 +130,7 @@ rec2bass <-dataBass
 data9 <- rec1
 dataBass <- rec1bass
 
+## == STRUCTURE BUILDER ==
 
 ## ==== CHARTS =======
 
@@ -162,6 +146,22 @@ draw  <- function(){
        ## markers = points.long$value+
         labs(x="Time", y="Value")
 }
+
+## ======== Reasoning  ================
+## ==== Music as List data structure options
+
+x <- vector(mode = "list" , length = 3)
+x[[1]] <- c(52,55,60,0,10) ## midi notes
+x[[2]] <- c(list(0,10,3,0), list(0,10,3,0), list(0,10,3,0), list(0,10,3,0), list(0,10,3,0)) ## ASRR note 1
+x
+x[[1]][2]  ## query note
+x[[2]][2] ## query ADSR
+## JSON
+
+## YAML
+
+
+## ======= end Reasoning
 
 ### ================= RESOURCES ===========
 ## ## Example data to pack into OSC messages
