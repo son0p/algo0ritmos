@@ -1,9 +1,12 @@
-rm(list=ls())
+## rm(list=ls())
 
-if(!require(plyr)){install.packages("plyr")}
-if(!require(tuneR)){install.packages("tuneR")}
-library(ROSC)
-
+## if(!require(plyr)){install.packages("plyr")}
+## if(!require(dplyr)){install.packages("dplyr")}
+## if(!require(magrittr)){install.packages("magrittr")}
+## if(!require(tuneR)){install.packages("tuneR")}
+##if(!require(profvis)){install.packages("profvis")}
+## library(ROSC)
+#profvis({
 ## ======= FUNCTIONS =======
 toOscTyped <- function(dataToOsc, address, type){
     msg <- paste(address, type, dataToOsc)
@@ -13,7 +16,7 @@ toOscTyped <- function(dataToOsc, address, type){
 
 ## ===================
 
-## extended 16 steps with 8 observations
+## extended 16 steps with 8 observations, FIX: here 1 = root, in /patternMode/ 1 = distance from root 
 s1 <- c(1 ,0,0,0,    0, 12, 0, 0,   11,0,0,0,    0,0,0,0)
 s2 <- c(NA,0,0,0,    0, 0, 0, 0,    11,0,0,0,    0,0,0,0)
 s3 <- c(NA,0,0,0,    0, 0, 0, 0,    11,0,0,0,    0,0,0,0)
@@ -78,7 +81,28 @@ count16$step <- 16
 
 ## percent distribution of in each step
 dfMcorpus <- rbind(count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11, count12, count13, count14, count15, count16 )
-dfMcorpus
+##dfMcorpus
+
+## ## TEST to abstract TODO
+## bundle <- rep(NA, 16)
+## ##FAIL
+## for(i in bundle){
+##           testPercent <-dfMcorpus[dfMcorpus$step %in% 1, ] %>%
+##             select(percent) %$%
+##             as.numeric(percent)
+##         dfMcorpus[dfMcorpus$step %in% 1, ] %>%
+##         select(Var1) %$% sample(as.numeric(as.character(Var1)), 1, prob = testPercent )
+## }
+
+
+## ## DONE TEST but two branchas of pipes and just 1 value
+## testPercent <-dfMcorpus[dfMcorpus$step %in% 6, ] %>%
+##     select(percent) %$%
+##     as.numeric(percent)
+## dfMcorpus[dfMcorpus$step %in% 6, ] %>%
+##     select(Var1) %$% sample(as.numeric(as.character(Var1)), 1, prob = testPercent )
+
+## === END TEST
 
 ## TODO abstract to a function
 ## selecionamos un factor
@@ -153,13 +177,4 @@ stp16 <- sample(values, 1, prob=pcts)
 result <- paste(as.character(c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp13,stp14,stp15,stp16 )),collapse=" ")
 type <- paste(rep("f", 16), collapse = "")
 toOscTyped(result, "/ffxf/step1", type)
-
-## test
-sample(values, 1, prob=pcts)
-## end test
-
-distTo100 <- function(dataF){
-    lapply(dataF, function(x){
-        dataF[dataF$step %in% x, ]
-    })
-}
+##})

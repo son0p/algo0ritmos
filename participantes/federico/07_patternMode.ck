@@ -1,17 +1,26 @@
 Library lib;
+Global glo;
 OSC_Read osc;
-osc.setPort(6449);
-osc.makePar("gain","/1/fader1, f" );
+OscIn oin;
+OscMsg msg;
+6449 => oin.port;
+
+// create an address in the receiver, store in new variable
+oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
+
+// containers
+float rec[0];
+float bassFromOsc[0];
+glo.bassFromOsc @=> bassFromOsc;
 
 // Establece valores globales
 200::ms => Global.beat;
 36 => Global.root;
-
 // cadena de audio -- drums
 Gain master => dac;
 // instrumentos
 
- kjzTT101 t1;
+kjzTT101 t1;
 
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
 
@@ -43,14 +52,15 @@ pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
 0.19 => pulseRev3.mix;
 Math.random2f(0.1, 0.99)=> pulse3.width;
 
-// === Functions
+// ===== FUNCTIONS ===
+
 fun void oscRun(){
    osc.values["gain"] => pulse3.gain;
    //<<< "OSC value GAIN:", osc.values["gain"]>>>;
    1::samp => now;
 }
 
-// función generar probabilidades según corpus
+// función generar probabilidades según corpus (FAIL when value already exist)
 fun float floatChance( int percent, float value1, float value2)
 {
   float percentArray[100];
@@ -62,7 +72,7 @@ fun float floatChance( int percent, float value1, float value2)
   percentArray[Math.random2(0, percentArray.cap()-1)] => float selected;
   return selected;
 }
-
+// Not usable yet
 fun float[] insertChance( int percent, float actual[], float valueToInsert)
 {
     float transitionArray[100];
@@ -119,7 +129,6 @@ fun void four(){
     }
 }
 
-
 // ========== BASS ===========================
 [ 20,0,0,20, 60,0,100,0,  00,0,0,0, 100,0,0,0] @=> int chanceBass[];
 [ 0, 0,0, 0,  0,3,  0,3,   0,0,10,12,  3,0,7,0] @=> int chanceBassNotes[];
@@ -134,6 +143,19 @@ fun void playBass()
       if( bassSwitch == 1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
       Global.beat => now;
       i++;
+    }
+}
+
+fun void playBassFromOsc()
+{
+    0 => int i;
+    while(true)
+    {
+        Global.bassFromOsc[i] => float bassNote;
+        bass.keyOff();
+        if( bassNote != 0 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
+        Global.beat => now;
+        i++;
     }
 }
 
@@ -324,7 +346,7 @@ fun void playBreak()
     }
 }
 fun void rollCounter(){
-    while(true){
+        while(true){
         Global.counter + 1 @=> Global.counter;
         <<< Global.counter, Global.mod256 >>>;
         Global.counter % 16 @=> Global.mod16;
@@ -357,118 +379,75 @@ while(true){
 //lib.print(chanceSd);
 }
 
-fun int intro(int steps)
-{
-    if(Global.mod256 == steps)
-    {
-        <<< "intro", steps>>>;
-        spork~ four();
-        20 * Global.beat => now;
-    }
-    return Global.mod256;
-}
-
-fun int breakDown(int steps)
-{
-    if(Global.mod256 == steps)
-    {
-        <<< "breakDown", steps >>>;
-        spork~ playBass();
-        4 * Global.beat => now;
-    }
-    return Global.mod256;
-}
-
-fun int end(int steps)
-{
-    if(Global.mod256 >= steps)
-    {
-        <<< "end">>>;
-        16 * Global.beat => now;
-    }
-    return steps ;
-}
-
-
-fun void playRow()
-{
-    while(true)
-    {
-        (1) => intro => breakDown => end => int end; 
-        if(Global.mod256 >= end) break;  // not working as expected, try global.end
-        Global.beat => now;
-
-    }
-}
-
 //==== SECTIONS ( Breaks and Samples in InmutableLiveCode)=======
 
 [ "a", "b", "c", "d", "e", "f", "g","h"] @=> string Names[];
 
-// == SONG STRUCTURE
-// 4 => int scale;
-// 16 * scale => int section;
-// [0, 1, 2, 3, 4, 5, 6, 7] @=> int structureMultiplicators[];
-// int iIntro; int oIntro; int iBreakDown1; int oBreakDown1; int iBuildUp1; int oBuildUp1; int iDropA; int oDropB;
-// [ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[]; // TODO assign values to var names
-// // -- Populate sections borders
-// for (int i; i < structureMultiplicators.cap(); i++){
-//     structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
-// }
+//== SONG STRUCTURE
+4 => int scale;
+16 * scale => int section;
+[0, 1, 2, 3, 4, 5, 6, 7] @=> int structureMultiplicators[];
+int iIntro; int oIntro; int iBreakDown1; int oBreakDown1; int iBuildUp1; int oBuildUp1; int iDropA; int oDropB;
+[ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[]; // TODO assign values to var names
+// -- Populate sections borders
+for (int i; i < structureMultiplicators.cap(); i++){
+    structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
+}
 
-// // ----- INTRO
-//     if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1]){
-//         //  spork~ playDrums() @=> Shred  offspring;
-//         // <<< offspring>>>;
-//         spork~ playBass();
-//         spork~ four();
-//     }
-// // ---- BREAKDOWN 1
-//     if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
-//         spork~ playDrums();
-//         spork~ playBass();
-//     }
-// // --- BuildUp
-//     if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
-//         spork~ playMarkov();
-//         spork~ pitchUp();
-//     }
-// // DROP A
-//     if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
-//         spork~ playMarkov2(); // not markov yet
-//         spork~ four();
-//         spork~ playBassDrop();
-//     }
-// // BREAKDOWN 2
-//     if(Global.mod256 >= structureParts[4] && structureParts[5] ){
-//         spork~ playMarkov2(); // not markov yet
-//         spork~ playDrums();
-//         spork~ playBassDrop();
-//     }
-// // --- BUILDUP
-//     if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
-//         spork~ playMarkov();
-//     }
-// // --- DROP B
-//     if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
-//         spork~ playMarkov2(); // not markov yet
-//         spork~ four();
-//         spork~ playBassDrop();
-//     }
-// // --- OUTRO
-//     if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
-//         spork~ four();
-//     }
+// === PIECE: LOCAL STRUCTURE ====
+// ----- INTRO
+if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1])
+{
+    //  spork~ playDrums() @=> Shred  offspring;
+    // <<< offspring>>>;
+    spork~ playBassFromOsc();
+    spork~ four();
+}
+// ---- BREAKDOWN 1
+if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
+    spork~ playDrums();
+    spork~ playBassFromOsc();
+}
+// --- BuildUp
+if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
+    spork~ playMarkov();
+    spork~ pitchUp();
+}
+// DROP A
+if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
+    spork~ playMarkov2(); // not markov yet
+    spork~ four();
+    spork~ playBassDrop();
+}
+// BREAKDOWN 2
+if(Global.mod256 >= structureParts[4] && structureParts[5] ){
+    spork~ playMarkov2(); // not markov yet
+    spork~ playDrums();
+    spork~ playBassDrop();
+}
+// --- BUILDUP
+if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
+    spork~ playMarkov();
+}
+// --- DROP B
+if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
+    spork~ playMarkov2(); // not markov yet
+    spork~ four();
+    spork~ playBassDrop();
+}
+// --- OUTRO
+if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
+    spork~ four();
+}
 
-//spork~ playDistPercent();
 //spork~ playBreak();
 spork~ rollCounter();
 //spork~ variations();
 //spork~ playDrums();
 spork~ oscRun();
-spork~ playRow();
+
 
 // mantiene vivos los sporks
 Global.beat * 16 => now;
 // antes de morir se crea a sí mismo
-Machine.add(me.dir()+"07_patternMode.ck");
+Machine.add(me.dir()+"07_patternMode.ck:777");
