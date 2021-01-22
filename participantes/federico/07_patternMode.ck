@@ -153,7 +153,7 @@ fun void playBassFromOsc()
     {
         Global.bassFromOsc[i] => float bassNote;
         bass.keyOff();
-        if( bassNote != 0 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
+        if( bassNote != -1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
         Global.beat => now;
         i++;
     }

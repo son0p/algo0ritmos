@@ -8,21 +8,19 @@ Library lib;
 // cadena de audio -- drums
 Gain master => dac;
 // instrumentos
-// --bassDrum
-Impulse bdImpulse => ResonZ bdFilter => ADSR bd => master;
-1000 => bdImpulse.gain; bdFilter.set(50.0, 10.0); bd.set( 1::ms, 150::ms, .50, 100::ms );
+
 // --snareDrum
-Noise sdImpulse => ResonZ sdFilter => ADSR sd => master;
-0.7 => sdImpulse.gain; sdFilter.set(400.0, 1.0); sd.set( 0::ms, 100::ms, .01, 100::ms );
-// --T1
-//Noise t1Impulse => ResonZ t1Filter => ADSR t1 => master;
-//0.7 => t1Impulse.gain; t1Filter.set(50.0, 1.0); t1.set( 0::ms, 100::ms, .01, 100::ms );
-kjzTT101 t1;
-t1.output => Gain t1Gain => master;
-// --hiHat
-Noise hhImpulse => ResonZ hhFilter => ADSR hh => master;
-0.2 => float hhGain; // asignamos esta variable para afectarla en la función
-hhGain => hhImpulse.gain; hhFilter.set(10000.0, 5.0); hh.set( 0::ms, 50::ms, .01, 10::ms );
+// Noise sdImpulse => ResonZ sdFilter => ADSR sd => master;
+// 0.7 => sdImpulse.gain; sdFilter.set(400.0, 1.0); sd.set( 0::ms, 100::ms, .01, 100::ms );
+// // --T1
+// //Noise t1Impulse => ResonZ t1Filter => ADSR t1 => master;
+// //0.7 => t1Impulse.gain; t1Filter.set(50.0, 1.0); t1.set( 0::ms, 100::ms, .01, 100::ms );
+// kjzTT101 t1;
+// t1.output => Gain t1Gain => master;
+// // --hiHat
+// Noise hhImpulse => ResonZ hhFilter => ADSR hh => master;
+ 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
+ hhGain => lib.hhImpulse.gain; lib.hhFilter.set(10000.0, 5.0); lib.hh.set( 0::ms, 50::ms, .01, 10::ms );
 
 // --bass
 SqrOsc saw => ADSR bass => LPF filterBass => dac;
@@ -87,7 +85,7 @@ lib.insertChance(99, testPercent, 5.0) @=> testPercent;
 
 // ============= DRUMS =================
 // Probabilidad de un corpus -- drums
-[100,  0,  0,  0,100,  0,  10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[]; 
+[100,  0,  0,  0,100,  0,  10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[];
 [  0,  0,  0,  0, 00,  0, 100,  0,  0,  0,  0,  0, 00,  0,100,  0] @=> int chanceSd[];
 [  0,  0,100,  0, 00,  0, 100,  0,  0,  0,100,  0,  0,   0,100, 20] @=> int chanceT1[];
 [ 100, 0,100,100,100,  0, 100,100, 90,  0,100,100, 80,  0,100, 30] @=> int chanceHh[];
@@ -103,18 +101,18 @@ fun void playDrums()
   0 => int i;
   while(true)
   {
-    hhGain * dynamicsFixed[i] => hhImpulse.gain; // comente y descomente esta línea para escuchar la diferencia
+    lib.hhGain * dynamicsFixed[i] => lib.hhImpulse.gain; // comente y descomente esta línea para escuchar la diferencia
     floatChance( chanceBd[i], 1,0 ) => float bdSwitch;
     floatChance( chanceSd[i], 1,0 ) => float sdSwitch;
     floatChance( chanceT1[i], 1,0 ) => float t1Switch;
     floatChance( chanceHh[i], 1,0 ) => float hhSwitch;
-    bd.keyOff();
-    sd.keyOff();
-    hh.keyOff();
-    if( bdSwitch == 1 ){ bd.keyOn(); 1.0 => bdImpulse.next;  }
-    if( sdSwitch == 1 ){ sd.keyOn(); }
+    lib.bd.keyOff();
+    lib.sd.keyOff();
+    lib.hh.keyOff();
+    if( bdSwitch == 1 ){ lib.bd.keyOn(); 1.0 => lib.bdImpulse.next;  }
+    if( sdSwitch == 1 ){ lib.sd.keyOn(); }
     if( t1Switch == 1 ){ t1.setBaseFreq(80 + i*2); t1.hit(.1 + i * .1); }
-    if( hhSwitch == 1 ){ hh.keyOn(); }
+    if( hhSwitch == 1 ){ lib.hh.keyOn(); }
     //Global.beat => now;
     200::ms => now;
     i++;
@@ -123,7 +121,7 @@ fun void playDrums()
 
 fun void four(){
     while(true){
-        bd.keyOn();  1.0 =>   bdImpulse.next;
+        lib.bd.keyOn();  1.0 =>   lib.bdImpulse.next;
         Global.beat * 4 => now;
     }
 }
@@ -131,7 +129,7 @@ fun void four(){
 
 // ========== BASS ===========================
 [ 0,  0, 0, 90, 100,  80, 100, 0, 100,  5, 0 ,  3, 0,  0, 10,  10] @=> int chanceBass[];
-[ 0,  0,  0, 0,  0,  3,  12,  3,  12,   0, 10, 12, 3,  0,  7, 0] @=> int chanceBassNotes[];
+[ 0,  0,  0, 0,  0,  3,  0,  3,  0,   0, 10, 12, 3,  0,  7, 0] @=> int chanceBassNotes[];
 fun void playBass()
 {
   0 => int i;
@@ -151,7 +149,7 @@ fun void playBassDrop()
     while(true)
     {
         bass.keyOff();
-        Std.mtof( Global.root ) => saw.freq; bass.keyOn(); 
+        Std.mtof( Global.root ) => saw.freq; bass.keyOn();
         Global.beat * 2 => now;
         bass.keyOff();
         Global.beat * 2 => now;
@@ -159,13 +157,21 @@ fun void playBassDrop()
     }
 }
 
+fun void pitchUp()
+{
+    while(true)
+    {
+        Global.root * Global.mod64  => pulse.freq;
+        Global.beat => now;
+    }
+}
 // ========== Melody ============
 // dos estados posibles:
 [0.0,12.0,7.0] @=> float posibleStates[];
 
 
 //  ----------- Matriz de transición ----------
-//                 a c t u a l 
+//                 a c t u a l
 //                  |      |
 //                  V      V
 //                 root   octava
@@ -324,6 +330,7 @@ if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
 // --- BuildUp
 if(Global.mod256 >= structureParts[2] && Global.mod256 < structureParts[3]){
     spork~ playMarkov();
+    spork~ pitchUp();
 }
 // DROP A
 if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
@@ -358,7 +365,8 @@ spork~ variations();
 // mantiene vivos los sporks
 Global.beat * 16 => now;
 // antes de morir se crea a sí mismo
-Machine.add(me.dir()+"liveCode.ck"); 
+Machine.add(me.dir()+"patternMode.ck");
+
 
 
 
