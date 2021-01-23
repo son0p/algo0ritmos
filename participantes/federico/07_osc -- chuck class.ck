@@ -4,7 +4,7 @@ public class OscCom
     Library lib;
     OscIn oin;
     OscMsg msg;
-    6449 => oin.port;
+    6448 => oin.port;
 
 // create an address in the receiver, store in new variable
     oin.addAddress( "/ffxf/step1, ffffffffffffffff" );

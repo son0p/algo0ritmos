@@ -1,4 +1,4 @@
-## rm(list=ls())
+rm(list=ls())
 
 ## if(!require(plyr)){install.packages("plyr")}
 ## if(!require(dplyr)){install.packages("dplyr")}
@@ -10,7 +10,7 @@
 ## ======= FUNCTIONS =======
 toOscTyped <- function(dataToOsc, address, type){
     msg <- paste(address, type, dataToOsc)
-    command <-  paste("oscchief send", "localhost", 6449, address, type, dataToOsc )
+    command <-  paste("oscchief send", "localhost", 6448, address, type, dataToOsc )
     system(command)
 }
 
@@ -171,7 +171,6 @@ fact16 <- dfMcorpus[dfMcorpus$step %in% 16, ]
 values <- as.numeric(as.character(fact16$Var1))
 pcts <- fact16$percent
 stp16 <- sample(values, 1, prob=pcts)
-
 
 ## -- prepare  OSC boundle
 result <- paste(as.character(c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp13,stp14,stp15,stp16 )),collapse=" ")
