@@ -22,7 +22,7 @@ public class OscCom
             oin => now;
             while (oin.recv(msg)){
                 for(0 => int i; i < 16; i++){
-                    Global.bassFromOsc << msg.getFloat(i);
+                    msg.getFloat(i) => Global.bassFromOsc[i];
                 }
             }
         }

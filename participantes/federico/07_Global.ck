@@ -19,5 +19,6 @@ public class Global
     static int cursor;
 }
 //init the array with something, else it would just stay an empty reference.
-[0.] @=> Global.bassFromOsc;
+[-1.0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1]  @=> Global.bassFromOsc;
+//[0.] @=> Global.bassFromOsc;
 200::ms => Global.beat; // initializacion in the class is not working .. bug?
