@@ -1,11 +1,13 @@
-rm(list=ls())
+#rm(list=ls())
 
 ## if(!require(plyr)){install.packages("plyr")}
 ## if(!require(dplyr)){install.packages("dplyr")}
 ## if(!require(magrittr)){install.packages("magrittr")}
 ## if(!require(tuneR)){install.packages("tuneR")}
 ##if(!require(profvis)){install.packages("profvis")}
+##if(!require(R.utils)){install.packages("R.utils")}
 ## library(ROSC)
+##library(R.utils)
 #profvis({
 ## ======= FUNCTIONS =======
 toOscTyped <- function(dataToOsc, address, type){
@@ -17,15 +19,18 @@ toOscTyped <- function(dataToOsc, address, type){
 ## ===================
 
 ## extended 16 steps with 8 observations, distances from root, [temporal convention: -1 = silence, 0 = root, 12 = octave ] 
-s1 <- c( 0,-1,-1,-1,    -1,12,-1,-1,    11,-1,-1,-1,    -1,-1,-1,-1)
-s2 <- c( 0,-1,-1,-1,    -1,-1,-1,-1,    11,-1,-1,-1,    -1,-1,-1,-1)
-s3 <- c( 0,-1,-1,-1,    -1,-1,-1,-1,    11,-1,-1,-1,    -1,-1,-1,-1)
-s4 <- c( 0,-1,-1,-1,    -1, 5,-1,-1,     6,-1,-1,-1,    -1,-1,-1,-1)
-s5 <- c( 0,-1,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1)
-s6 <- c( 0,-1,-1,-1,    -1, 3,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1)
-s7 <- c( 0,-1,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1)
-s8 <- c( 0,-1,-1,-1,    -1, 3,-1,-1,    -1,-1,-1,-1,    -1,-1,-1,-1)
+##s1 <- c( 0, 0,-1,-1,    -1, 3,-1,-1,     0,-1,-1, 0,    -1,-1,-1,-1)
+
+s1<- replace(rep(-1,16), c(4,8), 0)## create a vector of size 16 filled with -1, and replace certain positions
+s2<- replace(rep(-1,16), c(4,8), 0)
+s3<- replace(rep(-1,16), c(4,8), 0)
+s4<- replace(rep(-1,16), c(4,8), 0)
+s5<- replace(rep(-1,16), c(4,8), 0)
+s6<- replace(rep(-1,16), c(4,8), 0)
+s7<- replace(rep(-1,16), c(4,8), 0)
+s8<- replace(rep(-1,16), c(4,8), 0)
 mCorpus <- rbind(s1, s2, s3, s4, s5, s6, s7, s8)
+
 
 ##TODO Abstract moving parts to make it a function
 ## contar los elementos únicos
@@ -39,7 +44,7 @@ count2$step <- 2
 count3 <- (data.frame(table(mCorpus[,3])))
 count3$percent <- count3$Freq/ sum(count3$Freq)
 count3$step <- 3
-count4 <- (data.frame(table(mCorpus[,3])))
+count4 <- (data.frame(table(mCorpus[,4])))
 count4$percent <- count4$Freq/ sum(count4$Freq)
 count4$step <- 4
 count5 <- (data.frame(table(mCorpus[,5])))
