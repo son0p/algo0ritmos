@@ -10,9 +10,9 @@
 ##library(R.utils)
 #profvis({
 ## ======= FUNCTIONS =======
-toOscTyped <- function(dataToOsc, address, type){
+toOscTyped <- function(dataToOsc, address, port, type){
     msg <- paste(address, type, dataToOsc)
-    command <-  paste("oscchief send", "localhost", 6448, address, type, dataToOsc )
+    command <-  paste("oscchief send", "localhost", port, address, type, dataToOsc )
     system(command)
 }
 
@@ -177,8 +177,22 @@ values <- as.numeric(as.character(fact16$Var1))
 pcts <- fact16$percent
 stp16 <- sample(values, 1, prob=pcts)
 
-## -- prepare  OSC boundle
-result <- paste(as.character(c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp13,stp14,stp15,stp16 )),collapse=" ")
+## RESULT 
+resultVec <-c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp13,stp14,stp15,stp16 )
+
+## MODS based on RESULT
+## complement, TODO never touch the steps after a sincopa
+options <- c(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,12,51)
+resultComp <- ifelse(resultVec == -1, sample(options) , -1)
+
+
+## -- prepare  OSC boundles
+result <- paste(as.character(resultVec),collapse=" ")
+resultComp <- paste(as.character(resultComp),collapse=" ")
 type <- paste(rep("f", 16), collapse = "")
-toOscTyped(result, "/ffxf/step1", type)
+toOscTyped(result, "/ffxf/step1", 6448, type)
+toOscTyped(resultComp, "/ffxf/step1comp", 6447, type)
+
+
+
 ##})

@@ -8,11 +8,6 @@ OscMsg msg;
 // create an address in the receiver, store in new variable
 oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
 
-// containers
-float rec[0];
-float bassFromOsc[0];
-glo.bassFromOsc @=> bassFromOsc;
-
 // Establece valores globales
 200::ms => Global.beat;
 36 => Global.root;
@@ -21,6 +16,8 @@ Gain master => dac;
 // instrumentos
 
 kjzTT101 t1;
+t1.output => dac;
+0.01=> t1.setDriveGain;
 
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
 
@@ -90,10 +87,10 @@ lib.insertChance(99, testPercent, 5.0) @=> testPercent;
 
 // ============= DRUMS =================
 // Probabilidad de un corpus -- drums
-[100,  0,  0,  0,100,  0,  10,  0,100,  0,  0,  0,100,  0,  0, 20] @=> int chanceBd[];
-[  0,  0,  0,  0, 00,  0, 100,  0,  0,  0,  0,  0, 00,  0,100,  0] @=> int chanceSd[];
-[  0,  0,100,  0, 00,  0, 100,  0,  0,  0,100,  0,  0,   0,100, 20] @=> int chanceT1[];
-[ 100, 0,100,100,100,  0, 100,100, 90,  0,100,100, 80,  0,100, 30] @=> int chanceHh[];
+[100,  0,  0, 80,   100,  0,  0, 00,  100,  0,  0,  80,   100,  0,  0, 00] @=> int chanceBd[];
+[  0,  0,  0,  0,    00,  0,100,  0,     0,  0,  0,  0,    00,  0,100,  0] @=> int chanceSd[];
+[  0,  0,100,  0,    00,  0,100,  0,     0,  0,100,  0,     0,  0,100, 20] @=> int chanceT1[];
+[ 100, 0,100,100,   100,  0,100,100,    90,  0,100,100,    80,  0,100, 30] @=> int chanceHh[];
 
 // curva de dinámica fija
 [1.0,1.0,0.4,0.8,1.0,1.0,0.4,0.8,1.0,0.7,0.4,0.8,1.0,1.0,0.4,0.8] @=> float dynamicsFixed[];
@@ -114,7 +111,7 @@ fun void playDrums()
     lib.hh.keyOff();
     if( bdSwitch == 1 ){ lib.bd.keyOn(); 1.0 => lib.bdImpulse.next;  }
     if( sdSwitch == 1 ){ lib.sd.keyOn(); }
-    if( t1Switch == 1 ){ t1.setBaseFreq(80 + i*2); t1.hit(.1 + i * .1); }
+    if( t1Switch == 1 ){ t1.setBaseFreq(Std.mtof(Global.root +12) + i*1); t1.hit(.1 + i * .1); }
     if( hhSwitch == 1 ){ lib.hh.keyOn(); }
     //Global.beat => now;
     200::ms => now;
@@ -154,6 +151,19 @@ fun void playBassFromOsc()
         Global.bassFromOsc[i] => float bassNote;
         bass.keyOff();
         if( bassNote != -1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
+        Global.beat => now;
+        i++;
+    }
+}
+
+fun void playBassFromOscComp()
+{
+    0 => int i;
+    while(true)
+    {
+        Global.bassFromOscComp[i] => float bassNoteComp;
+        lib.sin0env.keyOff();
+        if( bassNoteComp != -1 ){ Std.mtof( bassNoteComp + Global.root ) => lib.sin0.freq; lib.sin0env.keyOn();  }
         Global.beat => now;
         i++;
     }
@@ -401,11 +411,13 @@ if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1])
     //  spork~ playDrums() @=> Shred  offspring;
     // <<< offspring>>>;
     spork~ playBassFromOsc();
-    spork~ four();
+    spork~ playBassFromOscComp();
+    spork~ playDrums();
 }
 // ---- BREAKDOWN 1
 if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
     spork~ playDrums();
+    spork~ playBassFromOscComp();
     spork~ playBassFromOsc();
 }
 // --- BuildUp
@@ -423,7 +435,7 @@ if(Global.mod256 >= structureParts[3] && Global.mod256 < structureParts[4]){
 if(Global.mod256 >= structureParts[4] && structureParts[5] ){
     spork~ playMarkov2(); // not markov yet
     spork~ playDrums();
-    spork~ playBassDrop();
+    spork~ playBassFromOsc();
 }
 // --- BUILDUP
 if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
@@ -442,7 +454,7 @@ if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
 
 //spork~ playBreak();
 spork~ rollCounter();
-//spork~ variations();
+spork~ variations();
 //spork~ playDrums();
 spork~ oscRun();
 

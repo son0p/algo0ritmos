@@ -4,6 +4,7 @@ public class Global
     int inmutableEnvNotes[16];
     int inmutableBass[16];
     static float bassFromOsc[];
+    static float bassFromOscComp[];
     int inmutableEnvBass[16];
     int inmutableBD[16];
     int inmutableSN[16];
@@ -20,5 +21,6 @@ public class Global
 }
 //init the array with something, else it would just stay an empty reference.
 [-1.0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1]  @=> Global.bassFromOsc;
+[-1.0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1]  @=> Global.bassFromOscComp;
 //[0.] @=> Global.bassFromOsc;
 200::ms => Global.beat; // initializacion in the class is not working .. bug?
