@@ -25,7 +25,7 @@ public class Library
       <<<array[i]>>>;
     }
   }
-   
+
     // función generar probabilidades según corpus
     fun static float floatChance( int percent, float value1, float value2)
     {
@@ -98,7 +98,8 @@ public class Library
   bd.set( 1::ms, 150::ms, .50, 100::ms );
   70.0 => hpfBD.freq;
   // --snareDrum
-  Noise sdImpulse => ResonZ sdFilter => ADSR sd => dac;
+  Noise sdImpulse => ResonZ sdFilter => ADSR sd => Gain sdGain => dac;
+  0.9 => sdGain.gain;
   0.9 => sdImpulse.gain;
   sdFilter.set(400.0, 1.0);
   sd.set( 0::ms, 50::ms, .0, 100::ms );
@@ -113,6 +114,7 @@ public class Library
   SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => dac;
   -0.5 => sin0Pan.pan;
   sin0env.set( 0::ms, 500::ms, .0, 100::ms );
+  0.1 => sin0.gain;
   // Sqr
   SqrOsc sqr0 => ADSR sqr0env => dac;
   0.15 => sqr0.gain;
@@ -238,7 +240,22 @@ public class Library
     return scale;
   }
 
-  // how many semintores between two freqs
+//////////// DYNAMICS ///////////////////////////
+    //// CLASSIC: force decrease form beat possition: 1 > 3 > 4 > 2
+   fun void dynClassic(Gain inst, float maxGain){
+       while(true){
+           maxGain => inst.gain;
+           // grab the actual level
+           // counter modulo:  if 1->100%, if 3->75%, if 4->50%, if 2->25%
+           if(Global.mod16 % 4 == 3){ inst.gain() * 0.75 => inst.gain; }
+           if(Global.mod16 % 4 == 4){ inst.gain() * 0.50 => inst.gain; }
+           if(Global.mod16 % 4 == 2){ inst.gain() * 0.25 => inst.gain; }
+           Global.beat => now;
+       }
+   }
+//////////// END DYNAMICS ////////////////
+
+// how many semintores between two freqs
 // fun float semitonesFinder(float freqFrom, float freqTo)
 //   {
 //     log(freqFrom/freqTo)/log(1.05946309436)float howManySemiTones;

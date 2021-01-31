@@ -9,7 +9,7 @@ OscMsg msg;
 oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
 
 // Establece valores globales
-200::ms => Global.beat;
+150::ms => Global.beat;
 36 => Global.root;
 // cadena de audio -- drums
 Gain master => dac;
@@ -113,8 +113,8 @@ fun void playDrums()
     if( sdSwitch == 1 ){ lib.sd.keyOn(); }
     if( t1Switch == 1 ){ t1.setBaseFreq(Std.mtof(Global.root +12) + i*1); t1.hit(.1 + i * .1); }
     if( hhSwitch == 1 ){ lib.hh.keyOn(); }
-    //Global.beat => now;
-    200::ms => now;
+    Global.beat => now;
+    //200::ms => now;
     i++;
   }
 }
@@ -187,6 +187,8 @@ fun void pitchUp()
     while(true)
     {
         Global.root * Global.mod64  => pulse.freq;
+        pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, pulse.gain()/ Math.random2f(0.5,1.8), Math.random2(100,8000)::ms);
+        Global.mod64/100 => pulseRev.mix; <<<Math.fabs(Math.sin(Global.mod64)/4)>>>;
         Global.beat => now;
     }
 }
@@ -357,13 +359,14 @@ fun void playBreak()
 }
 fun void rollCounter(){
         while(true){
-        Global.counter + 1 @=> Global.counter;
-        <<< Global.counter, Global.mod256 >>>;
-        Global.counter % 16 @=> Global.mod16;
-        Global.counter % 32 @=> Global.mod32;
-        Global.counter % 64 @=> Global.mod64;
+        Global.counter  +  1 @=> Global.counter;
+        Global.counter %   4 @=> Global.mod4;
+        Global.counter %  16 @=> Global.mod16;
+        Global.counter %  32 @=> Global.mod32;
+        Global.counter %  64 @=> Global.mod64;
         Global.counter % 256 @=> Global.mod256;
         Global.beat => now;
+        <<< Global.counter, Global.mod256 >>>;
     }
 }
 
@@ -414,6 +417,7 @@ if(Global.mod256 >= structureParts[0] && Global.mod256 < structureParts[1])
     spork~ playBassFromOscComp();
     spork~ playDrums();
 }
+
 // ---- BREAKDOWN 1
 if(Global.mod256 >= structureParts[1] && Global.mod256 < structureParts[2]){
     spork~ playDrums();
@@ -440,6 +444,7 @@ if(Global.mod256 >= structureParts[4] && structureParts[5] ){
 // --- BUILDUP
 if(Global.mod256 >= structureParts[5] && Global.mod256 < structureParts[6]){
     spork~ playMarkov();
+    spork~ pitchUp();
 }
 // --- DROP B
 if(Global.mod256 >= structureParts[6] && Global.mod256 < structureParts[7]){
@@ -452,11 +457,13 @@ if(Global.mod256 >= structureParts[7] && Global.mod256 < structureParts[8]){
     spork~ four();
 }
 
+//// SPORKS ////////
 //spork~ playBreak();
 spork~ rollCounter();
 spork~ variations();
 //spork~ playDrums();
 spork~ oscRun();
+spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
 
 
 // mantiene vivos los sporks

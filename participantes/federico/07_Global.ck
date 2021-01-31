@@ -11,6 +11,7 @@ public class Global
     int inmutableHH[16];
     float container[100];
     static int counter;
+    static int mod4;
     static int mod16;
     static int mod32;
     static int mod64;
