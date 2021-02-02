@@ -1,26 +1,51 @@
 // === SAMPLES ===
-// sound file
-//"/home/ffx1/Music/sounds/fx/366886__megablasterrecordings__reverse-door-slam.wav" => string reverse;
-//if( me.args() ) me.arg(0) => reverse;
-SndBuf rev => dac;
-"/home/ffx1/Music/sounds/fx/366886__megablasterrecordings__reverse-door-slam.wav" => rev.read;
-0 => rev.rate;
-.4 => rev.gain;
 
-fun void playRev(){
-    1 => rev.rate;
-    rev.length() => now;
-    0 => rev.rate;
-}
-while(true){
-    if(Global.mod256 == 156){
-        spork~ playRev();
+3 => int C;
+
+SndBuf s[C];
+JCRev r[C];
+Gain g[C];
+
+"/home/ffx1/Music/sounds/fx/165154__rhythmpeople__rpeople-revcrash2.wav" => s[0].read;
+"/home/ffx1/Music/sounds/fx/257838__lostphosphene__white-noise-sweep-up.wav" => s[1].read;
+"/home/ffx1/Music/sounds/fx/366886__megablasterrecordings__reverse-door-slam.wav" => s[2].read;
+
+[170, 115, 157] @=> int startPoint[]; // wav positions on song, to be fixed if tempo change
+[0,1,2] @=> int options[];  // wav array options
+
+fun void wavs(){
+    for( 0 => int i; i < C; i++ ){
+        s[i]  => r[i] => g[i] => dac;
+        r[i].mix(0.05);
+        g[i].gain(0.2);
+        s[i].samples() => s[i].pos; // playhead position to the end to be silent on initialization
     }
-    Global.beat => now;
+}
+//// === FUNCTIONS ===
+fun void playOneSample(SndBuf sample){
+    <<< "here! ">>>;
+    0 => sample.pos;
+    1 => sample.rate;
+    sample.length() => now;
 }
 
+fun void selectWav(){
+    0 => int selected;
+    while(true){
+        //// Select sample number and startPoint number
+        if(Global.mod256 == 5){
+            Math.random2(0, options.cap()-1) => selected;
+            <<< "selected:", selected>>>;
+        }
+        //// Play at selected startPoint
+        if(Global.mod256 == startPoint[selected]){
+            spork~ playOneSample(s[selected]);
+        }
+        Global.beat => now;
+    }
+}
 
-spork~ playRev();
-
-
+//// === RUN ===
+spork~ wavs();
+spork~ selectWav();
 while(true) .5::second => now;

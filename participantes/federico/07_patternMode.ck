@@ -37,8 +37,9 @@ PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
 pulseADSR.set( 0::ms, 80::ms, pulse.gain()/1.5, 100::ms );
 0.02 => pulseRev.mix;
 
-PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => dac;
-0.03 => pulse2.gain;
+PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => dac;
+0.03 => pulse2gain.gain;
+
 pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
 0.19 => pulseRev2.mix;
 Math.random2f(0.1, 0.99)=> pulse2.width;
@@ -188,7 +189,7 @@ fun void pitchUp()
     {
         Global.root * Global.mod64  => pulse.freq;
         pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, pulse.gain()/ Math.random2f(0.5,1.8), Math.random2(100,8000)::ms);
-        Global.mod64/100 => pulseRev.mix; <<<Math.fabs(Math.sin(Global.mod64)/4)>>>;
+        Global.mod64/100 => pulseRev.mix; 
         Global.beat => now;
     }
 }
@@ -464,7 +465,7 @@ spork~ variations();
 //spork~ playDrums();
 spork~ oscRun();
 spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
-
+spork~ lib.dynClassic(pulse2gain, 0.05);
 
 // mantiene vivos los sporks
 Global.beat * 16 => now;
