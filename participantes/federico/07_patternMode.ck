@@ -29,17 +29,17 @@ bass.set( 0::ms, 80::ms, fat.gain()/1.5, 100::ms );
 // --Melody
 BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
 0.09 => melodyImpulse.gain;
-melody.set( 0::ms, 80::ms, melodyImpulse.gain()/1.5, 100::ms );
-0.03 => mReverb.mix;
+melody.set( 0::ms, 80::ms, 0.00, 500::ms );
+0.07 => mReverb.mix;
+
 
 PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
 0.02 => pulse.gain;
-pulseADSR.set( 0::ms, 80::ms, pulse.gain()/1.5, 100::ms );
+pulseADSR.set( 0::ms, 80::ms, 0.00, 100::ms );
 0.02 => pulseRev.mix;
 
 PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => dac;
 0.03 => pulse2gain.gain;
-
 pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
 0.19 => pulseRev2.mix;
 Math.random2f(0.1, 0.99)=> pulse2.width;
@@ -139,7 +139,6 @@ fun void playBass()
       bass.keyOff();
       if( bassSwitch == 1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
       Global.beat  => now;
-  
     }
 }
 
@@ -183,7 +182,7 @@ fun void pitchUp()
     while(true)
     {
         Global.root * Global.mod64  => pulse.freq;
-        pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, pulse.gain()/ Math.random2f(0.5,1.8), Math.random2(100,8000)::ms);
+        pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, 0.0, 100::ms);
         Global.mod64/100 => pulseRev.mix; 
         Global.beat => now;
     }
@@ -238,24 +237,26 @@ fun void pitchUp()
 fun void playMarkov()
 {
     while(true)
-  {
-    // recorre la cantidad de estados posibles
-    for( 0 => int i; i < posibleStates.cap(); i++)
     {
-      melody.keyOff();
-      pulseADSR.keyOff();
-      if( currentState == posibleStates[i] )
-      {
-        (transitionMatrix[i][i] * 100.0) $ int => int percent;
-        floatChance( percent,posibleStates[0],posibleStates[1]) => currentState;
-        Std.mtof(Global.root + 12 + currentState) => melodyImpulse.freq;
-        Std.mtof(Global.root + 24 - (2*currentState)) => pulse.freq;
-        melody.keyOn();
-        pulseADSR.keyOn();
-        Global.beat => now;
-      }
+        melody.keyOff();
+        pulseADSR.keyOff();
+        // recorre la cantidad de estados posibles
+        for( 0 => int i; i < posibleStates.cap(); i++)
+        {
+            if( currentState == posibleStates[i] )
+            {
+                (transitionMatrix[i][i] * 100.0) $ int => int percent;
+                floatChance( percent,posibleStates[0],posibleStates[1]) => currentState;
+                Std.mtof(Global.root + 12 + currentState) => melodyImpulse.freq;
+                Std.mtof(Global.root + 24 - (2*currentState)) => pulse.freq;
+                melody.keyOn();
+                pulseADSR.keyOn();
+                Global.beat => now;
+                melody.keyOff();
+                pulseADSR.keyOff();
+            }
+        }
     }
-  }
 }
 
 [ 1.0, 2.0] @=> float pulse2Durations[];
@@ -281,6 +282,7 @@ fun void playMarkov2()
                 Std.mtof(Global.root + 24 + testPercent[Math.random2(0, 99)]) => pulse2.freq;
                 if( M2Switch == 1 ){ pulseADSR2.keyOn();  }
                 Global.beat => now;
+                pulseADSR2.keyOff();
              }
         }
     }
@@ -427,10 +429,18 @@ fun int buildUp(int steps){
     return steps;
 }
 //// -- DROP A
-fun int dropA(int steps){
+fun int drop(int steps){
     spork~ playMarkov2(); // not markov yet
     spork~ four();
     spork~ playBassDrop();
+    Global.beat * steps => now;
+    return steps;
+}
+fun int postDrop(int steps){
+    spork~ playMarkov2();
+    spork~ playDrums();
+    spork~ playBassFromOscComp();
+    spork~ playBassFromOsc();
     Global.beat * steps => now;
     return steps;
 }
@@ -444,16 +454,21 @@ spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
 spork~ lib.dynClassic(pulse2gain, 0.05);
 
 //// PLAY PARTS IN SERIAL
-64 => int steps;
-spork~ intro(steps);
-Global.beat * steps => now;
-me.yield();
-spork~ buildUp(steps);
-Global.beat * steps => now;
-me.yield();
-spork~ dropA(steps *2);
-Global.beat * steps *2  => now;
-me.yield();
+while(true){
+    64 => int steps;
+    spork~ breakDown(steps);
+    Global.beat * steps => now;
+    me.yield();
+    spork~ buildUp(steps);
+    Global.beat * steps => now;
+    me.yield();
+    spork~ drop(steps);
+    Global.beat * steps => now;
+    me.yield();
+    spork~ postDrop(steps);
+    Global.beat * steps  => now;
+    me.yield();
+}
 
 // keep sporks alive
 Global.beat * 256 => now;
