@@ -18,6 +18,7 @@ toOscTyped <- function(dataToOsc, address, port, type){
 
 ## ===================
 
+
 ## extended 16 steps with 8 observations, distances from root, [temporal convention: -1 = silence, 0 = root, 12 = octave ] 
 ##s1 <- c( 0, 0,-1,-1,    -1, 3,-1,-1,     0,-1,-1, 0,    -1,-1,-1,-1)
 
@@ -27,8 +28,8 @@ s3<- replace(rep(-1,16), c(4,8), 0)
 s4<- replace(rep(-1,16), c(4,8), 0)
 s5<- replace(rep(-1,16), c(4,8), 0)
 s6<- replace(rep(-1,16), c(4,8), 0)
-s7<- replace(rep(-1,16), c(4,8), 0)
-s8<- replace(rep(-1,16), c(4,8), 0)
+s7<- replace(rep(-1,16), c(4,12), 3)
+s8<- replace(rep(-1,16), c(4,16), 0)
 mCorpus <- rbind(s1, s2, s3, s4, s5, s6, s7, s8)
 
 
@@ -182,7 +183,7 @@ resultVec <-c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp
 
 ## MODS based on RESULT
 ## complement, TODO never touch the steps after a sincopa
-options <- c(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,12,51)
+options <- c(rep(-1,25),rep(0, 10),rep(3,1), rep(12,1),rep(51,1)) 
 resultComp <- ifelse(resultVec == -1, sample(options) , -1)
 
 
