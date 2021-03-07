@@ -87,105 +87,27 @@ count16$step <- 16
 
 ## percent distribution of in each step
 dfMcorpus <- rbind(count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11, count12, count13, count14, count15, count16 )
-##dfMcorpus
 
-## ## TEST to abstract TODO
-## bundle <- rep(NA, 16)
-## ##FAIL
-## for(i in bundle){
-##           testPercent <-dfMcorpus[dfMcorpus$step %in% 1, ] %>%
-##             select(percent) %$%
-##             as.numeric(percent)
-##         dfMcorpus[dfMcorpus$step %in% 1, ] %>%
-##         select(Var1) %$% sample(as.numeric(as.character(Var1)), 1, prob = testPercent )
-## }
+## number of steps to be evaluated
+patternSize <- c(1:length(unique(dfMcorpus$step)))
 
+factSel <- function(x){
+  ## form each step select the factors
+  fact <- dfMcorpus[dfMcorpus$step %in% x, ]
+  values <- as.numeric(as.character(fact$Var1))
+  pcts <- fact$percent
+  ## select one value considering percent distribution
+  stp <- sample(values, 1, prob=pcts)
+  return(stp)
+}
 
-## ## DONE TEST but two branchas of pipes and just 1 value
-## testPercent <-dfMcorpus[dfMcorpus$step %in% 6, ] %>%
-##     select(percent) %$%
-##     as.numeric(percent)
-## dfMcorpus[dfMcorpus$step %in% 6, ] %>%
-##     select(Var1) %$% sample(as.numeric(as.character(Var1)), 1, prob = testPercent )
+resultVec <- unlist(lapply(patternSize, function(x){factSel(x)}))
 
-## === END TEST
-
-## TODO abstract to a function
-## selecionamos un factor
-fact1 <- dfMcorpus[dfMcorpus$step %in% 1, ]
-## extraemos los  vectores de interes convirtiendo de factor a numeric
-values <- as.numeric(as.character(fact1$Var1))
-pcts <- fact1$percent
-stp1 <- sample(values, 1, prob=pcts)
-fact2 <- dfMcorpus[dfMcorpus$step %in% 2, ]
-values <- as.numeric(as.character(fact2$Var1))
-pcts <- fact2$percent
-stp2 <- sample(values, 1, prob=pcts)
-fact3 <- dfMcorpus[dfMcorpus$step %in% 3, ]
-values <- as.numeric(as.character(fact3$Var1))
-pcts <- fact3$percent
-stp3 <- sample(values, 1, prob=pcts)
-fact4 <- dfMcorpus[dfMcorpus$step %in% 4, ]
-values <- as.numeric(as.character(fact4$Var1))
-pcts <- fact4$percent
-stp4 <- sample(values, 1, prob=pcts)
-fact5 <- dfMcorpus[dfMcorpus$step %in% 5, ]
-values <- as.numeric(as.character(fact5$Var1))
-pcts <- fact5$percent
-stp5 <- sample(values, 1, prob=pcts)
-fact6 <- dfMcorpus[dfMcorpus$step %in% 6, ]
-values <- as.numeric(as.character(fact6$Var1))
-pcts <- fact6$percent
-stp6 <- sample(values, 1, prob=pcts)
-fact7 <- dfMcorpus[dfMcorpus$step %in% 7, ]
-values <- as.numeric(as.character(fact7$Var1))
-pcts <- fact7$percent
-stp7 <- sample(values, 1, prob=pcts)
-fact8 <- dfMcorpus[dfMcorpus$step %in% 8, ]
-values <- as.numeric(as.character(fact8$Var1))
-pcts <- fact8$percent
-stp8 <- sample(values, 1, prob=pcts)
-fact9 <- dfMcorpus[dfMcorpus$step %in% 9, ]
-values <- as.numeric(as.character(fact9$Var1))
-pcts <- fact9$percent
-stp9 <- sample(values, 1, prob=pcts)
-fact10 <- dfMcorpus[dfMcorpus$step %in% 10, ]
-values <- as.numeric(as.character(fact10$Var1))
-pcts <- fact10$percent
-stp10 <- sample(values, 1, prob=pcts)
-fact11 <- dfMcorpus[dfMcorpus$step %in% 11, ]
-values <- as.numeric(as.character(fact11$Var1))
-pcts <- fact11$percent
-stp11 <- sample(values, 1, prob=pcts)
-fact12 <- dfMcorpus[dfMcorpus$step %in% 12, ]
-values <- as.numeric(as.character(fact12$Var1))
-pcts <- fact12$percent
-stp12 <- sample(values, 1, prob=pcts)
-fact13 <- dfMcorpus[dfMcorpus$step %in% 13, ]
-values <- as.numeric(as.character(fact13$Var1))
-pcts <- fact13$percent
-stp13 <- sample(values, 1, prob=pcts)
-fact14 <- dfMcorpus[dfMcorpus$step %in% 14, ]
-values <- as.numeric(as.character(fact14$Var1))
-pcts <- fact14$percent
-stp14 <- sample(values, 1, prob=pcts)
-fact15 <- dfMcorpus[dfMcorpus$step %in% 15, ]
-values <- as.numeric(as.character(fact15$Var1))
-pcts <- fact15$percent
-stp15 <- sample(values, 1, prob=pcts)
-fact16 <- dfMcorpus[dfMcorpus$step %in% 16, ]
-values <- as.numeric(as.character(fact16$Var1))
-pcts <- fact16$percent
-stp16 <- sample(values, 1, prob=pcts)
-
-## RESULT 
-resultVec <-c(stp1,stp2,stp3,stp4,stp5,stp6,stp7,stp8,stp9,stp10,stp11,stp12,stp13,stp14,stp15,stp16 )
 
 ## MODS based on RESULT
 ## complement, TODO never touch the steps after a sincopa
 options <- c(rep(-1,25),rep(0, 10),rep(3,1), rep(12,1),rep(51,1)) 
 resultComp <- ifelse(resultVec == -1, sample(options) , -1)
-
 
 ## -- prepare  OSC boundles
 result <- paste(as.character(resultVec),collapse=" ")
@@ -193,7 +115,5 @@ resultComp <- paste(as.character(resultComp),collapse=" ")
 type <- paste(rep("f", 16), collapse = "")
 toOscTyped(result, "/ffxf/step1", 6448, type)
 toOscTyped(resultComp, "/ffxf/step1comp", 6447, type)
-
-
 
 ##})
