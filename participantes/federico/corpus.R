@@ -5,6 +5,9 @@
 ## if(!require(magrittr)){install.packages("magrittr")}
 ## if(!require(tuneR)){install.packages("tuneR")}
 ##if(!require(profvis)){install.packages("profvis")}
+if(!require(tibble)){install.packages("tibble")}
+if(!require(unnest)){install.packages("unnest")}
+
 ##if(!require(R.utils)){install.packages("R.utils")}
 ## library(ROSC)
 ##library(R.utils)
@@ -32,61 +35,17 @@ s7<- replace(rep(-1,16), c(4,12), 3)
 s8<- replace(rep(-1,16), c(4,16), 0)
 mCorpus <- rbind(s1, s2, s3, s4, s5, s6, s7, s8)
 
+targetSize <- c(1:16)
 
-##TODO Abstract moving parts to make it a function
-## contar los elementos únicos
-count1 <- (data.frame(table(mCorpus[,1])))
-## calcular su participación porcentual
-count1$percent <- count1$Freq/ sum(count1$Freq)
-count1$step <- 1  ## factor
-count2 <- (data.frame(table(mCorpus[,2])))
-count2$percent <- count2$Freq/ sum(count2$Freq)
-count2$step <- 2
-count3 <- (data.frame(table(mCorpus[,3])))
-count3$percent <- count3$Freq/ sum(count3$Freq)
-count3$step <- 3
-count4 <- (data.frame(table(mCorpus[,4])))
-count4$percent <- count4$Freq/ sum(count4$Freq)
-count4$step <- 4
-count5 <- (data.frame(table(mCorpus[,5])))
-count5$percent <- count5$Freq/ sum(count5$Freq)
-count5$step <- 5
-count6 <- (data.frame(table(mCorpus[,6])))
-count6$percent <- count6$Freq/ sum(count6$Freq)
-count6$step <- 6
-count7 <- (data.frame(table(mCorpus[,7])))
-count7$percent <- count7$Freq/ sum(count7$Freq)
-count7$step <- 7
-count8 <- (data.frame(table(mCorpus[,8])))
-count8$percent <- count8$Freq/ sum(count8$Freq)
-count8$step <- 8
-count9 <- (data.frame(table(mCorpus[,9])))
-count9$percent <- count9$Freq/ sum(count9$Freq)
-count9$step <- 9
-count10 <- (data.frame(table(mCorpus[,10])))
-count10$percent <- count10$Freq/ sum(count10$Freq)
-count10$step <- 10
-count11 <- (data.frame(table(mCorpus[,11])))
-count11$percent <- count11$Freq/ sum(count11$Freq)
-count11$step <- 11
-count12 <- (data.frame(table(mCorpus[,12])))
-count12$percent <- count12$Freq/ sum(count12$Freq)
-count12$step <- 12
-count13 <- (data.frame(table(mCorpus[,13])))
-count13$percent <- count13$Freq/ sum(count13$Freq)
-count13$step <- 13
-count14 <- (data.frame(table(mCorpus[,14])))
-count14$percent <- count14$Freq/ sum(count14$Freq)
-count14$step <- 14
-count15 <- (data.frame(table(mCorpus[,15])))
-count15$percent <- count15$Freq/ sum(count15$Freq)
-count15$step <- 15
-count16 <- (data.frame(table(mCorpus[,16])))
-count16$percent <- count16$Freq/ sum(count16$Freq)
-count16$step <- 16
+percentDistByStep <- function (corpus, x){
+  count <- (data.frame(table(corpus[ ,x])))
+  count$percent <- count$Freq / sum(count$Freq)
+  count$step <- x
+  return(count)
+}
 
-## percent distribution of in each step
-dfMcorpus <- rbind(count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11, count12, count13, count14, count15, count16 )
+
+dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(mCorpus, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
 
 ## number of steps to be evaluated
 patternSize <- c(1:length(unique(dfMcorpus$step)))
@@ -102,7 +61,6 @@ factSel <- function(x){
 }
 
 resultVec <- unlist(lapply(patternSize, function(x){factSel(x)}))
-
 
 ## MODS based on RESULT
 ## complement, TODO never touch the steps after a sincopa
