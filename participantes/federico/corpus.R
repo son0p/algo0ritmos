@@ -19,21 +19,18 @@ toOscTyped <- function(dataToOsc, address, port, type){
     system(command)
 }
 
-## ===================
+## extended 16 steps with some observations, distances from root, [temporal convention: -1 = silence, 0 = root, 12 = octave ]
 
+observation <- function(size, activeSteps, distances) {
+  replace(rep(-1,size), activeSteps, distances)
+}
 
-## extended 16 steps with 8 observations, distances from root, [temporal convention: -1 = silence, 0 = root, 12 = octave ] 
-##s1 <- c( 0, 0,-1,-1,    -1, 3,-1,-1,     0,-1,-1, 0,    -1,-1,-1,-1)
-
-s1<- replace(rep(-1,16), c(4,8), 0)## create a vector of size 16 filled with -1, and replace certain positions
-s2<- replace(rep(-1,16), c(4,8), 0)
-s3<- replace(rep(-1,16), c(4,8), 0)
-s4<- replace(rep(-1,16), c(4,8), 0)
-s5<- replace(rep(-1,16), c(4,8), 0)
-s6<- replace(rep(-1,16), c(4,8), 0)
-s7<- replace(rep(-1,16), c(4,12), 3)
-s8<- replace(rep(-1,16), c(4,16), 0)
-mCorpus <- rbind(s1, s2, s3, s4, s5, s6, s7, s8)
+mCorpus <- rbind(
+  observation(16, c(1,5,7), c(0,3,3)),
+  observation(16, c(1,7,9), c(0,5,5)),
+  observation(16, c(1,5,7), c(0,3,3)),
+  observation(16, c(1,7,9), c(0,5,5))
+)
 
 targetSize <- c(1:16)
 
@@ -43,7 +40,6 @@ percentDistByStep <- function (corpus, x){
   count$step <- x
   return(count)
 }
-
 
 dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(mCorpus, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
 
