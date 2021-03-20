@@ -82,19 +82,45 @@ fun float[] insertChance( int percent, float actual[], float valueToInsert)
     return transitionArray;
 }
 
-// test
-float testPercent[100];
-lib.insertChance(99, testPercent, 5.0) @=> testPercent;
+// containers
+int chanceBd[];
+int chanceSd[];
+int chanceT1[];
+int chanceHh[];
+float dynamicsFixed[];
 
+fun void initDrums(){
 // ============= DRUMS =================
 // Probabilidad de un corpus -- drums
-[100,  0,  0, 80,   100,  0,  0, 00,  100,  0,  0,  80,   100,  0,  0, 00] @=> int chanceBd[];
-[  0,  0,  0,  0,    00,  0,100,  0,     0,  0,  0,  0,    00,  0,100,  0] @=> int chanceSd[];
-[  0,  0,100,  0,    00,  0,100,  0,     0,  0,100,  0,     0,  0,100, 20] @=> int chanceT1[];
-[ 100, 0,100,100,   100,  0,100,100,    90,  0,100,100,    80,  0,100, 30] @=> int chanceHh[];
+    [100,  0,  0, 80,   100,  0,  0, 00,  100,  0,  0,  80,   100,  0,  0, 00] @=>  chanceBd;
+    [  0,  0,  0,  0,    00,  0,100,  0,     0,  0,  0,  0,    00,  0,100,  0] @=>  chanceSd;
+    [  0,  0,100,  0,    00,  0,100,  0,     0,  0,100,  0,     0,  0,100, 20] @=>  chanceT1;
+    [ 100, 0,100,100,   100,  0,100,100,    90,  0,100,100,    80,  0,100, 30] @=>  chanceHh;
 
 // curva de dinámica fija
-[1.0,1.0,0.4,0.8,1.0,1.0,0.4,0.8,1.0,0.7,0.4,0.8,1.0,1.0,0.4,0.8] @=> float dynamicsFixed[];
+    [1.0,1.0,0.4,0.8,1.0,1.0,0.4,0.8,1.0,0.7,0.4,0.8,1.0,1.0,0.4,0.8] @=> dynamicsFixed;
+
+}
+fun void variations(){
+    initDrums();
+    while(true){
+        if(Global.mod16 > 12){
+            lib.insertRandomInt(14, chanceSd, 30, 70) @=>  chanceSd;
+        }
+        if(Global.mod32 > 24){
+            lib.insertRandomInt(12, chanceSd, 0, 80) @=>  chanceSd;
+            lib.insertRandomInt(12, chanceBd, 0, 60) @=>  chanceBd;
+        }
+        if(Global.mod64 > 42){
+            lib.insertRandomInt(8, chanceSd, 80, 70) @=>  chanceSd;
+            lib.insertRandomInt(4, chanceBd, 0, 99) @=>  chanceBd;
+            lib.insertRandomInt(4, chanceT1, 0, 90) @=>  chanceT1;
+            lib.insertRandomInt(4, chanceHh, 0, 99) @=>  chanceHh;
+        }
+        else{ initDrums(); }
+        Global.beat => now;
+    }
+}
 
 // función que usa probabilidades para activar los instrumentos
 fun void playDrums()
@@ -364,31 +390,11 @@ fun void rollCounter(){
         Global.counter %  64 @=> Global.mod64;
         Global.counter % 256 @=> Global.mod256;
         Global.beat => now;
-        <<< Global.counter, Global.mod16 >>>;
+        <<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
     }
 }
 
-fun void variations(){
-while(true){
-    if(Global.mod16 > 12){
-        lib.insertRandomInt(14, chanceSd, 30, 70) @=>  chanceSd;
-        }
-    if(Global.mod32 > 24){
-        lib.insertRandomInt(12, chanceSd, 0, 80) @=>  chanceSd;
-        lib.insertRandomInt(12, chanceBd, 0, 60) @=>  chanceBd;
-    }
-    if(Global.mod64 > 42){
-        lib.insertRandomInt(8, chanceSd, 80, 70) @=>  chanceSd;
-        lib.insertRandomInt(4, chanceBd, 0, 99) @=>  chanceBd;
-        lib.insertRandomInt(4, chanceT1, 0, 90) @=>  chanceT1;
-        lib.insertRandomInt(4, chanceHh, 0, 99) @=>  chanceHh;
-    }
 
-    Global.beat => now;
-}
-// ==== cambios al final del array
-//lib.print(chanceSd);
-}
 
 //==== SECTIONS ( Breaks and Samples in InmutableLiveCode)=======
 
@@ -456,7 +462,7 @@ spork~ lib.dynClassic(pulse2gain, 0.05);
 //// PLAY PARTS IN SERIAL
 while(true){
     64 => int steps;
-    spork~ breakDown(steps);
+    spork~ breakDown(steps*2);
     Global.beat * steps => now;
     me.yield();
     spork~ buildUp(steps);
