@@ -82,7 +82,9 @@ fun float[] insertChance( int percent, float actual[], float valueToInsert)
     return transitionArray;
 }
 
-// containers
+float testPercent[100];
+lib.insertChance(99, testPercent, 5.0) @=> testPercent;
+
 int chanceBd[];
 int chanceSd[];
 int chanceT1[];
@@ -90,7 +92,7 @@ int chanceHh[];
 float dynamicsFixed[];
 
 fun void initDrums(){
-// ============= DRUMS =================
+   // ============= DRUMS =================
 // Probabilidad de un corpus -- drums
     [100,  0,  0, 80,   100,  0,  0, 00,  100,  0,  0,  80,   100,  0,  0, 00] @=>  chanceBd;
     [  0,  0,  0,  0,    00,  0,100,  0,     0,  0,  0,  0,    00,  0,100,  0] @=>  chanceSd;
