@@ -32,6 +32,11 @@ mCorpus <- rbind(
   observation(16, c(1,7,9), c(0,5,5))
 )
 
+mCorpusArtificial <-   lapply(1:20, function(i) {
+    observation(16,sample(1:16, 4), sample(c(0,0,0,0,0,0,0,3,5,7,12,24,36), 4))
+  })
+mCorpusArtificial <- t(sapply(1:20, function(i){mCorpusArtificial[[i]]}))
+
 targetSize <- c(1:16)
 
 percentDistByStep <- function (corpus, x){
@@ -41,7 +46,7 @@ percentDistByStep <- function (corpus, x){
   return(count)
 }
 
-dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(mCorpus, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
+dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(mCorpusArtificial, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
 
 ## number of steps to be evaluated
 patternSize <- c(1:length(unique(dfMcorpus$step)))
