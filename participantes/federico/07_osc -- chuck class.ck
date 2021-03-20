@@ -47,7 +47,7 @@ public class OscCom
 
     fun void callR(){
         while(true){
-            Std.system("Rscript corpus.R & > out.log 2> /dev/null");
+            Std.system("Rscript --default-packages=magrittr corpus.R & > out.log 2> /dev/null");
             // <<< "called R" >>>;
             Global.beat * 16 => now;
         }
