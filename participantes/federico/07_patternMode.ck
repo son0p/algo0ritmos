@@ -427,7 +427,7 @@ fun int intro(int steps){
 }
 //// -- BREAKDOWN 1
 fun int breakDown(int steps){
-    spork~ playDrums() @=> playDrumsShred;
+    spork~ playDrums() @=> playDrumsShred;  // store Shred to be removed by id()
     spork~ playBassFromOsc() @=> playBassFromOscShred;
     spork~ playBassFromOscComp() @=> playBassFromOscCompShred;
     Global.beat * steps => now;
@@ -472,16 +472,12 @@ while(true){
     64 => int steps;
     spork~ breakDown(steps*2);
     Global.beat * steps => now;
-    //me.exit();
     spork~ buildUp(steps);
     Global.beat * steps => now;
-    //me.exit();
     spork~ drop(steps);
     Global.beat * steps => now;
-    //me.exit();
     spork~ postDrop(steps);
     Global.beat * steps  => now;
-    //me.exit();
 }
 
 // keep sporks alive
