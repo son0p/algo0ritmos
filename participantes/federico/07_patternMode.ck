@@ -32,7 +32,6 @@ BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
 melody.set( 0::ms, 80::ms, 0.00, 500::ms );
 0.07 => mReverb.mix;
 
-
 PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
 0.02 => pulse.gain;
 pulseADSR.set( 0::ms, 80::ms, 0.00, 100::ms );
@@ -316,52 +315,6 @@ fun void playMarkov2()
     }
 }
 
-// switch chance for each step
-[ 0, 0, 0, 95,  0, 10,0,0,   40,5,0,100,   0,0,80,30] @=> int chanceM3[];
-//  percent distribution of distances
-float step1[100];
-float step2[100];
-float step3[100];
-float step4[100];
-float step5[100];
-float step6[100];
-float step7[100];
-float step8[100];
-float step9[100];
-float step10[100];
-float step11[100];
-float step12[100];
-float step13[100];
-float step14[100];
-float step15[100];
-float step16[100];
-lib.insertChance(50, step1, 12.0) @=> step1;
-lib.insertChance(50, step2, 7.0) @=> step2;
-lib.insertChance(50, step4, 0.0) @=> step4;
-lib.insertChance(50, step7, 5.0) @=> step7;
-lib.insertChance(20, step7, 4.0) @=> step7;
-lib.insertChance(20, step9, 4.0) @=> step9;
-lib.insertChance(40, step12, 12.0) @=> step12;
-lib.insertChance(40, step15, 7.0) @=> step15;
-lib.insertChance(40, step16, 4.0) @=> step16;
-// Index steps in a mutidimensional array
-[ step1, step2, step3, step4, step5, step6, step7, step8, step9, step10, step11, step12, step13, step14, step15, step16
-    ] @=> float multiTest[][];
-
-
-fun void playDistPercent()
-{
-    while(true)
-    {
-        pulseADSR3.keyOff();
-        floatChance( chanceM3[Global.mod16], 1, 0 )   => float M3Switch;
-         if( M3Switch == 1 ){
-            Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
-            pulseADSR3.keyOn();  }
-        Global.beat => now;
-    }
-}
-
 // ========= break ============
 [100,0,0,100, 0,0,100,0, 0,100,100,0,  100,100,0,0] @=> int chanceBreak[];
 // Envolventes participantes
@@ -394,23 +347,6 @@ fun void rollCounter(){
         Global.beat => now;
         <<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
     }
-}
-
-
-
-//==== SECTIONS ( Breaks and Samples in InmutableLiveCode)=======
-
-[ "a", "b", "c", "d", "e", "f", "g","h"] @=> string Names[];
-
-//== SONG STRUCTURE
-4 => int scale;
-16 * scale => int section;
-[0, 1, 2, 3, 4, 5, 6, 7] @=> int structureMultiplicators[];
-int iIntro; int oIntro; int iBreakDown1; int oBreakDown1; int iBuildUp1; int oBuildUp1; int iDropA; int oDropB;
-[ iIntro,  oIntro,  iBreakDown1,  oBreakDown1,  iBuildUp1,  oBuildUp1,  iDropA,  oDropB] @=> int structureParts[]; // TODO assign values to var names
-// -- Populate sections borders
-for (int i; i < structureMultiplicators.cap(); i++){
-    structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
 }
 
 Shred playDrumsShred;
