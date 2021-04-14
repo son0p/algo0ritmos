@@ -130,8 +130,8 @@ fun void playDrums()
   0 => int i;
   while(true)
   {
-    i % 16 => i; 
-    hhGain * dynamicsFixed[i] => lib.hhImpulse.gain; 
+    i % 16 => i;
+    hhGain * dynamicsFixed[i] => lib.hhImpulse.gain;
     floatChance( chanceBd[i], 1,0 ) => float bdSwitch;
     floatChance( chanceSd[i], 1,0 ) => float sdSwitch;
     floatChance( chanceT1[i], 1,0 ) => float t1Switch;
@@ -413,6 +413,10 @@ for (int i; i < structureMultiplicators.cap(); i++){
     structureParts[i] + (section * structureMultiplicators[i]) @=> structureParts[i];
 }
 
+Shred playDrumsShred;
+Shred playBassFromOscShred;
+Shred playBassFromOscCompShred;
+
 //// PARTS
 //// -- INTRO
 fun int intro(int steps){
@@ -423,14 +427,17 @@ fun int intro(int steps){
 }
 //// -- BREAKDOWN 1
 fun int breakDown(int steps){
-    spork~ playDrums();
-    spork~ playBassFromOscComp();
-    spork~ playBassFromOsc();
+    spork~ playDrums() @=> playDrumsShred;
+    spork~ playBassFromOsc() @=> playBassFromOscShred;
+    spork~ playBassFromOscComp() @=> playBassFromOscCompShred;
     Global.beat * steps => now;
     return steps;
 }
 //// -- BUILDUP
 fun int buildUp(int steps){
+    Machine.remove(playDrumsShred.id());
+    Machine.remove(playBassFromOscShred.id());
+    Machine.remove(playBassFromOscCompShred.id());
     spork~ playMarkov();
     spork~ pitchUp();
     Global.beat * steps => now;
@@ -456,7 +463,6 @@ fun int postDrop(int steps){
 //// SPORKS ////////
 spork~ rollCounter();
 spork~ variations();
-//spork~ playDrums();
 spork~ oscRun();
 spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
 spork~ lib.dynClassic(pulse2gain, 0.05);
@@ -466,16 +472,16 @@ while(true){
     64 => int steps;
     spork~ breakDown(steps*2);
     Global.beat * steps => now;
-    me.yield();
+    //me.exit();
     spork~ buildUp(steps);
     Global.beat * steps => now;
-    me.yield();
+    //me.exit();
     spork~ drop(steps);
     Global.beat * steps => now;
-    me.yield();
+    //me.exit();
     spork~ postDrop(steps);
     Global.beat * steps  => now;
-    me.yield();
+    //me.exit();
 }
 
 // keep sporks alive
