@@ -316,20 +316,20 @@ fun void playMarkov2()
 }
 
 // ========= break ============
-[100,0,0,100, 0,0,100,0, 0,100,100,0,  100,100,0,0] @=> int chanceBreak[];
+[100,0,0,0, 0,0,100,0, 0,0,100,0,  100,0,0,0] @=> int chanceBreak[];
 // Envolventes participantes
-[pulseADSR, pulseADSR2, bass, lib.bd, lib.sd, lib.hh, pulseADSR3] @=> ADSR envs[];
+[melody, pulseADSR, pulseADSR2, bass, lib.bd, lib.sd, lib.hh, pulseADSR3] @=> ADSR envs[];
 
 fun void playBreak()
 {
     while(true)
     {
-        // apaga todas las envolventes antes de empezar (falta el kick)
+        // apaga todas las envolventes antes de empezar 
         for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
         floatChance( chanceBreak[Global.mod16], 1, 0 )   => float breakSwitch;
         if( breakSwitch == 1 ){
             // asigna frecuencia
-            Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
+            //Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
             // siendo 1 enciende todas las envolventes
             for(0 => int i; i < envs.cap(); i++){ envs[i].keyOn(); }
             }
@@ -376,6 +376,7 @@ fun int buildUp(int steps){
     Machine.remove(playBassFromOscCompShred.id());
     spork~ playMarkov();
     spork~ pitchUp();
+    spork~ playBreak();
     Global.beat * steps => now;
     return steps;
 }
