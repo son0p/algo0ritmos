@@ -320,19 +320,28 @@ fun void playMarkov2()
 // Envolventes participantes
 [melody, pulseADSR, pulseADSR2, bass, lib.bd, lib.sd, lib.hh, pulseADSR3] @=> ADSR envs[];
 
-fun void playBreak()
+// silence = 0, break =1
+fun void playBreak(int type)
 {
     while(true)
     {
-        // apaga todas las envolventes antes de empezar 
-        for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
-        floatChance( chanceBreak[Global.mod16], 1, 0 )   => float breakSwitch;
-        if( breakSwitch == 1 ){
-            // asigna frecuencia
-            //Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
-            // siendo 1 enciende todas las envolventes
-            for(0 => int i; i < envs.cap(); i++){ envs[i].keyOn(); }
+        if(type == 1){
+            // apaga todas las envolventes antes de empezar 
+            for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
+            floatChance( chanceBreak[Global.mod16], 1, 0 )   => float breakSwitch;
+            if( breakSwitch == 1 ){
+                // asigna frecuencia
+                //Std.mtof(Global.root + 12 + multiTest[Global.mod16][Math.random2(0, 99)]) => pulse3.freq;
+                // siendo 1 enciende todas las envolventes
+                for(0 => int i; i < envs.cap(); i++){ envs[i].keyOn(); }
             }
+        }
+        if(type == 0){
+            for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
+        }
+        else{
+            for(0 => int i; i < envs.cap(); i++){ envs[i].keyOn(); }
+        }
         Global.beat => now;
     }
 }
@@ -352,6 +361,7 @@ fun void rollCounter(){
 Shred playDrumsShred;
 Shred playBassFromOscShred;
 Shred playBassFromOscCompShred;
+Shred breakShred;
 
 //// PARTS
 //// -- INTRO
@@ -376,13 +386,12 @@ fun int buildUp(int steps){
     Machine.remove(playBassFromOscCompShred.id());
     spork~ playMarkov();
     spork~ pitchUp();
-    spork~ playBreak();
     Global.beat * steps => now;
     return steps;
 }
 //// -- DROP A
 fun int drop(int steps){
-    spork~ playMarkov2(); // not markov yet
+     spork~ playMarkov2(); // not markov yet
     spork~ four();
     spork~ playBassDrop();
     Global.beat * steps => now;
@@ -397,9 +406,22 @@ fun int postDrop(int steps){
     return steps;
 }
 
+// conditional sections
+fun void breakA(){
+        while(true){
+            if( Global.mod256 > 121 && Global.mod256 < 128 )
+            {
+                spork~ playBreak(0) @=> breakShred;
+            }
+            Global.beat => now;
+            Machine.remove(breakShred.id());
+        }
+}
+
 //// SPORKS ////////
 spork~ rollCounter();
 spork~ variations();
+spork~ breakA();
 spork~ oscRun();
 spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
 spork~ lib.dynClassic(pulse2gain, 0.05);
