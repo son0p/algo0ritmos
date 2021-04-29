@@ -5,12 +5,13 @@
 ## if(!require(magrittr)){install.packages("magrittr")}
 ## if(!require(tuneR)){install.packages("tuneR")}
 ##if(!require(profvis)){install.packages("profvis")}
-if(!require(tibble)){install.packages("tibble")}
-if(!require(unnest)){install.packages("unnest")}
+##if(!require(tibble)){install.packages("tibble")}
+##if(!require(unnest)){install.packages("unnest")}
 
 ##if(!require(R.utils)){install.packages("R.utils")}
 ## library(ROSC)
 ##library(R.utils)
+source("corpus_db.R")
 #profvis({
 ## ======= FUNCTIONS =======
 toOscTyped <- function(dataToOsc, address, port, type){
@@ -19,23 +20,7 @@ toOscTyped <- function(dataToOsc, address, port, type){
     system(command)
 }
 
-## extended 16 steps with some observations, distances from root, [temporal convention: -1 = silence, 0 = root, 12 = octave ]
-
-observation <- function(size, activeSteps, distances) {
-  replace(rep(-1,size), activeSteps, distances)
-}
-
-mCorpus <- rbind(
-  observation(16, c(1,5,7), c(0,3,3)),
-  observation(16, c(1,7,9), c(0,5,5)),
-  observation(16, c(1,5,7), c(0,3,3)),
-  observation(16, c(1,7,9), c(0,5,5))
-)
-
-mCorpusArtificial <-   lapply(1:20, function(i) {
-    observation(16,sample(1:16, 4), sample(c(0,0,0,0,0,0,0,3,5,7,12,24,36), 4))
-  })
-mCorpusArtificial <- t(sapply(1:20, function(i){mCorpusArtificial[[i]]}))
+corpus <- corpus_bass_marejada
 
 targetSize <- c(1:16)
 
@@ -46,7 +31,7 @@ percentDistByStep <- function (corpus, x){
   return(count)
 }
 
-dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(mCorpusArtificial, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
+dfMcorpus <- lapply(targetSize, function(x){percentDistByStep(corpus, x)}) %>% tibble::enframe(.) %>% tidyr::unnest(., cols = c(value))
 
 ## number of steps to be evaluated
 patternSize <- c(1:length(unique(dfMcorpus$step)))
