@@ -129,6 +129,39 @@ public class Library
     TriOsc tri0 => ADSR tri0env => Pan2 tri0Pan => dac;
     -0.0 => tri0Pan.pan;
     tri0env.set( 0::ms, 500::ms, .0, 100::ms );
+    // --Melody
+    BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
+    0.09 => melodyImpulse.gain;
+    melody.set( 0::ms, 80::ms, 0.00, 500::ms );
+    0.07 => mReverb.mix;
+
+    // --bass
+    Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => dac;
+    0.3 => fat.gain;  2800 => filterBass.freq;
+    bass.set( 0::ms, 80::ms, fat.gain()/1.5, 100::ms );
+    0.03 => fatRev.mix;
+
+
+    PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
+    0.02 => pulse.gain;
+    pulseADSR.set( 0::ms, 80::ms, 0.00, 100::ms );
+    0.02 => pulseRev.mix;
+
+    PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => dac;
+    0.03 => pulse2gain.gain;
+    pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
+    0.19 => pulseRev2.mix;
+    Math.random2f(0.1, 0.99)=> pulse2.width;
+
+    PulseOsc pulse3 => ADSR pulseADSR3 => NRev pulseRev3 => dac;
+    0.03 => pulse3.gain;
+    pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
+    0.19 => pulseRev3.mix;
+    Math.random2f(0.1, 0.99)=> pulse3.width;
+
+    kjzTT101 t1;
+    t1.output => dac;
+    0.01=> t1.setDriveGain;
 
   // modelado
 

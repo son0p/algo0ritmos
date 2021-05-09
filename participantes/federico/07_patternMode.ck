@@ -15,44 +15,14 @@ oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
 Gain master => dac;
 // instrumentos
 
-kjzTT101 t1;
-t1.output => dac;
-0.01=> t1.setDriveGain;
+
 
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
-
-// --bass
-Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => dac;
-0.3 => fat.gain;  2800 => filterBass.freq;
-bass.set( 0::ms, 80::ms, fat.gain()/1.5, 100::ms );
-0.03 => fatRev.mix;
-// --Melody
-BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
-0.09 => melodyImpulse.gain;
-melody.set( 0::ms, 80::ms, 0.00, 500::ms );
-0.07 => mReverb.mix;
-
-PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
-0.02 => pulse.gain;
-pulseADSR.set( 0::ms, 80::ms, 0.00, 100::ms );
-0.02 => pulseRev.mix;
-
-PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => dac;
-0.03 => pulse2gain.gain;
-pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
-0.19 => pulseRev2.mix;
-Math.random2f(0.1, 0.99)=> pulse2.width;
-
-PulseOsc pulse3 => ADSR pulseADSR3 => NRev pulseRev3 => dac;
-0.03 => pulse3.gain;
-pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
-0.19 => pulseRev3.mix;
-Math.random2f(0.1, 0.99)=> pulse3.width;
 
 // ===== FUNCTIONS ===
 
 fun void oscRun(){
-   osc.values["gain"] => pulse3.gain;
+   osc.values["gain"] => lib.pulse3.gain;
    //<<< "OSC value GAIN:", osc.values["gain"]>>>;
    1::samp => now;
 }
@@ -140,7 +110,7 @@ fun void playDrums()
     lib.hh.keyOff();
     if( bdSwitch == 1 ){ lib.bd.keyOn(); 1.0 => lib.bdImpulse.next;  }
     if( sdSwitch == 1 ){ lib.sd.keyOn(); }
-    if( t1Switch == 1 ){ t1.setBaseFreq(Std.mtof(Global.root +12) + i*1); t1.hit(.1 + i * .1); }
+    if( t1Switch == 1 ){ lib.t1.setBaseFreq(Std.mtof(Global.root +12) + i*1); lib.t1.hit(.1 + i * .1); }
     if( hhSwitch == 1 ){ lib.hh.keyOn(); }
     Global.beat => now;
     i++;
@@ -163,8 +133,8 @@ fun void playBass()
     {
       floatChance( chanceBass[Global.mod16], 1, 0 )   => float bassSwitch;
       chanceBassNotes[Math.random2(0, 15)] => float bassNote;
-      bass.keyOff();
-      if( bassSwitch == 1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
+      lib.bass.keyOff();
+      if( bassSwitch == 1 ){ Std.mtof( bassNote + Global.root ) => lib.fat.freq; lib.bass.keyOn();  }
       Global.beat  => now;
     }
 }
@@ -174,8 +144,8 @@ fun void playBassFromOsc()
     while(true)
     {
         Global.bassFromOsc[Global.mod16] => float bassNote;
-        bass.keyOff();
-        if( bassNote != -1 ){ Std.mtof( bassNote + Global.root ) => fat.freq; bass.keyOn();  }
+        lib.bass.keyOff();
+        if( bassNote != -1 ){ Std.mtof( bassNote + Global.root ) => lib.fat.freq; lib.bass.keyOn();  }
         Global.beat => now;
        }
 }
@@ -195,10 +165,10 @@ fun void playBassDrop()
 {
     while(true)
     {
-        bass.keyOff();
-        Std.mtof( Global.root ) => fat.freq; bass.keyOn();
+        lib.bass.keyOff();
+        Std.mtof( Global.root ) => lib.fat.freq; lib.bass.keyOn();
         Global.beat * 2 => now;
-        bass.keyOff();
+        lib.bass.keyOff();
         Global.beat * 2 => now;
 
     }
@@ -208,13 +178,13 @@ fun void pitchUp()
 {
     while(true)
     {
-        Global.root * Global.mod64  => pulse.freq;
-        pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, 0.0, 100::ms);
-        Global.mod64/100 => pulseRev.mix; 
+        Global.root * Global.mod64  => lib.pulse.freq;
+        lib.pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, 0.0, 100::ms);
+        Global.mod64/100 => lib.pulseRev.mix; 
         Global.beat => now;
     }
 }
-// ========== Melody ============
+// ========== Lib.Melody ============
 // dos estados posibles:
 [0.0,12.0,7.0] @=> float posibleStates[];
 
@@ -265,8 +235,8 @@ fun void playMarkov()
 {
     while(true)
     {
-        melody.keyOff();
-        pulseADSR.keyOff();
+        lib.melody.keyOff();
+        lib.pulseADSR.keyOff();
         // recorre la cantidad de estados posibles
         for( 0 => int i; i < posibleStates.cap(); i++)
         {
@@ -274,13 +244,13 @@ fun void playMarkov()
             {
                 (transitionMatrix[i][i] * 100.0) $ int => int percent;
                 floatChance( percent,posibleStates[0],posibleStates[1]) => currentState;
-                Std.mtof(Global.root + 12 + currentState) => melodyImpulse.freq;
-                Std.mtof(Global.root + 24 - (2*currentState)) => pulse.freq;
-                melody.keyOn();
-                pulseADSR.keyOn();
+                Std.mtof(Global.root + 12 + currentState) => lib.melodyImpulse.freq;
+                Std.mtof(Global.root + 24 - (2*currentState)) => lib.pulse.freq;
+                lib.melody.keyOn();
+                lib.pulseADSR.keyOn();
                 Global.beat => now;
-                melody.keyOff();
-                pulseADSR.keyOff();
+                lib.melody.keyOff();
+                lib.pulseADSR.keyOff();
             }
         }
     }
@@ -288,14 +258,14 @@ fun void playMarkov()
 
 [ 1.0, 2.0] @=> float pulse2Durations[];
 
-// ==== Melody 2 ====
+// ==== Lib.Melody 2 ====
 [ 0,  0, 0, 100, 0,  80, 100, 0, 100,  5, 0 ,  100, 0,  0, 10,  10] @=> int chanceM2[];
 fun void playMarkov2()
 {
     //lib.print(testPercent);
     while(true)
     {
-        pulseADSR2.keyOff();
+        lib.pulseADSR2.keyOff();
         floatChance( chanceM2[Global.mod16], 1, 0 )   => float M2Switch;
         // recorre la cantidad de estados posibles
         for( 0 => int i; i < posibleStates.cap(); i++)
@@ -306,10 +276,10 @@ fun void playMarkov2()
                 //lib.insertChance(30, testPercent, 12.0) @=> testPercent;
                 lib.insertChance(20, testPercent, 3.0) @=> testPercent;
                 lib.insertChance(10, testPercent, 7.0) @=> testPercent;
-                Std.mtof(Global.root + 24 + testPercent[Math.random2(0, 99)]) => pulse2.freq;
-                if( M2Switch == 1 ){ pulseADSR2.keyOn();  }
+                Std.mtof(Global.root + 24 + testPercent[Math.random2(0, 99)]) => lib.pulse2.freq;
+                if( M2Switch == 1 ){ lib.pulseADSR2.keyOn();  }
                 Global.beat => now;
-                pulseADSR2.keyOff();
+                lib.pulseADSR2.keyOff();
              }
         }
     }
@@ -318,9 +288,11 @@ fun void playMarkov2()
 // ========= break ============
 [100,0,0,0, 0,0,100,0, 0,0,100,0,  100,0,0,0] @=> int chanceBreak[];
 // Envolventes participantes
-[melody, pulseADSR, pulseADSR2, bass, lib.bd, lib.sd, lib.hh, pulseADSR3] @=> ADSR envs[];
+[lib.melody, lib.pulseADSR, lib.pulseADSR2, lib.bass, lib.bd, lib.sd, lib.hh, lib.pulseADSR3] @=> ADSR envs[];
 
 // silence = 0, break =1
+// TODO this function can be overload to receive an array
+//      of switches of a 16 step pattern
 fun void playBreak(int type)
 {
     while(true)
@@ -424,7 +396,7 @@ spork~ variations();
 spork~ breakA();
 spork~ oscRun();
 spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
-spork~ lib.dynClassic(pulse2gain, 0.05);
+spork~ lib.dynClassic(lib.pulse2gain, 0.05);
 
 //// PLAY PARTS IN SERIAL
 while(true){
