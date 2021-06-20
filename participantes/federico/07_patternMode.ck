@@ -361,14 +361,24 @@ fun int buildUp(int steps){
     Global.beat * steps => now;
     return steps;
 }
-//// -- DROP A
+//// -- DROP A  TODO remove precedent sporks
 fun int drop(int steps){
-     spork~ playMarkov2(); // not markov yet
+    spork~ playMarkov2(); // not markov yet
     spork~ four();
     spork~ playBassDrop();
     Global.beat * steps => now;
     return steps;
 }
+
+fun int breakA(int steps){
+    spork~ playBreak(0) @=> breakShred;
+    Global.beat * steps => now;
+    return steps;
+}
+fun void removeBreak(){
+    Machine.remove(breakShred.id()); 
+}
+
 fun int postDrop(int steps){
     spork~ playMarkov2();
     spork~ playDrums();
@@ -378,22 +388,9 @@ fun int postDrop(int steps){
     return steps;
 }
 
-// conditional sections
-fun void breakA(){
-        while(true){
-            if( Global.mod256 > 121 && Global.mod256 < 128 )
-            {
-                spork~ playBreak(0) @=> breakShred;
-            }
-            Global.beat => now;
-            Machine.remove(breakShred.id());
-        }
-}
-
 //// SPORKS ////////
 spork~ rollCounter();
 spork~ variations();
-spork~ breakA();
 spork~ oscRun();
 spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
 spork~ lib.dynClassic(lib.pulse2gain, 0.05);
@@ -402,11 +399,14 @@ spork~ lib.dynClassic(lib.pulse2gain, 0.05);
 while(true){
     64 => int steps;
     spork~ breakDown(steps*2);
-    Global.beat * steps => now;
-    spork~ buildUp(steps);
-    Global.beat * steps => now;
+    Global.beat * steps => now; // TODO: porque no multiplica por dos?
+    spork~ buildUp(steps - 4);
+    Global.beat * (steps - 4) => now;
+    spork~ breakA(steps/8);
+    Global.beat * steps/8 => now;
     spork~ drop(steps);
     Global.beat * steps => now;
+    spork~ removeBreak();
     spork~ postDrop(steps);
     Global.beat * steps  => now;
 }
