@@ -174,6 +174,8 @@ fun void playBassDrop()
     }
 }
 
+//  =========== BUILDUP functions ======================
+
 fun void pitchUp()
 {
     while(true)
@@ -184,6 +186,24 @@ fun void pitchUp()
         Global.beat => now;
     }
 }
+
+fun void uplifter(){
+    0.05 => lib.uplift.gain;
+    lib.upliftADSR.keyOn();
+    // TODO: un-absolutize
+    // TODO: LOGIC ERROR if Global.beat > 59 ADSR do not keyOff
+    Global.beat * 59 => now;
+    lib.upliftADSR.keyOff();
+ }
+
+fun void uplifterLFO(){
+    while(true){
+        12::second => lib.lfo.period;
+        lib.lfo.last()*100 => lib.uplift.freq;
+        50::ms => now;
+    }
+}
+
 // ========== Lib.Melody ============
 // dos estados posibles:
 [0.0,12.0,7.0] @=> float posibleStates[];
@@ -330,27 +350,11 @@ fun void rollCounter(){
     }
 }
 
-fun void testSynth(){
-    while(true){
-        0.1 => lib.uplift.gain;
-        lib.upliftADSR.keyOn();
-        <<< "play" >>>;
-        10::second => now;
-        lib.upliftADSR.keyOff();
-    }
-}
-
-fun void testLFO(){
-    while(true){
-        lib.lfo.last()*100 => lib.uplift.freq;
-        50::ms => now;
-    }
-}
-
 Shred playDrumsShred;
 Shred playBassFromOscShred;
 Shred playBassFromOscCompShred;
 Shred breakShred;
+Shred uplifterShred;
 
 //// PARTS
 //// -- INTRO
@@ -362,8 +366,6 @@ fun int intro(int steps){
 }
 //// -- BREAKDOWN 1
 fun int breakDown(int steps){
-    spork~ testSynth();
-    spork~ testLFO();
     spork~ playDrums() @=> playDrumsShred;  // store Shred to be removed by id()
     spork~ playBassFromOsc() @=> playBassFromOscShred;
     spork~ playBassFromOscComp() @=> playBassFromOscCompShred;
@@ -377,9 +379,19 @@ fun int buildUp(int steps){
     Machine.remove(playBassFromOscCompShred.id());
     spork~ playMarkov();
     spork~ pitchUp();
+    spork~ uplifter() @=> uplifterShred;
+    spork~ uplifterLFO();
     Global.beat * steps => now;
     return steps;
 }
+
+fun int breakA(int steps){
+    Machine.remove(uplifterShred.id());
+    spork~ playBreak(0) @=> breakShred;
+    Global.beat * steps => now;
+    return steps;
+}
+
 //// -- DROP A  TODO remove precedent sporks
 fun int drop(int steps){
     spork~ playMarkov2(); // not markov yet
@@ -389,11 +401,7 @@ fun int drop(int steps){
     return steps;
 }
 
-fun int breakA(int steps){
-    spork~ playBreak(0) @=> breakShred;
-    Global.beat * steps => now;
-    return steps;
-}
+
 fun void removeBreak(){
     Machine.remove(breakShred.id()); 
 }

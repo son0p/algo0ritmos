@@ -159,11 +159,12 @@ public class Library
     0.19 => pulseRev3.mix;
     Math.random2f(0.1, 0.99)=> pulse3.width;
 
-    SqrOsc uplift => ADSR upliftADSR => dac; 
+    SqrOsc uplift => ADSR upliftADSR => NRev upliftRev => dac; 
     Phasor lfo => blackhole;
     // set period (an alternative to .freq)
     8::second => lfo.period;
     0 => lfo.sync;
+    0.1 => upliftRev.mix;
 
 
     kjzTT101 t1;
