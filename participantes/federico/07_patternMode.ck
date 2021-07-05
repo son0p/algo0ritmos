@@ -330,6 +330,23 @@ fun void rollCounter(){
     }
 }
 
+fun void testSynth(){
+    while(true){
+        0.1 => lib.uplift.gain;
+        lib.upliftADSR.keyOn();
+        <<< "play" >>>;
+        10::second => now;
+        lib.upliftADSR.keyOff();
+    }
+}
+
+fun void testLFO(){
+    while(true){
+        lib.lfo.last()*100 => lib.uplift.freq;
+        50::ms => now;
+    }
+}
+
 Shred playDrumsShred;
 Shred playBassFromOscShred;
 Shred playBassFromOscCompShred;
@@ -345,6 +362,8 @@ fun int intro(int steps){
 }
 //// -- BREAKDOWN 1
 fun int breakDown(int steps){
+    spork~ testSynth();
+    spork~ testLFO();
     spork~ playDrums() @=> playDrumsShred;  // store Shred to be removed by id()
     spork~ playBassFromOsc() @=> playBassFromOscShred;
     spork~ playBassFromOscComp() @=> playBassFromOscCompShred;
