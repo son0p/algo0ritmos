@@ -60,8 +60,17 @@ int chanceT1[];
 int chanceHh[];
 float dynamicsFixed[];
 
+// ============= DRUMS =================
+
+fun void hitKick(int beats){
+    <<<"hit K">>>;
+    lib.bd.keyOn();  1.0 => lib.bdImpulse.next;
+    Global.beat * beats => now;
+    lib.bd.keyOff();
+}
+
 fun void initDrums(){
-   // ============= DRUMS =================
+
 // Probabilidad de un corpus -- drums
     [100,  0,  0, 80,   100,  0,  0, 00,  100,  0,  0,  80,   100,  0,  0, 00] @=>  chanceBd;
     [  0,  0,  0,  0,    00,  0,100,  0,     0,  0,  0,  0,    00,  0,100,  0] @=>  chanceSd;
@@ -202,6 +211,13 @@ fun void uplifterLFO(){
         lib.lfo.last()*100 => lib.uplift.freq;
         50::ms => now;
     }
+}
+fun void kickRoll(){
+        hitKick(8); hitKick(8);
+        hitKick(4); hitKick(4); hitKick(4); hitKick(4);
+        hitKick(2); hitKick(2); hitKick(2); hitKick(2); hitKick(2); hitKick(2); hitKick(2); hitKick(2);
+        hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1); hitKick(1);
+
 }
 
 // ========== Lib.Melody ============
@@ -381,6 +397,7 @@ fun int buildUp(int steps){
     spork~ pitchUp();
     spork~ uplifter() @=> uplifterShred;
     spork~ uplifterLFO();
+    spork~ kickRoll();
     Global.beat * steps => now;
     return steps;
 }
