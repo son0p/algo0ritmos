@@ -1,12 +1,14 @@
 devtools::install_github("bergant/datamodelr")
+if(!require(DiagrammeR)){install.packages("DiagrammeR")}
 library(datamodelr)
 library(DiagrammeR)
+options(browser = "brave")
 
 #file_path <- system.file("~/builds/algo0ritmos/participantes/federico/data_model_YAML.yml")
 #dm <- datamodelr::dm_read_yaml(file_path)
 
-A data model not array, relational.how to traverse
-ledger?
+##A data model not array, relational.how to traverse
+##ledger?
 dm <-
     dm_read_yaml(text = "
 # data model segments
