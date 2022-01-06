@@ -1,0 +1,30 @@
+---
+title: "Data Models"
+output: 
+   flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: united
+
+---
+
+```{r global, include=FALSE}
+library(shiny)
+library(flexdashboard)
+if(!require(flexdashboard)){install.packages("flexdashboard")}
+library(rmarkdown)
+source("data_model.R")
+``` 
+
+# Publish Subscribe Model
+### PubSub
+```{R, echo = FALSE}
+fig_functional_data_model
+```
+
+# Arrays Model
+###  Based in files
+```{R, echo = FALSE}
+fig_array_data_model              
+```
+
