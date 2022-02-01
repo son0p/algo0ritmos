@@ -1,6 +1,8 @@
 ## actualmente funciona con liveDany.ck
+## TODO send by OSC, change names, convert legacy trigo to phrase
 
-devtools::install_github("tidyverse/ggplot2")
+## libraries ==================
+#devtools::install_github("tidyverse/ggplot2")
 library(devtools)
 library(ggplot2)
 ##library(ggthemes)
@@ -10,10 +12,15 @@ if(!require(binhf)){install.packages("binhf")}
 if(!require(reshape)){install.packages("reshape")}
 if(!require(dplyr)){install.packages("dplyr")}
 
+
+## operations ==========
+
+## data ==========
+minorPenta <- c(0,3,5,7,10)
+
 ## Encadenamiento de funciones Seed - grid 
 
-## functions  
-
+## functions ==============
 draw <- function(x,l1,l2,l3){
   df <- data.frame(x,l1,l2,l3)
   ggplot(df, aes(x))+
@@ -63,8 +70,7 @@ offsetTrigo <- function(offsetX, data, offsetY){
   return(fun)
 }
 
-## INITIALIZE!!
-minorPenta <- c(0,3,5,7,10)
+## initialize ====================
 notes <- semitonesGen(32.7031956626, 20000)
 scaleJumps <- c(2,2,1,2,2,2,1)
 ##length(minorPenta)
@@ -81,13 +87,6 @@ testRef <- notes
 testSrc <- c(33,455,555)
 magneticGrid(notes, c(33,455,555))
 lapply(testSrc, function(x)notes[which.min(abs(x-notes))])
-
-
-
-
-
-
-
 
 ## bassDrum
 bd <- numeric(16)
@@ -108,7 +107,7 @@ write(hh, file="hh.txt", ncolumns=1)
 hh
 
 ## clave  ## clave [1,0,0,0,5,0,7,0,0,0,11,0,13,0,0,0]
-activate.steps <- function(activeSteps, value, filename){
+phrase <- function(activeSteps, value, filename){
   steps <- numeric(16)
   steps[activeSteps] <- value
   write(steps, file=filename, ncolumns=1)
@@ -146,13 +145,13 @@ level <- level.generator(1)
 ## PLAYGROUND =====================
 ##  steps to play
 ##   drums
-d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
-d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
-d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+d1 <- phrase(c(  1,  5,  9, 13),     1, "d1.txt")
+d2 <- phrase(c(  4,  7, 12, 15),     1, "d2.txt")
+d3 <- phrase(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
 ##   melodic lines
-l1 <- activate.steps(c(  1, 2, 5, 9, 13, 16  ), 1, "l1.txt")
-l2 <- activate.steps(c(  3,  7,  11, 13, 14), 1, "l2.txt")
-l3 <- activate.steps(c(   11, 12), 1, "l3.txt")
+l1 <- phrase(c(  1, 2, 5, 9, 13, 16  ), 1, "l1.txt")
+l2 <- phrase(c(  3,  7,  11, 13, 14), 1, "l2.txt")
+l3 <- phrase(c(   11, 12), 1, "l3.txt")
 
 ## construction of melodic lines with trigonometrics
 xAxis <- c(1:16) ## TODO: mas puntos para ver la función pero se escogen puntos dividiendo en 16 o 32 steps
@@ -188,47 +187,47 @@ write(harmonized2, file="freqL2.txt", ncolumns = 1)
 ############## PATTERN FUNCTIONS ###########################
 
 ## base generation
-d0 <- activate.steps(c(  1,  5,  7, 11, 13), 1, "d0.txt") ## clave
+d0 <- phrase(c(  1,  5,  7, 11, 13), 1, "d0.txt") ## clave
 
 pattern.A <- function(){
-  d1 <- activate.steps(c(  1,  9),     1, "d1.txt")
-  d2 <- activate.steps(c(   7,  13),     1, "d2.txt")
-  d3 <- activate.steps(c(  0, 1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
+  d1 <- phrase(c(  1,  9),     1, "d1.txt")
+  d2 <- phrase(c(   7,  13),     1, "d2.txt")
+  d3 <- phrase(c(  0, 1,  2,    5,  6,    9, 10,  13, 14 ), 1, "d3.txt")
 
-  l1 <- activate.steps(c(  1,  4, 10, 13, 16 ), 1, "l1.txt")
-  l2 <- activate.steps(c(  1, 2, 4, 7, 10, 12, 15), 1, "l2.txt")
-  l3 <- activate.steps(c(   7,  9, 11, 12), 1, "l3.txt")
+  l1 <- phrase(c(  1,  4, 10, 13, 16 ), 1, "l1.txt")
+  l2 <- phrase(c(  1, 2, 4, 7, 10, 12, 15), 1, "l2.txt")
+  l3 <- phrase(c(   7,  9, 11, 12), 1, "l3.txt")
 }
 pattern.B <- function(){
-  d1 <- activate.steps(c(  1,  9, 13),     1, "d1.txt")
-  d2 <- activate.steps(c(  4,  12),     1, "d2.txt")
-  d3 <- activate.steps(c(  0, 1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+  d1 <- phrase(c(  1,  9, 13),     1, "d1.txt")
+  d2 <- phrase(c(  4,  12),     1, "d2.txt")
+  d3 <- phrase(c(  0, 1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
 
-  l1 <- activate.steps(c(  7,  11, 15, 16  ), 1, "l1.txt")
-  l2 <- activate.steps(c(  3,  7, 11, 13), 1, "l2.txt")
-  l3 <- activate.steps(c(   9, 11), 1, "l3.txt")
+  l1 <- phrase(c(  7,  11, 15, 16  ), 1, "l1.txt")
+  l2 <- phrase(c(  3,  7, 11, 13), 1, "l2.txt")
+  l3 <- phrase(c(   9, 11), 1, "l3.txt")
 }
 
 pattern.C <- function(){
-  d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
-  d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
-  d3 <- activate.steps(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
+  d1 <- phrase(c(  1,  5,  9, 13),     1, "d1.txt")
+  d2 <- phrase(c(  4,  7, 12, 15),     1, "d2.txt")
+  d3 <- phrase(c(  1,  2,  3,  5,  6,  7,  9, 10, 11, 13, 14, 15), 1, "d3.txt")
 
-  l1 <- activate.steps(c(  7,  11, 15, 16  ), 1, "l1.txt")
-  l2 <- activate.steps(c(  4,  8, 15), 1, "l2.txt")
-  l3 <- activate.steps(c(   11, 12), 1, "l3.txt")
+  l1 <- phrase(c(  7,  11, 15, 16  ), 1, "l1.txt")
+  l2 <- phrase(c(  4,  8, 15), 1, "l2.txt")
+  l3 <- phrase(c(   11, 12), 1, "l3.txt")
 }
 pattern.D <- function(){
-  d1 <- activate.steps(c(  1,  5,  9, 13),     1, "d1.txt")
-  l1 <- activate.steps(c(  6, 7, 10, 11, 15, 16  ), 1, "l1.txt")
-  d2 <- activate.steps(c(  4,  7, 12, 15),     1, "d2.txt")
-  l2 <- activate.steps(c(  4,  8, 15), 1, "l2.txt")
-  d3 <- activate.steps(c(  3,  7,  11, 14, 15, 16 ), 1, "d3.txt")
-  l3 <- activate.steps(c(  5,  7,  9, 11, 12,16), 1, "l3.txt")
+  d1 <- phrase(c(  1,  5,  9, 13),     1, "d1.txt")
+  l1 <- phrase(c(  6, 7, 10, 11, 15, 16  ), 1, "l1.txt")
+  d2 <- phrase(c(  4,  7, 12, 15),     1, "d2.txt")
+  l2 <- phrase(c(  4,  8, 15), 1, "l2.txt")
+  d3 <- phrase(c(  3,  7,  11, 14, 15, 16 ), 1, "d3.txt")
+  l3 <- phrase(c(  5,  7,  9, 11, 12,16), 1, "l3.txt")
 }
 
 pattern <- function(){
-  vector <- activate.steps(steps, value, file)
+  vector <- phrase(steps, value, file)
 }
 
 pattern.A()
@@ -238,15 +237,15 @@ pattern.D()
 
 ## mutes
 
-d0 <- activate.steps(c(0), 0, "d0.txt")
+d0 <- phrase(c(0), 0, "d0.txt")
 
-d1 <- activate.steps(c(0), 0, "d1.txt")
-d2 <- activate.steps(c(0), 0, "d2.txt")
-d3 <- activate.steps(c(0), 0, "d3.txt")
+d1 <- phrase(c(0), 0, "d1.txt")
+d2 <- phrase(c(0), 0, "d2.txt")
+d3 <- phrase(c(0), 0, "d3.txt")
 
-l1 <- activate.steps(c(0), 0, "l1.txt")
-l2 <- activate.steps(c(0), 0, "l2.txt")
-l3 <- activate.steps(c(0), 0, "l3.txt")
+l1 <- phrase(c(0), 0, "l1.txt")
+l2 <- phrase(c(0), 0, "l2.txt")
+l3 <- phrase(c(0), 0, "l3.txt")
 
 
 pattern <- 
@@ -287,18 +286,12 @@ plot(bass <- c((sin((x)/500)+sin((x)/10)+sin((x)/10+sin((x)/80))+sin((x+10)/20)+
 plot(line2 <- c(440+cot(x/4)*440), col="blue", pch=14)
 plot(line3 <- c(1500+csc(x/4)*100), col="brown")
 
-
-
-## no trigonometricas
-
+## ==== no trigonometricas
 
 ## from video
 plot(bass <- c(3/4*(sin(x))*1/4*(sin(3*x)),  col="red"))
 ## plot(line2 <- c(sin(x/210)+sin(2*x/10)*1000), col="blue")
 plot(line3 <- c(440+sin(x)/5), col="brown")
-
-
-
 
 ## pony jump
 plot(bass <- c((sin((x+10)/500)+sin((x+5)/10)+sin((x+10)/10+sin((x+10)/80))+sin((x+10)/20)+sin((x+10)/90))*100),  col="#cd6858", pch=6+x%%4, fg="#cdcecc", axes = FALSE, xlab=".o0o.", bg=FALSE)
