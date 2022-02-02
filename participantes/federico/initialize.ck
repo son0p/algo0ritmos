@@ -11,6 +11,7 @@ Machine.add(me.dir()+"../../../lick/lick/dist/Dist.ck");
 Machine.add(me.dir()+"../../../lick/lick/synth/Fat.ck");
 // Libraries
 Machine.add(me.dir()+"Library2001.ck");
+Machine.add(me.dir()+"Inmutable_class.ck");
 Machine.add(me.dir()+"OSC_Read.ck");
 Machine.add(me.dir()+"oscClass.ck");
 
