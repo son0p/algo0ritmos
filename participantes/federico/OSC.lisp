@@ -1,8 +1,5 @@
 (ql:quickload :osc)
 (ql:quickload :usocket)
-; (ql:quickload "usocket")
-;(ql:quickload "inferior-shell")
-
 (defun osc-send-test (host port)
   "a basic test function which sends osc test message to a given port/hostname.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
@@ -17,6 +14,8 @@
 
 (osc-send-test #(127 0 0 1) 6668)
 
+(ql:quickload :osc)
+(ql:quickload :usocket)
 (defun osc-receive-test (port)
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
@@ -39,37 +38,35 @@
                            :protocol :datagram
                            :element-type '(unsigned-byte 8))
 
-;; tested with simpleOSCpattern.ck --------------------
-
-(defun osc-send-test1 (host port list)
+;;; tested with simpleOSCpattern.ck --------------------
+(defun osc-send-test1 (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
   (let ((s (USOCKET:socket-connect host port
                            :protocol :datagram
                            :element-type '(unsigned-byte 8)))
-        (b (osc:encode-message "/audio/2/bass"  110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0  )))
+        ;(b (osc:encode-message "/foo/bar"  110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0  ))) ;; working
+        (b (apply #'osc:encode-message my-data)))
     (format t "sending to ~a on port ~A~%~%" host port)
     (unwind-protect
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-(osc-send-test1 #(127 0 0 1) 6450 (list 1 2 3 4))
+;;; ===========================================================================
+;;; pool trying to conform osc:encode-message
+(defvar address-pattern '("foo/bar/" 11.0 33.0 20.0))
+(osc-send-test1 #(127 0 0 1) 6450 address-pattern)
 
-;; ===========================================================================
-;; pool trying to conform osc:encode-message
-(setq *osc-message* '(list '("/foo/bar" "baz" 1 2 3 (coerce PI 'single-float))))
-(let test '((string "/foo/bar") "baz" 1 2 3 (COERCE PI 'SINGLE-FLOAT)))
-(type-of(car test)) ;; firt element
-(type-of(intern (string (car test))))
+(defun write-stream-t1 (stream osc-message)
+  "writes a given message to a stream. keep in mind that when using a buffered
+   stream any funtion writing to the stream should  call (finish-output stream)
+   after it sends the mesages,. ."
+  (write-sequence
+   (osc:encode-message "/bzzp" "got" "it" )
+   stream)
+  (finish-output stream))
 
-(let ((str "/foo/bar")
-      (str2 "baz"))
-  (str str2))
-
-(let ((str "Hello, world!"))
-  (string-upcase str))
-
-(let ((str1 "Hello, world!")
-      (str2 "me too"))
-  (string-downcase (append '(str1 str2))))
+(defmacro osc-write-to-stream (stream &body args)
+  `(progn (write-sequence (osc:encode-message ,@args) ,stream)
+          (finish-output ,stream)))
 
