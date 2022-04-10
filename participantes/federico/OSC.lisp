@@ -46,7 +46,7 @@
                            :protocol :datagram
                            :element-type '(unsigned-byte 8)))
         ;(b (osc:encode-message "/foo/bar"  110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0  ))) ;; working
-        (b (apply #'osc:encode-message my-data)))
+        (b (apply #'osc:encode-message address-pattern)))
     (format t "sending to ~a on port ~A~%~%" host port)
     (unwind-protect
  (USOCKET:socket-send s b (length b))
@@ -54,8 +54,25 @@
 
 ;;; ===========================================================================
 ;;; pool trying to conform osc:encode-message
-(defvar address-pattern '("foo/bar/" 11.0 33.0 20.0))
+(defvar address-pattern '("foo/bar/" 11.0 33.0 20.0 55.0))
+(defvar address-pattern '("/audio/2/bass" 110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 ))
+(defvar address-pattern '("/audio/2/bass" 500.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 ))
 (osc-send-test1 #(127 0 0 1) 6450 address-pattern)
+
+(let ((BASS
+        (let ((addr "/audio/2/bass")
+              (patt (mapcar #'tan '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16))))
+          (cons addr patt)))
+      (MID
+       (let ((addr "/audio/2/mid")
+              (patt (mapcar #'sin '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16))))
+         (cons addr patt)))
+      (LEAD nil)
+      (BD nil)
+      (SN nil)
+      (HH nil))
+  (progn (osc-send-test1 #(127 0 0 1) 6450 BASS)
+         (osc-send-test1 #(127 0 0 1) 6450 MID)))
 
 (defun write-stream-t1 (stream osc-message)
   "writes a given message to a stream. keep in mind that when using a buffered
