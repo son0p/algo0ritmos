@@ -52,21 +52,19 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-;;; ===========================================================================
-;;; pool trying to conform osc:encode-message
-(defvar address-pattern '("foo/bar/" 11.0 33.0 20.0 55.0))
-(defvar address-pattern '("/audio/2/bass" 110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 ))
-(defvar address-pattern '("/audio/2/bass" 500.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 ))
-(osc-send-test1 #(127 0 0 1) 6450 address-pattern)
+;;; pool  to conform osc:encode-message ====================
+
+(defvar num-seq (loop :for n :below 16 :collect n))
+;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt  (mapcar #'sin '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16))))
+                  (patt (mapcar #'(lambda (x) (* (sin (+ 400 x)) 1000)) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'sin '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16))))
+                 (patt (mapcar #'(lambda (x) (* (sin (* 2 x)) 100)) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
-                  (patt (mapcar #'tan '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16))))
+                  (patt (mapcar #'(lambda (x) (* (tan (* 0.045 x)) 100)) num-seq)))
               (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
                 (patt  '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0)))
