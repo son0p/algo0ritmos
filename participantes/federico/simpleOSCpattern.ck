@@ -7,22 +7,49 @@ OSC_Read osc;
 OscIn oin;
 OscMsg msg;
 6450 => oin.port;
+oin.addAddress( "/audio/2/lead, ffffffffffffffff" );
+oin.addAddress( "/audio/2/mid,  ffffffffffffffff" );
 oin.addAddress( "/audio/2/bass, ffffffffffffffff" );
+oin.addAddress( "/audio/2/bd,   iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/sd,   iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 
 // osc data to array --------------------
  fun void oscRxFloat()
  {
+
      while(true)
      {
-         // wait for event to arrive
-         oin => now;
-         while (oin.recv(msg))
-         {
-             for(0 => int i; i < 16; i++)
-             {
-                 msg.getFloat(i) => Global.bassFromOsc[i];
-             }
-         }
+        oin => now; // wait for event to arrive
+        while (oin.recv(msg))
+        {
+            msg.address => string addr;
+            if (addr == "/audio/2/lead" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getFloat(i) => Global.inmutableLEAD[i]; }
+            }
+            else if (addr == "/audio/2/mid" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getFloat(i) => Global.inmutableMID[i]; }
+            }
+            else if (addr == "/audio/2/bass" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getFloat(i) => Global.inmutableBASS[i]; }
+            }
+            else if (addr == "/audio/2/bd" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableBD[i]; }
+            }
+            else if (addr == "/audio/2/sd" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableSD[i]; }
+            }
+            else if (addr == "/audio/2/hh" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableHH[i]; }
+            }
+
+        }
      }
  }
 
@@ -31,9 +58,9 @@ fun void playBassFromOsc()
 {
     while(true)
     {
-        Global.bassFromOsc[Global.mod16] => float bassNote;
+        Global.inmutableBASS[Global.mod16] => float bassNote;
         lib.bass.keyOff();
-        if( bassNote != -1 ){ Std.mtof(bassNote) => lib.fat.freq; lib.bass.keyOn();  }
+        if( bassNote > 20 ){ Std.mtof(bassNote) => lib.fat.freq; lib.bass.keyOn();  }
         Global.beat => now;
     }
 }
