@@ -53,14 +53,18 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
      }
  }
 
-// play some instrument --------------------
-fun void playBassFromOsc()
+// play some instruments --------------------
+fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
 {
     while(true)
     {
-        Global.inmutableBASS[Global.mod16] => float bassNote;
-        lib.bass.keyOff();
-        if( bassNote > 20 ){ Std.mtof(bassNote) => lib.fat.freq; lib.bass.keyOn();  }
+        notes[Global.mod16] => float noteFreq;
+        instrumentEnv.keyOff();
+        if( noteFreq > 20 )
+        {
+            Std.mtof(noteFreq) => instrument.freq;
+            instrumentEnv.keyOn();
+        }
         Global.beat => now;
     }
 }
@@ -82,7 +86,9 @@ fun void rollCounter()
 }
 
 //// SPORKS --------------------
-spork~ playBassFromOsc();
+spork~ player(Global.inmutableLEAD, lib.sin0env, lib.sin0);
+spork~ player(Global.inmutableMID,  lib.tri0env, lib.tri0);
+spork~ player(Global.inmutableBASS, lib.sqr0env, lib.sqr0);
 spork~ rollCounter();
 spork~ oscRxFloat();
 
