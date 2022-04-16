@@ -52,16 +52,29 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
+(defvar scale-frequencies '(333.0 440.0 675.0)) ; selected freqs
+(defun quantize-frequency (unquantized-value)
+  (nth
+   ;; select the nth element of the quantized-list
+   (position
+    ;; gets the position of the lowest difference element
+    (reduce #'min (mapcar #'(lambda (x) (abs (- x unquantized-value)))
+                          scale-frequencies))
+    (mapcar #'(lambda (x) (abs (- x unquantized-value)))
+            ;; find the differences between value and each element of the quantized list
+            scale-frequencies))
+   scale-frequencies))
+
 ;;; pool  to conform osc:encode-message ====================
 
 (defvar num-seq (loop :for n :below 16 :collect n))
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (* (sin (+ 400 x)) 1000)) num-seq)))
+                  (patt (mapcar #'(lambda (x) (* (sin (+ 1000 x)) 1000)) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'(lambda (x) (* (sin (* 2 x)) 100)) num-seq)))
+                 (patt (mapcar #'(lambda (x) (* (sin (* 1.5 x)) 100)) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
                   (patt (mapcar #'(lambda (x) (* (tan (* 0.045 x)) 100)) num-seq)))
