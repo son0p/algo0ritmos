@@ -14,6 +14,9 @@ oin.addAddress( "/audio/2/bd,   iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/sd,   iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 
+// mixer --------------------
+ 0.03 => lib.sqr0.gain;
+
 // osc data to array --------------------
  fun void oscRxFloat()
  {
@@ -62,10 +65,30 @@ fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
         instrumentEnv.keyOff();
         if( noteFreq > 20 )
         {
-            Std.mtof(noteFreq) => instrument.freq;
+            noteFreq => instrument.freq;
             instrumentEnv.keyOn();
         }
         Global.beat => now;
+    }
+}
+fun void drumPlayer(int notes[], ADSR instrumentEnv)
+{
+    while(true)
+    {
+        if( notes[Global.mod16] == 1 && instrumentEnv != lib.bd )
+        {
+            lib.playDrums(instrumentEnv);
+            Global.beat => now;
+        }
+        else if( notes[Global.mod16] == 1 && instrumentEnv == lib.bd )
+        {
+            lib.playDrums(instrumentEnv, lib.bdImpulse);
+            Global.beat => now;
+        }
+        else
+        {
+             Global.beat => now;
+        }
     }
 }
 
@@ -86,9 +109,12 @@ fun void rollCounter()
 }
 
 //// SPORKS --------------------
-spork~ player(Global.inmutableLEAD, lib.sin0env, lib.sin0);
-spork~ player(Global.inmutableMID,  lib.tri0env, lib.tri0);
-spork~ player(Global.inmutableBASS, lib.sqr0env, lib.sqr0);
+spork~ player    (Global.inmutableLEAD, lib.sin0env, lib.sin0);
+spork~ player    (Global.inmutableMID,  lib.tri0env, lib.tri0);
+spork~ player    (Global.inmutableBASS, lib.sqr0env, lib.sqr0);
+spork~ drumPlayer(Global.inmutableBD,   lib.bd);
+spork~ drumPlayer(Global.inmutableSD,   lib.sd);
+spork~ drumPlayer(Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
 

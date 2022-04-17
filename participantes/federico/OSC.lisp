@@ -52,9 +52,11 @@
 
 ;;; musical scale calculation --------------------
 (defvar major-scale-ratios '(1 9/8 5/4 4/3 3/2 5/3 15/8)) ; ratios major scale
-(defvar octave (mapcar #'(lambda (x) (float (* x 330))) major-scale-ratios))
+(defvar octave (mapcar #'(lambda (x) (float (* x 32.70))) major-scale-ratios))
 (defvar second-octave (mapcar #'(lambda (x) (* x 2)) octave))
-(defvar scale-frequencies (concatenate 'list first-octave second-octave)) ; selected freqs
+(defvar third-octave (mapcar #'(lambda (x) (* x 3)) octave))
+(defvar fourth-octave (mapcar #'(lambda (x) (* x 3)) octave))
+(defvar scale-frequencies (concatenate 'list first-octave second-octave third-octave fourth-octave)) ; selected freqs
 
 ;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
@@ -75,13 +77,13 @@
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 100 x)) 1000))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 1000 x)) 1000))) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 4.4 x)) 500))) num-seq)))
+                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 8.4 x)) 1000))) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 4.515 x)) 1000))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* 0.0715 x)) 100))) num-seq)))
               (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
                 (patt  '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0)))
