@@ -14,8 +14,6 @@
 
 (osc-send-test #(127 0 0 1) 6668)
 
-(ql:quickload :osc)
-(ql:quickload :usocket)
 (defun osc-receive-test (port)
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
@@ -52,7 +50,13 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-(defvar scale-frequencies '(333.0 440.0 675.0)) ; selected freqs
+;;; musical scale calculation --------------------
+(defvar major-scale-ratios '(1 9/8 5/4 4/3 3/2 5/3 15/8)) ; ratios major scale
+(defvar octave (mapcar #'(lambda (x) (float (* x 330))) major-scale-ratios))
+(defvar second-octave (mapcar #'(lambda (x) (* x 2)) octave))
+(defvar scale-frequencies (concatenate 'list first-octave second-octave)) ; selected freqs
+
+;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
   (nth
    ;; select the nth element of the quantized-list
@@ -71,13 +75,13 @@
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (* (sin (+ 1000 x)) 1000)) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 100 x)) 1000))) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'(lambda (x) (* (sin (* 1.5 x)) 100)) num-seq)))
+                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 4.4 x)) 500))) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
-                  (patt (mapcar #'(lambda (x) (* (tan (* 0.045 x)) 100)) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 4.515 x)) 1000))) num-seq)))
               (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
                 (patt  '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0)))
