@@ -1,5 +1,7 @@
 (ql:quickload :osc)
 (ql:quickload :usocket)
+(ql:quickload "alexandria")
+
 (defun osc-send-test (host port)
   "a basic test function which sends osc test message to a given port/hostname.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
@@ -53,10 +55,13 @@
 ;;; musical scale calculation --------------------
 (defvar major-scale-ratios '(1 9/8 5/4 4/3 3/2 5/3 15/8)) ; ratios major scale
 (defvar octave (mapcar #'(lambda (x) (float (* x 32.70))) major-scale-ratios))
-(defvar second-octave (mapcar #'(lambda (x) (* x 2)) octave))
-(defvar third-octave (mapcar #'(lambda (x) (* x 3)) octave))
-(defvar fourth-octave (mapcar #'(lambda (x) (* x 3)) octave))
-(defvar scale-frequencies (concatenate 'list octave second-octave third-octave fourth-octave)) ; selected freqs
+(defvar octaves '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26))
+
+(defvar scale-frequencies)
+(setf scale-frequencies
+  (append  (mapcar #' (lambda (y)
+                        (mapcar #'(lambda (x) (* x y)) octave)) octaves)))
+(setf scale-frequencies (alexandria:flatten scale-frequencies)) ; because result is a nested list of lists
 
 ;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
@@ -77,13 +82,13 @@
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 1000 x)) 1000))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 4 x)) 800))) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* 8.4 x)) 1000))) num-seq)))
+                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (cos x) 300))) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* 0.0715 x)) 100))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin x) 100 ))) num-seq)))
               (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
                 (patt  '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0)))
