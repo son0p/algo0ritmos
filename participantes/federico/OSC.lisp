@@ -52,16 +52,17 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-(defvar scale-frequencies nil)
+
 (defun calculate-frequencies (n)
   "starting at n calculate frequencies for 9 octaves with 12 steps"
+  (defvar scale-frequencies nil)
   (dotimes (i (* 12 9))
     (setf n (* n 1.0594630943))
     (push n scale-frequencies)))
-(setf scale-frequencies (calculate-frequencies 16.35))
+(calculate-frequencies 16.35) ;; initialize scale-frequencies
 
-;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
+  "quantize to frequencies in musical scale"
   (nth
    ;; select the nth element of the quantized-list
    (position
@@ -79,7 +80,7 @@
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 10 x)) 800))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 19 x)) 800))) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (cos x) 200))) num-seq)))
