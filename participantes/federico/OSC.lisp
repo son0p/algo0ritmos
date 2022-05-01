@@ -52,16 +52,13 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-;;; musical scale calculation --------------------
-(defvar major-scale-ratios '(1 9/8 5/4 4/3 3/2 5/3 15/8)) ; ratios major scale
-(defvar octave (mapcar #'(lambda (x) (float (* x 32.70))) major-scale-ratios))
-(defvar octaves '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26))
-
-(defvar scale-frequencies)
-(setf scale-frequencies
-  (append  (mapcar #' (lambda (y)
-                        (mapcar #'(lambda (x) (* x y)) octave)) octaves)))
-(setf scale-frequencies (alexandria:flatten scale-frequencies)) ; because result is a nested list of lists
+(defvar scale-frequencies nil)
+(defun calculate-frequencies (n)
+  "starting at n calculate frequencies for 9 octaves with 12 steps"
+  (dotimes (i (* 12 9))
+    (setf n (* n 1.0594630943))
+    (push n scale-frequencies)))
+(setf scale-frequencies (calculate-frequencies 16.35))
 
 ;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
@@ -82,13 +79,13 @@
 ;(setf num-seq (nreverse num-seq))
 
 (let ((LEAD (let ((addr "/audio/2/lead")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 4 x)) 800))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ 10 x)) 800))) num-seq)))
               (cons addr patt)))
       (MID (let ((addr "/audio/2/mid")
-                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (cos x) 300))) num-seq)))
+                 (patt (mapcar #'(lambda (x) (quantize-frequency (* (cos x) 200))) num-seq)))
              (cons addr patt)))
       (BASS (let ((addr "/audio/2/bass")
-                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin x) 100 ))) num-seq)))
+                  (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan x) 28 ))) num-seq)))
               (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
                 (patt  '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0)))
