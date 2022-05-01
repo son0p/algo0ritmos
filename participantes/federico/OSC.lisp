@@ -56,7 +56,7 @@
 (defvar second-octave (mapcar #'(lambda (x) (* x 2)) octave))
 (defvar third-octave (mapcar #'(lambda (x) (* x 3)) octave))
 (defvar fourth-octave (mapcar #'(lambda (x) (* x 3)) octave))
-(defvar scale-frequencies (concatenate 'list first-octave second-octave third-octave fourth-octave)) ; selected freqs
+(defvar scale-frequencies (concatenate 'list octave second-octave third-octave fourth-octave)) ; selected freqs
 
 ;;; quantize to frequencies in musical scale --------------------
 (defun quantize-frequency (unquantized-value)
