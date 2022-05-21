@@ -19,7 +19,7 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 0.03 => lib.sqr0.gain;
 0.05 => lib.sin0.gain;
 0.05 => lib.tri0.gain;
-0.2 => lib.htom.gain;
+
 // osc data to array --------------------
  fun void oscRxFloat()
  {
@@ -64,9 +64,9 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
  }
 
 // instrument classes
-kjzTT101 A;
-A.output => dac;
-A.setBaseFreq(140);
+kjzTT101 htom;
+htom.output => dac;
+htom.setBaseFreq(140);
 
 // play some instruments --------------------
 fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
@@ -110,7 +110,7 @@ fun void instPlayer(int notes[])
     {
         if( notes[Global.mod16] == 1 )
         {
-            A.hit(.5 );
+            htom.hit(.5 );
             Global.beat => now;
         }
         else
