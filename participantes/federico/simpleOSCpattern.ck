@@ -68,6 +68,28 @@ kjzTT101 htom;
 htom.output => dac;
 htom.setBaseFreq(140);
 
+// instantiate a Dinky (not connected yet)
+Dinky imp;
+//  patch
+Gain g => NRev r => Echo e => Echo e2 => dac;
+// direct/dry
+g => dac;
+e => dac;
+
+// set up delay, gain, and mix
+1500::ms => e.max => e.delay;
+3000::ms => e2.max => e2.delay;
+1 => g.gain;
+.5 => e.gain;
+.25 => e2.gain;
+.1 => r.mix;
+
+// connect the Dinky
+imp.connect( g );
+// set the radius (should never be more than 1)
+imp.radius( .999 );
+
+
 // play some instruments --------------------
 fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
 {
@@ -120,6 +142,25 @@ fun void instPlayer(int notes[])
     }
 }
 
+fun void dinkyPlayer(float notes[])
+{
+
+    while(true)
+    {
+        notes[Global.mod16] => float noteFreq;
+        if( noteFreq > 20 )
+        {
+            notes[Global.mod16] => imp.t;
+            Global.beat => now;
+            imp.c();
+        }
+        else
+        {
+             Global.beat => now;
+        }
+    }
+}
+
 // tickers --------------------
 fun void rollCounter()
 {
@@ -137,7 +178,8 @@ fun void rollCounter()
 }
 
 //// SPORKS --------------------
-spork~ player    (Global.inmutableLEAD, lib.sin0env, lib.sin0);
+//spork~ player    (Global.inmutableLEAD, lib.sin0env, lib.sin0);
+spork~ dinkyPlayer (Global.inmutableLEAD);
 spork~ player    (Global.inmutableMID,  lib.tri0env, lib.tri0);
 spork~ player    (Global.inmutableBASS, lib.sqr0env, lib.sqr0);
 spork~ drumPlayer(Global.inmutableBD,   lib.bd);

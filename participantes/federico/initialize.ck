@@ -4,6 +4,7 @@ Machine.add(me.dir()+"Global.ck");
 // Instruments
 Machine.add(me.dir()+"inst_kjzTT101.ck");
 Machine.add(me.dir()+"instruments/kjzTT101.ck");
+Machine.add(me.dir()+"instruments/dinky.ck");
 Machine.add(me.dir()+"../../../lick/lick/fn/FloatFunction.ck");
 Machine.add(me.dir()+"../../../lick/lick/interval/Interval.ck");
 Machine.add(me.dir()+"../../../lick/lick/interval/Intervals.ck");
