@@ -2,13 +2,16 @@ public class Global
 {
     int inmutableArray[16];
     int inmutableEnvNotes[16];
-    int inmutableBass[16];
+    static float inmutableLEAD[];
+    static float inmutableMID[];
+    static float inmutableBASS[];
+    static int inmutableBD[];
+    static int inmutableSD[];
+    static int inmutableHTOM[];
+    static int inmutableHH[];
     static float bassFromOsc[];
     static float bassFromOscComp[];
     int inmutableEnvBass[16];
-    int inmutableBD[16];
-    int inmutableSN[16];
-    int inmutableHH[16];
     float container[100];
     static int counter;
     static int mod4;
@@ -21,7 +24,14 @@ public class Global
     static int cursor;
 }
 //init the array with something, else it would just stay an empty reference.
-[-1.0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1]  @=> Global.bassFromOsc;
-[-1.0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1]  @=> Global.bassFromOscComp;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.bassFromOsc;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.bassFromOscComp;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableLEAD;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableMID;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableBASS;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableBD;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableSD;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHTOM;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHH;
 //[0.] @=> Global.bassFromOsc;
-200::ms => Global.beat; // initializacion in the class is not working .. bug?
+200::ms => Global.beat;

@@ -12,11 +12,14 @@ oin.addAddress( "/audio/2/mid,  ffffffffffffffff" );
 oin.addAddress( "/audio/2/bass, ffffffffffffffff" );
 oin.addAddress( "/audio/2/bd,   iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/sd,   iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/htom, iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 
 // mixer --------------------
- 0.03 => lib.sqr0.gain;
-
+0.03 => lib.sqr0.gain;
+0.05 => lib.sin0.gain;
+0.05 => lib.tri0.gain;
+0.2 => lib.htom.gain;
 // osc data to array --------------------
  fun void oscRxFloat()
  {
@@ -47,6 +50,10 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
             {
                 for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableSD[i]; }
             }
+            else if (addr == "/audio/2/htom" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableHTOM[i]; }
+            }
             else if (addr == "/audio/2/hh" )
             {
                 for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableHH[i]; }
@@ -55,6 +62,11 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
         }
      }
  }
+
+// instrument classes
+kjzTT101 A;
+A.output => dac;
+A.setBaseFreq(140);
 
 // play some instruments --------------------
 fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
@@ -92,6 +104,22 @@ fun void drumPlayer(int notes[], ADSR instrumentEnv)
     }
 }
 
+fun void instPlayer(int notes[])
+{
+    while(true)
+    {
+        if( notes[Global.mod16] == 1 )
+        {
+            A.hit(.5 );
+            Global.beat => now;
+        }
+        else
+        {
+             Global.beat => now;
+        }
+    }
+}
+
 // tickers --------------------
 fun void rollCounter()
 {
@@ -114,6 +142,7 @@ spork~ player    (Global.inmutableMID,  lib.tri0env, lib.tri0);
 spork~ player    (Global.inmutableBASS, lib.sqr0env, lib.sqr0);
 spork~ drumPlayer(Global.inmutableBD,   lib.bd);
 spork~ drumPlayer(Global.inmutableSD,   lib.sd);
+spork~ instPlayer(Global.inmutableHTOM);
 spork~ drumPlayer(Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();

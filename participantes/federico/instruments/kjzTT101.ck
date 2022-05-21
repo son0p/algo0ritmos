@@ -65,5 +65,5 @@ class kjzTT101
 kjzTT101 A;
 A.output => dac;
 
-for(int i; i < 8; i++)
-{ A.setBaseFreq(60 + i*20); A.hit(.5 + i * .1); .8::second => now; }
+// for(int i; i < 8; i++)
+// { A.setBaseFreq(60 + i*20); A.hit(.5 + i * .1); .8::second => now; }
