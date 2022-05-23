@@ -47,7 +47,7 @@
                            :element-type '(unsigned-byte 8)))
         ;(b (osc:encode-message "/foo/bar"  110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0  ))) ;; working
         (b (apply #'osc:encode-message address-pattern)))
-    (format t "sending to ~a on port ~A~%~%" host port)
+    ;(format t "sending to ~a on port ~A~%~%" host port)
     (unwind-protect
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
@@ -100,12 +100,49 @@
    *scale*))
 
 ;;; pool  to conform osc:encode-message ====================
+(defun modify-list (list position value)
+  (setf (nth position list) value))
+
+(defvar *bd* nil)
+(defvar *sd* nil)
+(defvar *hh* nil)
+(defvar *htom* nil)
+(defvar *bd-actives* nil)
+(defvar *sd-actives* nil)
+(defvar *hh-actives* nil)
+(defvar *htom-actives* nil)
+(defun clear-patt ()
+  (progn
+    (setf *bd*   (loop for i from 1 to 16 collecting 0))
+    (setf *sd*   (loop for i from 1 to 16 collecting 0))
+    (setf *hh*   (loop for i from 1 to 16 collecting 0))
+    (setf *htom* (loop for i from 1 to 16 collecting 0))))
+(defun patt-0 ()
+  (progn
+    (setf *bd-actives*   '(0 7 8 15))
+    (setf *sd-actives*   '(3 4 11 12))
+    (setf *htom-actives* '(4 12))
+    (setf *hh-actives*   '(2 4 8 11 14))
+    (mapcar #'(lambda (x) (modify-list *bd*   x 1)) *bd-actives*)
+    (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
+    (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
+    (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
+(defun patt-1 ()
+  (progn
+    (setf *bd-actives*   '(6 14))
+    (setf *sd-actives*   '(2 3 10 11))
+    (setf *htom-actives* '(6 7 14 15))
+    (setf *hh-actives*   '(2 5 8 12 14))
+    (mapcar #'(lambda (x) (modify-list *bd*   x 1)) *bd-actives*)
+    (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
+    (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
+    (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
 
 (defvar num-seq (loop :for n :below 16 :collect n))
 ;(setf num-seq (nreverse num-seq))
 (defun pattern-changer ()
   (let ((LEAD (let ((addr "/audio/2/lead")
-                    (patt (mapcar #'(lambda (x) (quantize-frequency (* (cos (+ (* 1 (random 80)) x)) 1000))) num-seq)))
+                    (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (+ (* 1 (random 200)) x)) 1000))) num-seq)))
                 (cons addr patt)))
         (MID (let ((addr "/audio/2/mid")
                    (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (+ 1 (random 50)) x)) 200))) num-seq)))
@@ -114,16 +151,16 @@
                     (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (* 2  (Random 80)) x)) 70 ))) num-seq)))
                 (cons addr patt)))
       (BD (let ((addr "/audio/2/bd")
-                (patt  '(1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0)))
+                (patt  *bd*))
             (cons addr patt)))
       (SD (let ((addr "/audio/2/sd")
-                (patt  '(0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0)))
+                (patt  *sd*))
             (cons addr patt)))
        (HTOM (let ((addr "/audio/2/htom")
-                (patt  '(0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 1)))
+                (patt  *htom*))
             (cons addr patt)))
       (HH (let ((addr "/audio/2/hh")
-                (patt  '(1 0 1 0 0 1 0 0 1 0 0 1 0 1 0 0)))
+                (patt  *hh*))
             (cons addr patt))))
   (progn
     (osc-send-test1 #(127 0 0 1) 6450 LEAD)
@@ -136,7 +173,12 @@
 (pattern-changer)
 
 (dotimes (i 1000)
-  (progn  (pattern-changer) (sleep 20)))
+  (clear-patt) ; TODO fix bad position
+  (progn
+    (defvar *dice* (mod i 2))
+    (pattern-changer)
+    (if (= *dice* 0) (patt-0) (patt-1))
+    (sleep 10)))
 
 (defun write-stream-t1 (stream osc-message)
   "writes a given message to a stream. keep in mind that when using a buffered
