@@ -15,11 +15,11 @@
       (when s (USOCKET:socket-close s)))))
 
 (osc-send-test #(127 0 0 1) 6668)
-
+(defvar *oscRx* nil)
 (defun osc-receive-test (port)
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
-  (let ((s (socket-connect nil nil
+  (let ((s (USOCKET:socket-connect nil nil
                            :local-port port
                            :local-host #(127 0 0 1)
                            :protocol :datagram
@@ -28,9 +28,10 @@
     (format t "listening on localhost port ~A~%~%" port)
     (unwind-protect
          (loop do
-           (socket-receive s buffer (length buffer))
-           (format t "received -=> ~S~%" (osc:decode-bundle buffer)))
-      (when s (socket-close s)))))
+           (USOCKET:socket-receive s buffer (length buffer))
+           (format t "received -=> ~S~%" (osc:decode-bundle buffer))
+           (setf *oscRx* (osc:decode-bundle buffer)))
+      (when s (USOCKET:socket-close s)))))
 
 (osc-receive-test 6667)
 
@@ -102,23 +103,25 @@
 ;;; pool  to conform osc:encode-message ====================
 (defun modify-list (list position value)
   (setf (nth position list) value))
+(progn
+  (defvar *bd* nil)
+  (defvar *sd* nil)
+  (defvar *hh* nil)
+  (defvar *htom* nil)
+  (defvar *bd-actives* nil)
+  (defvar *sd-actives* nil)
+  (defvar *hh-actives* nil)
+  (defvar *htom-actives* nil))
 
-(defvar *bd* nil)
-(defvar *sd* nil)
-(defvar *hh* nil)
-(defvar *htom* nil)
-(defvar *bd-actives* nil)
-(defvar *sd-actives* nil)
-(defvar *hh-actives* nil)
-(defvar *htom-actives* nil)
 (defun clear-patt ()
   (progn
     (setf *bd*   (loop for i from 1 to 16 collecting 0))
     (setf *sd*   (loop for i from 1 to 16 collecting 0))
     (setf *hh*   (loop for i from 1 to 16 collecting 0))
     (setf *htom* (loop for i from 1 to 16 collecting 0))))
-(defun patt-0 ()
+(defun patt-a ()
   (progn
+    (clear-patt)
     (setf *bd-actives*   '(0 7 8 15))
     (setf *sd-actives*   '(3 4 11 12))
     (setf *htom-actives* '(4 12))
@@ -127,8 +130,9 @@
     (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
     (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
     (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
-(defun patt-1 ()
+(defun patt-b ()
   (progn
+    (clear-patt)
     (setf *bd-actives*   '(6 14))
     (setf *sd-actives*   '(2 3 10 11))
     (setf *htom-actives* '(6 7 14 15))
@@ -170,15 +174,10 @@
     (osc-send-test1 #(127 0 0 1) 6450 SD)
     (osc-send-test1 #(127 0 0 1) 6450 HTOM)
     (osc-send-test1 #(127 0 0 1) 6450 HH))))
-(pattern-changer)
-
-(dotimes (i 1000)
-  (clear-patt) ; TODO fix bad position
-  (progn
-    (defvar *dice* (mod i 2))
-    (pattern-changer)
-    (if (= *dice* 0) (patt-0) (patt-1))
-    (sleep 10)))
+(progn
+  "reveived message from OSC select drum pattern between patt-a or patt-b"
+  (if  (= (nth 1 *oscrx*) 1) (patt-a) (patt-b) )
+  (pattern-changer))
 
 (defun write-stream-t1 (stream osc-message)
   "writes a given message to a stream. keep in mind that when using a buffered
