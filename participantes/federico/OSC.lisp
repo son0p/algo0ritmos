@@ -141,6 +141,17 @@
     (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
     (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
     (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
+(defun patt-c ()
+  (progn
+    (clear-patt)
+    (setf *bd-actives*   '(1 5 7 8 11 12 14))
+    (setf *sd-actives*   '(2 3 10 11))
+    (setf *htom-actives* '(6 7 14 15))
+    (setf *hh-actives*   '(2 5 7 8 9 12 14 15))
+    (mapcar #'(lambda (x) (modify-list *bd*   x 1)) *bd-actives*)
+    (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
+    (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
+    (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
 
 (defvar num-seq (loop :for n :below 16 :collect n))
 ;(setf num-seq (nreverse num-seq))
@@ -154,18 +165,18 @@
         (BASS (let ((addr "/audio/2/bass")
                     (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (* 2  (Random 80)) x)) 70 ))) num-seq)))
                 (cons addr patt)))
-      (BD (let ((addr "/audio/2/bd")
-                (patt  *bd*))
-            (cons addr patt)))
-      (SD (let ((addr "/audio/2/sd")
-                (patt  *sd*))
-            (cons addr patt)))
-       (HTOM (let ((addr "/audio/2/htom")
-                (patt  *htom*))
-            (cons addr patt)))
-      (HH (let ((addr "/audio/2/hh")
-                (patt  *hh*))
-            (cons addr patt))))
+        (BD (let ((addr "/audio/2/bd")
+                  (patt  *bd*))
+              (cons addr patt)))
+        (SD (let ((addr "/audio/2/sd")
+                  (patt  *sd*))
+              (cons addr patt)))
+        (HTOM (let ((addr "/audio/2/htom")
+                    (patt  *htom*))
+                (cons addr patt)))
+        (HH (let ((addr "/audio/2/hh")
+                  (patt  *hh*))
+              (cons addr patt))))
   (progn
     (osc-send-test1 #(127 0 0 1) 6450 LEAD)
     (osc-send-test1 #(127 0 0 1) 6450 MID)
@@ -178,6 +189,39 @@
   "reveived message from OSC select drum pattern between patt-a or patt-b"
   (if  (= (nth 1 *oscrx*) 1) (patt-a) (patt-b) )
   (pattern-changer))
+
+;;; change to individual parts
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/lead")
+                      (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (+ (* 1 (random 200)) x)) 1000))) num-seq)))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/mid")
+                      (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (+ 1 (random 50)) x)) 200))) num-seq)))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/bass")
+                      (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (* 2  (Random 80)) x)) 70 ))) num-seq)))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/bd")
+                      (patt  *bd*))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/sd")
+                      (patt *sd*))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/htom")
+                      (patt *htom*))
+                  (cons addr patt)))
+(osc-send-test1 #(127 0 0 1) 6450
+                (let ((addr "/audio/2/hh")
+                      (patt *hh*))
+                  (cons addr patt)))
+(patt-a)
+(patt-b)
+(patt-c)
 
 (defun write-stream-t1 (stream osc-message)
   "writes a given message to a stream. keep in mind that when using a buffered
