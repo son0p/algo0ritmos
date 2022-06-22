@@ -27,6 +27,19 @@ mo.output => NRev moRev => dac;
 0.9 => mo.filterSweepRate;
 0.09 => moRev.mix;
 
+Stif sk;
+sk.output => NRev skRev => dac;
+.75 => skRev.gain;
+.02 => skRev.mix;
+0.5 => sk.gain;
+
+Sit sit;
+sit.output => NRev sitRev => dac;
+.75 => sitRev.gain;
+.15 => sitRev.mix;
+0.9 => sit.gain;
+
+
 Fat fat;
 
 // instantiate a Dinky (not connected yet)
@@ -214,6 +227,40 @@ fun void player(float notes[], Moogi instrument)
         }
     }
 }
+fun void player(float notes[], Stif instrument)
+{
+    while(true)
+    {
+        notes[Global.mod16] => float noteFreq;
+        if( noteFreq > 20 )
+        {
+            notes[Global.mod16] => instrument.note;
+            Math.random2f( 0, 1 ) =>  instrument.velocity;
+            Global.beat => now;
+        }
+        else
+        {
+             Global.beat => now;
+        }
+    }
+}
+fun void player(float notes[], Sit instrument)
+{
+    while(true)
+    {
+        notes[Global.mod16] => float noteFreq;
+        if( noteFreq > 20 )
+        {
+            notes[Global.mod16] => instrument.note;
+            Math.random2f( 0.4, 0.9 ) =>  instrument.velocity;
+            Global.beat => now;
+        }
+        else
+        {
+             Global.beat => now;
+        }
+    }
+}
 fun void drumPlayer(int notes[], ADSR instrumentEnv)
 {
     while(true)
@@ -253,7 +300,9 @@ fun void rollCounter()
 
 //// SPORKS --------------------
 spork~ player     (Global.inmutableLEAD);
-spork~ player     (Global.inmutableMID, mo);
+//spork~ player     (Global.inmutableMID, mo);
+//spork~ player     (Global.inmutableMID, sk);
+spork~ player     (Global.inmutableMID, sit);
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
