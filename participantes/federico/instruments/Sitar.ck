@@ -5,7 +5,6 @@ public class Sit
     fun void note(float freq)
     {
         freq => m.freq;
-        <<<freq , "">>>;
     }
     fun void gain(float gain)
     {
@@ -14,7 +13,6 @@ public class Sit
      fun void velocity(float velocity)
     {
         velocity => m.noteOn;
-        <<< "pluck", "">>>;
     }
 }
 

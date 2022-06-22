@@ -9,10 +9,10 @@ public class Stif
         Math.random2f( 0, 1 ) => m.sustain;
         Math.random2f( 0, 1 ) => m.stretch;
 
-        <<< "---", "" >>>;
-        <<< "pickup:", m.pickupPosition() >>>;
-        <<< "sustain:", m.sustain() >>>;
-        <<< "stretch:", m.stretch() >>>;
+        // <<< "---", "" >>>;
+        // <<< "pickup:", m.pickupPosition() >>>;
+        // <<< "sustain:", m.sustain() >>>;
+        //<<< "stretch:", m.stretch() >>>;
 
         // factor
         Math.random2f( 1, 4 ) => float factor;
