@@ -88,19 +88,27 @@ fun void oscTxFloat()
 // infinite time loop
     while( true )
     {
-        // start the message...
-        xmit.start( "/foo/notes" );
+        if (Global.mod64 == 60)
+        {
+            // start the message...
+            xmit.start( "/foo/no" );
 
-        // add int argument
-        Math.random2( 0, 1 ) => xmit.add;
-        // add float argument
-        Math.random2f( .1, .5 ) => xmit.add;
+            // add int argument
+            Math.random2( 0, 4 ) => xmit.add;
+            // add float argument
+            Math.random2f( .1, .5 ) => xmit.add;
 
-        // send it
-        xmit.send();
+            // send it
+            xmit.send();
 
-        // advance time
-        Global.beat * 16 => now;
+            // advance time
+            Global.beat  => now;
+        }
+        else
+        {
+            Global.beat  => now;
+        }
+
     }
 }
 
