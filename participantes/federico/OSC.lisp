@@ -1,5 +1,18 @@
 (ql:quickload :osc)
 (ql:quickload :usocket)
+(ql:quickload :random-sample)
+
+;;; from https://stackoverflow.com/questions/25866292/flatten-a-list-using-common-lisp
+;;; paul graham inspired
+(defun flatten (lst)
+  (labels ((rflatten (lst1 acc)
+             (dolist (el lst1)
+               (if (listp el)
+                   (setf acc (rflatten el acc))
+                   (push el acc)))
+             acc))
+    (reverse (rflatten lst nil))))
+
 
 (defun osc-send-test (host port)
   "a basic test function which sends osc test message to a given port/hostname.
@@ -13,7 +26,7 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-(osc-send-test #(127 0 0 1) 6668)
+(osc-send-test #(127 0 0 1) 6668) ;; test
 (defvar *oscRx* nil)
 ;;(fmakunbound 'osc-receive-test)
 (defun osc-receive-test (port)
@@ -40,9 +53,9 @@
                )
       (when s (USOCKET:socket-close s)))))
 
-(osc-receive-test 6667)
+(osc-receive-test 6667);; test
 
-(socket-connect #(127 0 0 1) 6668
+(socket-connect #(127 0 0 1) 6668 ;; test
                            :protocol :datagram
                            :element-type '(unsigned-byte 8))
 
@@ -88,7 +101,11 @@
 ;;    ;(write (length notes))
 ;;   )
 
-(setf *scale* '(16.35 18.35 20.60 21.83 24.50 27.50 30.87 32.70 36.71 41.20  43.65 49.00 55.00 61.74 65.41 73.42 82.41 87.31 98.00 110.00 123.47 130.81 146.83 164.81 174.61 196.00 220.00 246.94 261.63 293.66 329.63 349.23 392.00  440 493.88 523.25 587.33 659.25 698.46 783.99 880.00 987.77 1046.50 1174.66 1318.51 1396.91 1567.98 ))
+(setf *scale* '(16.35 18.35 20.60 21.83 24.50 27.50 30.87 32.70 36.71 41.20
+                43.65 49.00 55.00 61.74 65.41 73.42 82.41 87.31 98.00 110.00
+                123.47 130.81 146.83 164.81 174.61 196.00 220.00 246.94 261.63
+                293.66 329.63 349.23 392.00  440 493.88 523.25 587.33 659.25 698.46
+                783.99 880.00 987.77 1046.50 1174.66 1318.51 1396.91 1567.98 ))
 
 ;;(scale-generator scale-frequencies major-scale-jumps )
 
@@ -111,6 +128,45 @@
 ;;; pool  to conform osc:encode-message ====================
 (defun modify-list (list position value)
   (setf (nth position list) value))
+
+(defun sample-segment-generator (lenght value)
+   (loop for i from 0 to lenght collecting value))
+
+(define-condition not-summing-100 (error)
+   ((message :initarg :message :reader message)))
+
+(defun sample (lst-lenghts lst-values)
+  (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
+
+(defun distributed-sample-generator (lst-lenghts lst-values)
+  "Toma los tamaños y los valores de dos listas, genera una lista aplanada"
+  (if (/= (reduce #'+ lst-lenghts)  100)
+      (error 'not-summing-100 :message "lenghts must sum 100"))
+  (flatten (mapcar #'sample-segment-generator lst-lenghts lst-values)))
+
+;;; drums test pag 65
+(defun refresh-bd()
+  (setf *bd2*
+        (flatten
+         (list
+          (sample '(90 10) '(1 0)) ;00
+          (sample '(05 95) '(1 0)) ;01
+          (sample '(40 60) '(1 0)) ;02
+          (sample '(90 10) '(1 0)) ;03
+          (sample '(05 95) '(1 0)) ;04
+          (sample '(10 90) '(1 0)) ;05
+          (sample '(30 70) '(1 0)) ;06
+          (sample '(20 80) '(1 0)) ;07
+          (sample '(90 10) '(1 0)) ;08
+          (sample '(05 95) '(1 0)) ;09
+          (sample '(20 80) '(1 0)) ;10
+          (sample '(90 10) '(1 0)) ;11
+          (sample '(05 95) '(1 0)) ;12
+          (sample '(10 90) '(1 0)) ;13
+          (sample '(40 60) '(1 0)) ;14
+          (sample '(40 60) '(1 0))))));15
+
+
 
 (progn
   (defvar *bd* nil)
@@ -174,10 +230,11 @@
     (osc-send-test1 #(127 0 0 1) 6450 SD)
     (osc-send-test1 #(127 0 0 1) 6450 HTOM)
     (osc-send-test1 #(127 0 0 1) 6450 HH))))
-(progn
-  "reveived message from OSC select drum pattern between patt-a or patt-b"
-  (if  (= (nth 1 *oscrx*) 1) (patt-a) (patt-b) )
-  (pattern-changer))
+
+;; (progn
+;;   "reveived message from OSC select drum pattern between patt-a or patt-b"
+;;   (if  (= (nth 1 *oscrx*) 1) (patt-a) (patt-b) )
+;;   (pattern-changer))
 
 ;;; change to individual parts
 (defun update-lead ()
@@ -199,7 +256,7 @@
   (progn
     (osc-send-test1 #(127 0 0 1) 6450
                     (let ((addr "/audio/2/bd")
-                          (patt  *bd*))
+                          (patt  *bd2*))
                       (cons addr patt)))
     (osc-send-test1 #(127 0 0 1) 6450
                     (let ((addr "/audio/2/sd")
@@ -215,13 +272,16 @@
                       (cons addr patt)))))
 
 ;; ----------------------     BD                    SN              HTOM            HH
-(progn (patt-changer   '(1 2 10 12 13 14 15)   '(6 7 8 9 10)   '(12 13 14)    '(1 2 3 4 5 8 9 10 14 15 ))  (update-drums))
-(progn (patt-changer   '(0 7 8 15)             '(3 4 11 12)    '(4 12)        '(2 4 8 11 14))              (update-drums))
-(progn (patt-changer   '(6 14)                 '(2 3 10 11)    '(6 7 14 15)   '(2 5 8 12 14))              (update-drums))
+(progn (patt-changer   '(1 2 10 12 13 14 15)   '(6 7 8 9 10)   '(12 13 14)       '(1 2 3 4 5 8 9 10 14 15 ))         (update-drums))
+(progn (patt-changer   '(0 7 8 15)             '(3 4 11 12)    '(4 12)           '(2 4 8 11 14))                     (update-drums))
+(progn (patt-changer   '(6 14)                 '(2 3 10 11)    '(6 7 14 15)      '(0 2 3 4 6 7 8 10 11 12 14 15  ))  (update-drums))
+(progn (patt-changer   '(4 12)                 '(3 11)        '(2 4 7 8 11 14 15)   '(4 12  ))              (update-drums))
 
 (update-lead)
 (update-mid)
-(update-drums)
+(progn
+ (refresh-bd)
+ (update-drums))
 
 (defun write-stream-t1 (stream osc-message)
   "writes a given message to a stream. keep in mind that when using a buffered
