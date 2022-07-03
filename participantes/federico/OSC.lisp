@@ -36,7 +36,6 @@
 (defun sample-segment-generator (lenght value)
    (loop for i from 0 to lenght collecting value))
 
-
 (defun flatten (lst)
   "from https://stackoverflow.com/questions/25866292/flatten-a-list-using-common-lisp
    paul graham inspired"
@@ -134,6 +133,40 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
+(defun osc-receive-test (port)
+  "a basic test function which attempts to decode an osc message on given port.
+  note ip#s need to be in the format #(127 0 0 1) for now.. .
+  - TODO funciones para sileciar par y poder ejecutar una estructura"
+  (let ((s (USOCKET:socket-connect nil nil
+                                   :local-port port
+                                   :local-host #(127 0 0 1)
+                                   :protocol :datagram
+                                   :element-type '(unsigned-byte 8)))
+        (buffer (make-sequence '(vector (unsigned-byte 8)) 1024)))
+    (format t "listening on localhost port ~A~%~%" port)
+    (unwind-protect
+         (loop do
+           (USOCKET:socket-receive s buffer (length buffer))
+           (format t "received -=> ~S~%" (osc:decode-bundle buffer))
+           (setf *oscRx* (osc:decode-bundle buffer))
+           (if (= (nth 1 *oscrx*) 1)
+               (progn
+                 (update-bass)
+                 (play-drums)))
+           (if (= (nth 1 *oscrx*) 2)
+               (progn
+                 (update-mid)
+                 (clear-patt)
+                 (update-drums)))
+           (if (= (nth 1 *oscrx*) 3)
+               (progn
+                 (update-lead)
+                 (update-bass)
+                 (play-drums))))
+      (when s (USOCKET:socket-close s)))))
+
+(osc-receive-test 6667)
+
 ;;; change to individual parts
 (defun update-lead ()
   (osc-send-test1 #(127 0 0 1) 6450
@@ -181,13 +214,11 @@
     (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
     (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
 
-
 (defun play-drums ()
   (progn
     (setf *bd* (refresh-bd))
     (setf *sd* (refresh-sd))
     (update-drums)))
-
 
 (defun pattern-changer ()
   (let ((LEAD (let ((addr "/audio/2/lead")
@@ -220,18 +251,18 @@
     (osc-send-test1 #(127 0 0 1) 6450 HTOM)
     (osc-send-test1 #(127 0 0 1) 6450 HH))))
 
-(defun write-stream-t1 (stream osc-message)
-  "writes a given message to a stream. keep in mind that when using a buffered
-   stream any funtion writing to the stream should  call (finish-output stream)
-   after it sends the mesages,. ."
-  (write-sequence
-   (osc:encode-message "/bzzp" "got" "it" )
-   stream)
-  (finish-output stream))
+;; (defun write-stream-t1 (stream osc-message)
+;;   "writes a given message to a stream. keep in mind that when using a buffered
+;;    stream any funtion writing to the stream should  call (finish-output stream)
+;;    after it sends the mesages,. ."
+;;   (write-sequence
+;;    (osc:encode-message "/bzzp" "got" "it" )
+;;    stream)
+;;   (finish-output stream))
 
-(defmacro osc-write-to-stream (stream &body args)
-  `(progn (write-sequence (osc:encode-message ,@args) ,stream)
-          (finish-output ,stream)))
+;; (defmacro osc-write-to-stream (stream &body args)
+;;   `(progn (write-sequence (osc:encode-message ,@args) ,stream)
+;;           (finish-output ,stream)))
 
 ;; ==== live transformations
 (update-lead)
