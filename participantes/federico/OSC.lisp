@@ -11,13 +11,16 @@
 
 ;;; variables
 (progn
-  (defvar *bd* nil)
-  (defvar *sd* nil)
-  (defvar *hh* nil)
+  (defvar *lead* nil)
+  (defvar *mid*  nil)
+  (defvar *bass* nil)
+  (defvar *bd*   nil)
+  (defvar *sd*   nil)
+  (defvar *hh*   nil)
   (defvar *htom* nil)
-  (defvar *bd-actives* nil)
-  (defvar *sd-actives* nil)
-  (defvar *hh-actives* nil)
+  (defvar *bd-actives*   nil)
+  (defvar *sd-actives*   nil)
+  (defvar *hh-actives*   nil)
   (defvar *htom-actives* nil)
   (defvar *oscRx* nil)
   (defvar *scale* nil)  ; make local let
@@ -97,12 +100,8 @@
     (sample '(01 99) '(1 0)) ;14
     (sample '(20 80) '(1 0)))));15
 
-(defun clear-patt ()
-  (progn
-    (setf *bd*   (loop for i from 1 to 16 collecting 0))
-    (setf *sd*   (loop for i from 1 to 16 collecting 0))
-    (setf *hh*   (loop for i from 1 to 16 collecting 0))
-    (setf *htom* (loop for i from 1 to 16 collecting 0))))
+(defun clear-patt (pattern)
+     (setf pattern (loop for i from 1 to 16 collecting 0)))
 
 (defun quantize-frequency (unquantized-value)
   "quantize to frequencies in musical scale"
@@ -120,7 +119,7 @@
    ;;scale-frequencies))
    *scale*))
 
-(defun osc-send-test1 (host port address-pattern)
+(defun osc-send (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
   note ip#s need to be in the format #(127 0 0 1) for now.. ."
   (let ((s (USOCKET:socket-connect host port
@@ -133,86 +132,83 @@
  (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-(defun osc-receive-test (port)
-  "a basic test function which attempts to decode an osc message on given port.
-  note ip#s need to be in the format #(127 0 0 1) for now.. .
-  - TODO funciones para sileciar par y poder ejecutar una estructura"
-  (let ((s (USOCKET:socket-connect nil nil
-                                   :local-port port
-                                   :local-host #(127 0 0 1)
-                                   :protocol :datagram
-                                   :element-type '(unsigned-byte 8)))
-        (buffer (make-sequence '(vector (unsigned-byte 8)) 1024)))
-    (format t "listening on localhost port ~A~%~%" port)
-    (unwind-protect
-         (loop do
-           (USOCKET:socket-receive s buffer (length buffer))
-           (format t "received -=> ~S~%" (osc:decode-bundle buffer))
-           (setf *oscRx* (osc:decode-bundle buffer))
-           (if (= (nth 1 *oscrx*) 1)
-               (progn
-                 (update-bass)
-                 (play-drums)))
-           (if (= (nth 1 *oscrx*) 2)
-               (progn
-                 (update-mid)
-                 (clear-patt)
-                 (update-drums)))
-           (if (= (nth 1 *oscrx*) 3)
-               (progn
-                 (update-lead)
-                 (update-bass)
-                 (play-drums))))
-      (when s (USOCKET:socket-close s)))))
-
-(osc-receive-test 6667)
-
 ;;; change to individual parts
 (defun update-lead ()
-  (osc-send-test1 #(127 0 0 1) 6450
+  (osc-send #(127 0 0 1) 6450
                   (let ((addr "/audio/2/lead")
-                        (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (+ (* 1 (random 200)) x)) 1000))) num-seq)))
+                        (patt *lead*))
                     (cons addr patt))))
 (defun update-mid ()
-  (osc-send-test1 #(127 0 0 1) 6450
+  (osc-send #(127 0 0 1) 6450
                   (let ((addr "/audio/2/mid")
-                        (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* (+ 1 (random 50)) x)) 200))) num-seq)))
+                        (patt *mid*))
                     (cons addr patt))))
 (defun update-bass ()
-  (osc-send-test1 #(127 0 0 1) 6450
+  (osc-send #(127 0 0 1) 6450
                   (let ((addr "/audio/2/bass")
-                        (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (* 2  (Random 80)) x)) 70 ))) num-seq)))
+                        (patt *bass*))
                     (cons addr patt))))
 (defun update-drums ()
   (progn
-    (osc-send-test1 #(127 0 0 1) 6450
+    (osc-send #(127 0 0 1) 6450
                     (let ((addr "/audio/2/bd")
                           (patt  *bd*))
                       (cons addr patt)))
-    (osc-send-test1 #(127 0 0 1) 6450
+    (osc-send #(127 0 0 1) 6450
                     (let ((addr "/audio/2/sd")
                           (patt *sd*))
                       (cons addr patt)))
-    (osc-send-test1 #(127 0 0 1) 6450
+    (osc-send #(127 0 0 1) 6450
                     (let ((addr "/audio/2/htom")
                           (patt *htom*))
                       (cons addr patt)))
-    (osc-send-test1 #(127 0 0 1) 6450
+    (osc-send #(127 0 0 1) 6450
                     (let ((addr "/audio/2/hh")
                           (patt *hh*))
                       (cons addr patt)))))
 
-(defun patt-changer (bd-list sn-list htom-list hh-list)
-  (progn
-    (clear-patt)
-    (setf *bd-actives*   bd-list)
-    (setf *sd-actives*   sn-list)
-    (setf *htom-actives* htom-list)
-    (setf *hh-actives*   hh-list)
-    (mapcar #'(lambda (x) (modify-list *bd*   x 1)) *bd-actives*)
-    (mapcar #'(lambda (x) (modify-list *sd*   x 1)) *sd-actives*)
-    (mapcar #'(lambda (x) (modify-list *hh*   x 1)) *hh-actives*)
-    (mapcar #'(lambda (x) (modify-list *htom* x 1)) *htom-actives*)))
+(defun generate-lead ()
+  (setf *lead*
+        (mapcar #'(lambda (x)
+                    (quantize-frequency
+                     (* (sin (+ (* 1 (random 200)) x)) 1000)))
+                num-seq))
+  (update-lead))
+
+(defun generate-bass ()
+  (setf *bass*
+        (mapcar #'(lambda (x)
+                    (quantize-frequency
+                     (* (tan (* (* 2  (Random 80)) x)) 70 )))
+                num-seq))
+  (update-bass))
+
+(defun generate-mid ()
+  (setf *mid*
+        (mapcar #'(lambda (x)
+                    (quantize-frequency
+                     (* (sin (* (+ 1 (random 50)) x)) 200)))
+                num-seq))
+  (update-mid))
+
+(defun mute-lead ()
+  (setf *lead* (clear-patt *lead*))
+  (update-lead))
+
+(defun mute-mid ()
+  (setf *mid* (clear-patt *mid*))
+  (update-mid))
+
+(defun mute-bass ()
+  (setf *bass* (clear-patt *bass*))
+  (update-bass))
+
+(defun mute-drums ()
+  (setf *bd*   (clear-patt *bd*))
+  (setf *sd*   (clear-patt *sd*))
+  (setf *htom* (clear-patt *htom*))
+  (setf *hh*   (clear-patt *hh*))
+  (update-drums))
 
 (defun play-drums ()
   (progn
@@ -243,13 +239,13 @@
                   (patt  *hh*))
               (cons addr patt))))
   (progn
-    (osc-send-test1 #(127 0 0 1) 6450 LEAD)
-    (osc-send-test1 #(127 0 0 1) 6450 MID)
-    (osc-send-test1 #(127 0 0 1) 6450 BASS)
-    (osc-send-test1 #(127 0 0 1) 6450 BD)
-    (osc-send-test1 #(127 0 0 1) 6450 SD)
-    (osc-send-test1 #(127 0 0 1) 6450 HTOM)
-    (osc-send-test1 #(127 0 0 1) 6450 HH))))
+    (osc-send #(127 0 0 1) 6450 LEAD)
+    (osc-send #(127 0 0 1) 6450 MID)
+    (osc-send #(127 0 0 1) 6450 BASS)
+    (osc-send #(127 0 0 1) 6450 BD)
+    (osc-send #(127 0 0 1) 6450 SD)
+    (osc-send #(127 0 0 1) 6450 HTOM)
+    (osc-send #(127 0 0 1) 6450 HH))))
 
 ;; (defun write-stream-t1 (stream osc-message)
 ;;   "writes a given message to a stream. keep in mind that when using a buffered
@@ -263,6 +259,44 @@
 ;; (defmacro osc-write-to-stream (stream &body args)
 ;;   `(progn (write-sequence (osc:encode-message ,@args) ,stream)
 ;;           (finish-output ,stream)))
+
+(defun osc-receive (port)
+  "a basic test function which attempts to decode an osc message on given port.
+  note ip#s need to be in the format #(127 0 0 1) for now.. .
+  - TODO funciones para sileciar par y poder ejecutar una estructura"
+  (let ((s (USOCKET:socket-connect nil nil
+                                   :local-port port
+                                   :local-host #(127 0 0 1)
+                                   :protocol :datagram
+                                   :element-type '(unsigned-byte 8)))
+        (buffer (make-sequence '(vector (unsigned-byte 8)) 1024)))
+    (format t "listening on localhost port ~A~%~%" port)
+    (unwind-protect
+         (loop do
+           (USOCKET:socket-receive s buffer (length buffer))
+           (format t "received -=> ~S~%" (osc:decode-bundle buffer))
+           (setf *oscRx* (osc:decode-bundle buffer))
+           (if (= (nth 1 *oscrx*) 1)
+               (progn
+                 (generate-mid)
+                 (mute-lead)
+                 (mute-bass)
+                 (play-drums)))
+           (if (= (nth 1 *oscrx*) 2)
+               (progn
+                 (generate-mid)
+                 (mute-lead)
+                 (mute-bass)
+                 (mute-drums)))
+           (if (= (nth 1 *oscrx*) 3)
+               (progn
+                 (mute-mid)
+                 (generate-lead)
+                 (generate-bass)
+                 (play-drums))))
+      (when s (USOCKET:socket-close s)))))
+
+(osc-receive 6667)
 
 ;; ==== live transformations
 (update-lead)

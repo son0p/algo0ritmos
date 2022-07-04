@@ -18,11 +18,11 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 // instrument classes
 kjzTT101 htom;
 htom.output => dac;
-htom.setBaseFreq(123);
+htom.setBaseFreq(1567);
 
 Moogi mo;
 mo.output => NRev moRev => dac;
-0.1 => mo.gain;
+0.05 => mo.gain;
 0.55 => mo.filterQ;
 0.9 => mo.filterSweepRate;
 0.09 => moRev.mix;
@@ -31,13 +31,13 @@ Stif sk;
 sk.output => NRev skRev => dac;
 .75 => skRev.gain;
 .02 => skRev.mix;
-0.5 => sk.gain;
+0.1 => sk.gain;
 
 Sit sit;
 sit.output => NRev sitRev => dac;
 .75 => sitRev.gain;
 .15 => sitRev.mix;
-0.9 => sit.gain;
+0.3 => sit.gain;
 
 
 Fat fat;
@@ -85,24 +85,26 @@ xmit.dest( hostname, port );
 
 fun void oscTxFloat()
 {
-// infinite time loop
     while( true )
     {
-        if (Global.mod64 == 60)
+        // en mod64 cambia en 60
+        if (Global.mod64 == 0)
         {
             // start the message...
             xmit.start( "/foo/no" );
 
             // add int argument
-            Math.random2( 0, 4 ) => xmit.add;
+            //Math.random2( 0, 4 ) => xmit.add;
+            Global.cursor % 4  => xmit.add;
             // add float argument
             Math.random2f( .1, .5 ) => xmit.add;
 
             // send it
             xmit.send();
 
+            Global.cursor++;
             // advance time
-            Global.beat  => now;
+            Global.beat => now;
         }
         else
         {
@@ -308,7 +310,7 @@ fun void rollCounter()
 
 //// SPORKS --------------------
 spork~ player     (Global.inmutableLEAD);
-//spork~ player     (Global.inmutableMID, mo);
+spork~ player     (Global.inmutableMID, mo);
 //spork~ player     (Global.inmutableMID, sk);
 spork~ player     (Global.inmutableMID, sit);
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
