@@ -80,6 +80,10 @@
     (sample '(40 60) '(1 0)) ;14
     (sample '(40 60) '(1 0)))));15
 
+(defun four-on-floor ()
+  (setf *bd* '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0))
+  (update-drums))
+
 (defun refresh-sd()
   (flatten
    (list
@@ -99,6 +103,10 @@
     (sample '(01 99) '(1 0)) ;13
     (sample '(01 99) '(1 0)) ;14
     (sample '(20 80) '(1 0)))));15
+
+(defun hh-base()
+ (setf *hh* '(1 0 1 1 1 0 1 1 1 0 1 1 1 0 1 1))
+  (update-drums))
 
 (defun clear-patt (pattern)
      (setf pattern (loop for i from 1 to 16 collecting 0)))
@@ -276,24 +284,32 @@
            (USOCKET:socket-receive s buffer (length buffer))
            (format t "received -=> ~S~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
+           (if (= (nth 1 *oscrx*) 0)
+               (progn
+                 (generate-mid)
+                 (mute-lead)
+                 (mute-bass)
+                 (play-drums)
+                 (hh-base)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
                  (generate-mid)
                  (mute-lead)
                  (mute-bass)
-                 (play-drums)))
-           (if (= (nth 1 *oscrx*) 2)
-               (progn
-                 (generate-mid)
-                 (mute-lead)
-                 (mute-bass)
                  (mute-drums)))
-           (if (= (nth 1 *oscrx*) 3)
+           (if (= (nth 1 *oscrx*) 2)
                (progn
                  (mute-mid)
                  (generate-lead)
                  (generate-bass)
-                 (play-drums))))
+                 (four-on-floor)
+                 (hh-base)))
+            (if (= (nth 1 *oscrx*) 3)
+               (progn
+                 (mute-mid)
+                 (generate-lead)
+                 (play-drums)
+                 (hh-base))))
       (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)

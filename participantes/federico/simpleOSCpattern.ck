@@ -39,7 +39,6 @@ sit.output => NRev sitRev => dac;
 .15 => sitRev.mix;
 0.3 => sit.gain;
 
-
 Fat fat;
 
 // instantiate a Dinky (not connected yet)
@@ -70,7 +69,7 @@ imp.radius( 0.999 );
 0.05 => lib.tri0.gain;
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
-0.6 => lib.hh.gain;
+0.25 => lib.hh.gain;
 
 // send OSC to change patterns
 // destination host name
