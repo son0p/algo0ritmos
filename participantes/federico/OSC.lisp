@@ -1,4 +1,4 @@
-;;; test with simpleOSCpattern.ck (ChucK)--------------------
+;;;; test with simpleOSCpattern.ck (ChucK)--------------------
 
 ;;; librerias
 (ql:quickload :osc)
@@ -112,50 +112,40 @@
      (setf pattern (loop for i from 1 to 16 collecting 0)))
 
 (defun quantize-frequency (unquantized-value)
-  "quantize to frequencies in musical scale"
+  "Quantize to frequencies in musical scale
+
+- Select the NTH element of the quantized-list.
+- Gets the position of the lowest difference element.
+- find the differences between value and each element of the quantized list.
+
+"
   (nth
-   ;; select the nth element of the quantized-list
    (position
-    ;; gets the position of the lowest difference element
     (reduce #'min (mapcar #'(lambda (x) (abs (- x unquantized-value)))
-                          ;;scale-frequencies))
                           *scale*))
     (mapcar #'(lambda (x) (abs (- x unquantized-value)))
-            ;; find the differences between value and each element of the quantized list
-                *scale*))
-            ;;scale-frequencies))
-   ;;scale-frequencies))
+            *scale*))
    *scale*))
 
 (defun osc-send (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
-  note ip#s need to be in the format #(127 0 0 1) for now.. ."
+ note ip#s need to be in the format #(127 0 0 1) for now.. ."
   (let ((s (USOCKET:socket-connect host port
-                           :protocol :datagram
-                           :element-type '(unsigned-byte 8)))
-        ;(b (osc:encode-message "/foo/bar"  110.0 0.0 0.0 0.0 680.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0 100.0 0.0 0.0 0.0  ))) ;; working
+                                   :protocol :datagram
+                                   :element-type '(unsigned-byte 8)))
         (b (apply #'osc:encode-message address-pattern)))
-    ;(format t "sending to ~a on port ~A~%~%" host port)
     (unwind-protect
- (USOCKET:socket-send s b (length b))
+         (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
 ;;; change to individual parts
-(defun update-lead ()
+(defun update-part (part-patt osc-name)
   (osc-send #(127 0 0 1) 6450
-                  (let ((addr "/audio/2/lead")
-                        (patt *lead*))
-                    (cons addr patt))))
-(defun update-mid ()
-  (osc-send #(127 0 0 1) 6450
-                  (let ((addr "/audio/2/mid")
-                        (patt *mid*))
-                    (cons addr patt))))
-(defun update-bass ()
-  (osc-send #(127 0 0 1) 6450
-                  (let ((addr "/audio/2/bass")
-                        (patt *bass*))
-                    (cons addr patt))))
+                  (let ((addr "/audio/2/")
+                        (osc-name osc-name)
+                        (patt part-patt))
+                    (cons (concatenate 'string addr osc-name) patt))))
+
 (defun update-drums ()
   (progn
     (osc-send #(127 0 0 1) 6450
@@ -181,35 +171,27 @@
                     (quantize-frequency
                      (* (sin (+ (* 1 (random 200)) x)) 1000)))
                 num-seq))
-  (update-lead))
-
-(defun generate-bass ()
-  (setf *bass*
-        (mapcar #'(lambda (x)
-                    (quantize-frequency
-                     (* (tan (* (* 2  (Random 80)) x)) 70 )))
-                num-seq))
-  (update-bass))
+  (update-part *lead* "lead"))
 
 (defun generate-mid ()
   (setf *mid*
         (mapcar #'(lambda (x)
                     (quantize-frequency
-                     (* (sin (* (+ 1 (random 50)) x)) 200)))
+                     (* (tan (* (+ 1 (random 50)) x)) 200)))
                 num-seq))
-  (update-mid))
+  (update-part *mid* "mid"))
 
-(defun mute-lead ()
-  (setf *lead* (clear-patt *lead*))
-  (update-lead))
+(defun generate-bass ()
+  (setf *bass*
+        (mapcar #'(lambda (x)
+                    (quantize-frequency
+                     (* (sin (* (* 2  (Random 80)) x)) 70 )))
+                num-seq))
+  (update-part *bass* "bass"))
 
-(defun mute-mid ()
-  (setf *mid* (clear-patt *mid*))
-  (update-mid))
-
-(defun mute-bass ()
-  (setf *bass* (clear-patt *bass*))
-  (update-bass))
+(defun mute-part (part-patt osc-name)
+  (setf part-patt (clear-patt part-patt))
+  (update-part part-patt osc-name))
 
 (defun mute-drums ()
   (setf *bd*   (clear-patt *bd*))
@@ -224,54 +206,11 @@
     (setf *sd* (refresh-sd))
     (update-drums)))
 
-(defun pattern-changer ()
-  (let ((LEAD (let ((addr "/audio/2/lead")
-                    (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (+ (* 1 (random 200)) x)) 1000))) num-seq)))
-                (cons addr patt)))
-        (MID (let ((addr "/audio/2/mid")
-                   (patt (mapcar #'(lambda (x) (quantize-frequency (* (sin (* (+ 1 (random 50)) x)) 200))) num-seq)))
-               (cons addr patt)))
-        (BASS (let ((addr "/audio/2/bass")
-                    (patt (mapcar #'(lambda (x) (quantize-frequency (* (tan (* (* 2  (Random 80)) x)) 70 ))) num-seq)))
-                (cons addr patt)))
-        (BD (let ((addr "/audio/2/bd")
-                  (patt  *bd*))
-              (cons addr patt)))
-        (SD (let ((addr "/audio/2/sd")
-                  (patt  *sd*))
-              (cons addr patt)))
-        (HTOM (let ((addr "/audio/2/htom")
-                    (patt  *htom*))
-                (cons addr patt)))
-        (HH (let ((addr "/audio/2/hh")
-                  (patt  *hh*))
-              (cons addr patt))))
-  (progn
-    (osc-send #(127 0 0 1) 6450 LEAD)
-    (osc-send #(127 0 0 1) 6450 MID)
-    (osc-send #(127 0 0 1) 6450 BASS)
-    (osc-send #(127 0 0 1) 6450 BD)
-    (osc-send #(127 0 0 1) 6450 SD)
-    (osc-send #(127 0 0 1) 6450 HTOM)
-    (osc-send #(127 0 0 1) 6450 HH))))
-
-;; (defun write-stream-t1 (stream osc-message)
-;;   "writes a given message to a stream. keep in mind that when using a buffered
-;;    stream any funtion writing to the stream should  call (finish-output stream)
-;;    after it sends the mesages,. ."
-;;   (write-sequence
-;;    (osc:encode-message "/bzzp" "got" "it" )
-;;    stream)
-;;   (finish-output stream))
-
-;; (defmacro osc-write-to-stream (stream &body args)
-;;   `(progn (write-sequence (osc:encode-message ,@args) ,stream)
-;;           (finish-output ,stream)))
-
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. .
-  - TODO funciones para sileciar par y poder ejecutar una estructura"
+  - TODO funciones para sileciar par y poder ejecutar una estructura
+"
   (let ((s (USOCKET:socket-connect nil nil
                                    :local-port port
                                    :local-host #(127 0 0 1)
@@ -287,26 +226,26 @@
            (if (= (nth 1 *oscrx*) 0)
                (progn
                  (generate-mid)
-                 (mute-lead)
-                 (mute-bass)
+                 (mute-part *lead* "lead")
+                 (mute-part *bass* "bass")
                  (play-drums)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
                  (generate-mid)
-                 (mute-lead)
-                 (mute-bass)
+                 (mute-part *lead* "lead")
+                 (mute-part *bass* "bass")
                  (mute-drums)))
            (if (= (nth 1 *oscrx*) 2)
                (progn
-                 (mute-mid)
+                 (mute-part *mid* "mid")
                  (generate-lead)
                  (generate-bass)
                  (four-on-floor)
                  (hh-base)))
-            (if (= (nth 1 *oscrx*) 3)
+           (if (= (nth 1 *oscrx*) 3)
                (progn
-                 (mute-mid)
+                 (mute-part *mid* "mid")
                  (generate-lead)
                  (play-drums)
                  (hh-base))))
@@ -315,14 +254,7 @@
 (osc-receive 6667)
 
 ;; ==== live transformations
-(update-lead)
-(update-mid)
-(update-bass)
+(update-part *lead* "lead")
 ;;; mute drums
 (clear-patt)
 (update-drums)
-;; ----------------------     BD                    SN              HTOM            HH
-(progn (patt-changer   '(1 2 10 12 13 14 15)   '(6 7 8 9 10)   '(12 13 14)       '(1 2 3 4 5 8 9 10 14 15 ))         (update-drums))
-(progn (patt-changer   '(0 7 8 15)             '(3 4 11 12)    '(4 12)           '(2 4 8 11 14))                     (update-drums))
-(progn (patt-changer   '(6 14)                 '(2 3 10 11)    '(6 7 14 15)      '(0 2 3 4 6 7 8 10 11 12 14 15  ))  (update-drums))
-(progn (patt-changer   '(4 12)                 '(3 4 )        '(2 4 7 8 11 14 15)   '(4 12  ))              (update-drums))
