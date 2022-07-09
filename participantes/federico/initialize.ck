@@ -1,6 +1,7 @@
 // Globals
 Machine.add(me.dir()+"Global.ck");
-// Libraries
+// MIDI
+Machine.add(me.dir()+"midisender.ck");
 // Instruments
 Machine.add(me.dir()+"inst_kjzTT101.ck");
 Machine.add(me.dir()+"instruments/kjzTT101.ck");

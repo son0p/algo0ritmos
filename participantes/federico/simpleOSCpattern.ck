@@ -2,6 +2,8 @@
 // tested with  OSC.lisp
 
 Library lib;
+MIDIsender midi01;
+MIDIsender midi02;
 Global glo;
 OSC_Read osc;
 OscIn oin;
@@ -62,6 +64,11 @@ imp.connect( g );
 // set the radius (should never be more than 1)
 imp.radius( 0.999 );
 
+// midi port
+0 => midi01.open;
+1 => midi02.open;
+1 => midi01.set_channel;
+2 => midi02.set_channel;
 
 // mixer --------------------
 0.03 => lib.sqr0.gain;
@@ -112,12 +119,9 @@ fun void oscTxFloat()
 
     }
 }
-
-
 // Receive OSC data and fill array --------------------
  fun void oscRxFloat()
  {
-
      while(true)
      {
         oin => now; // wait for event to arrive
@@ -168,8 +172,13 @@ fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
         {
             noteFreq => instrument.freq;
             instrumentEnv.keyOn();
+            Global.beat => now;
         }
-        Global.beat => now;
+
+        else
+        {
+           Global.beat => now;
+        }
     }
 }
 fun void player(float notes[], ADSR instrumentEnv, Fat instrument)
@@ -182,8 +191,16 @@ fun void player(float notes[], ADSR instrumentEnv, Fat instrument)
         {
             noteFreq => instrument.freq;
             instrumentEnv.keyOn();
+            midi02.noteon((Std.ftoi(Std.ftom(noteFreq))), 30);
+            Global.beat => now;
+            midi02.noteoff(Std.ftoi(Std.ftom(noteFreq)));
         }
-        Global.beat => now;
+        else
+        {
+             Global.beat => now;
+        }
+
+
     }
 }
 fun void player(float notes[])
@@ -262,11 +279,13 @@ fun void player(float notes[], Sit instrument)
         {
             notes[Global.mod16] => instrument.note;
             Math.random2f( 0.4, 0.9 ) =>  instrument.velocity;
+            midi01.noteon((Std.ftoi(Std.ftom(noteFreq))), 30);
             Global.beat => now;
+            midi01.noteoff(Std.ftoi(Std.ftom(noteFreq)));
         }
         else
         {
-             Global.beat => now;
+            Global.beat => now;
         }
     }
 }
