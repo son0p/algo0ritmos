@@ -59,6 +59,9 @@
 (defun sample (lst-lenghts lst-values)
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
+(defun lead-math-function (x) (+ (* 4 (random 200)) (sin x)))
+(defun bass-math-function (x) (+ (* 2 (random 200)) (tan x)))
+
 ;;; drums test pag 65
 (defun refresh-bd()
   (flatten
@@ -139,7 +142,7 @@
       (when s (USOCKET:socket-close s)))))
 
 ;;; change to individual parts
-(defun update-part (part-patt osc-name)
+(defun send-part (part-patt osc-name)
   (osc-send #(127 0 0 1) 6450
                   (let ((addr "/audio/2/")
                         (osc-name osc-name)
@@ -165,13 +168,28 @@
                           (patt *hh*))
                       (cons addr patt)))))
 
+(defun pattern-generate (part-patt osc-name part-math-function)
+  "¿puedo quitar PART-PATT usando LET por SETF?"
+  (setf part-patt
+        (mapcar #'(lambda (x)
+                    (quantize-frequency
+                     (funcall part-math-function x)))
+                num-seq))
+  (send-part part-patt osc-name)
+  part-patt)
+
+(defun generate-and-send (part-patt osc-name part-math-function)
+  (send-part (pattern-generate part-patt osc-name part-math-function)
+                osc-name))
+
 (defun generate-lead ()
   (setf *lead*
         (mapcar #'(lambda (x)
                     (quantize-frequency
                      (* (sin (+ (* 1 (random 200)) x)) 1000)))
                 num-seq))
-  (update-part *lead* "lead"))
+  (send-part *lead* "lead")
+  *lead*)
 
 (defun generate-mid ()
   (setf *mid*
@@ -179,7 +197,7 @@
                     (quantize-frequency
                      (* (tan (* (+ 1 (random 50)) x)) 200)))
                 num-seq))
-  (update-part *mid* "mid"))
+  (send-part *mid* "mid"))
 
 (defun generate-bass ()
   (setf *bass*
@@ -187,11 +205,11 @@
                     (quantize-frequency
                      (* (sin (* (* 2  (Random 80)) x)) 70 )))
                 num-seq))
-  (update-part *bass* "bass"))
+  (send-part *bass* "bass"))
 
 (defun mute-part (part-patt osc-name)
   (setf part-patt (clear-patt part-patt))
-  (update-part part-patt osc-name))
+  (send-part part-patt osc-name))
 
 (defun mute-drums ()
   (setf *bd*   (clear-patt *bd*))
@@ -239,14 +257,14 @@
            (if (= (nth 1 *oscrx*) 2)
                (progn
                  (mute-part *mid* "mid")
-                 (generate-lead)
+                 (generate-and-send *lead* "lead" #'lead-math-function)
                  (generate-bass)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
                  (mute-part *mid* "mid")
-                 (generate-lead)
+                 (generate-and-send *lead* "lead" #'lead-math-function)
                  (play-drums)
                  (hh-base))))
       (when s (USOCKET:socket-close s)))))
@@ -254,7 +272,9 @@
 (osc-receive 6667)
 
 ;; ==== live transformations
-(update-part *lead* "lead")
+;(update-part *lead* "lead")
+(generate-and-send *lead* "lead" #'lead-math-function)
+(generate-and-send *bass* "bass" #'bass-math-function)
 ;;; mute drums
 (clear-patt)
 (update-drums)
