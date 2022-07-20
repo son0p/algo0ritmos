@@ -60,7 +60,8 @@
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
 (defun lead-math-function (x) (+ (* 4 (random 200)) (sin x)))
-(defun bass-math-function (x) (+ (* 2 (random 200)) (tan x)))
+(defun mid-math-function  (x) (+ (* 8 (random 200)) (sin x)))
+(defun bass-math-function (x) (+ (* 8 (random 100)) (tan x)))
 
 ;;; drums test pag 65
 (defun refresh-bd()
@@ -182,31 +183,6 @@
   (send-part (pattern-generate part-patt osc-name part-math-function)
                 osc-name))
 
-(defun generate-lead ()
-  (setf *lead*
-        (mapcar #'(lambda (x)
-                    (quantize-frequency
-                     (* (sin (+ (* 1 (random 200)) x)) 1000)))
-                num-seq))
-  (send-part *lead* "lead")
-  *lead*)
-
-(defun generate-mid ()
-  (setf *mid*
-        (mapcar #'(lambda (x)
-                    (quantize-frequency
-                     (* (tan (* (+ 1 (random 50)) x)) 200)))
-                num-seq))
-  (send-part *mid* "mid"))
-
-(defun generate-bass ()
-  (setf *bass*
-        (mapcar #'(lambda (x)
-                    (quantize-frequency
-                     (* (sin (* (* 2  (Random 80)) x)) 70 )))
-                num-seq))
-  (send-part *bass* "bass"))
-
 (defun mute-part (part-patt osc-name)
   (setf part-patt (clear-patt part-patt))
   (send-part part-patt osc-name))
@@ -243,14 +219,14 @@
            (setf *oscRx* (osc:decode-bundle buffer))
            (if (= (nth 1 *oscrx*) 0)
                (progn
-                 (generate-mid)
+                 (generate-and-send *mid*  "mid"  #' mid-math-function)
                  (mute-part *lead* "lead")
                  (mute-part *bass* "bass")
                  (play-drums)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                 (generate-mid)
+                (generate-and-send *mid*  "mid"  #' mid-math-function)
                  (mute-part *lead* "lead")
                  (mute-part *bass* "bass")
                  (mute-drums)))
@@ -258,7 +234,7 @@
                (progn
                  (mute-part *mid* "mid")
                  (generate-and-send *lead* "lead" #'lead-math-function)
-                 (generate-bass)
+                 (generate-and-send *bass* "bass" #'bass-math-function)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
@@ -274,6 +250,7 @@
 ;; ==== live transformations
 ;(update-part *lead* "lead")
 (generate-and-send *lead* "lead" #'lead-math-function)
+(generate-and-send *mid*  "mid"  #' mid-math-function)
 (generate-and-send *bass* "bass" #'bass-math-function)
 ;;; mute drums
 (clear-patt)
