@@ -11,9 +11,6 @@
 
 ;;; variables
 (progn
-  (defvar *lead* nil)
-  (defvar *mid*  nil)
-  (defvar *bass* nil)
   (defvar *bd*   nil)
   (defvar *sd*   nil)
   (defvar *hh*   nil)
@@ -169,23 +166,24 @@
                           (patt *hh*))
                       (cons addr patt)))))
 
-(defun pattern-generate (part-patt osc-name part-math-function)
-  "¿puedo quitar PART-PATT usando LET por SETF?"
-  (setf part-patt
+(defun pattern-generate (osc-name part-math-function)
+   (let ((local-pattern nil))
+  (setf local-pattern
         (mapcar #'(lambda (x)
                     (quantize-frequency
                      (funcall part-math-function x)))
                 num-seq))
-  (send-part part-patt osc-name)
-  part-patt)
+  (send-part local-pattern osc-name)
+  local-pattern))
 
-(defun generate-and-send (part-patt osc-name part-math-function)
-  (send-part (pattern-generate part-patt osc-name part-math-function)
-                osc-name))
+(defun generate-and-send (osc-name part-math-function)
+   (send-part (pattern-generate osc-name part-math-function)
+                 osc-name))
 
-(defun mute-part (part-patt osc-name)
-  (setf part-patt (clear-patt part-patt))
-  (send-part part-patt osc-name))
+(defun mute-part (osc-name)
+  (let ((local-pattern nil))
+    (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
+  (send-part local-pattern osc-name)))
 
 (defun mute-drums ()
   (setf *bd*   (clear-patt *bd*))
@@ -219,28 +217,28 @@
            (setf *oscRx* (osc:decode-bundle buffer))
            (if (= (nth 1 *oscrx*) 0)
                (progn
-                 (generate-and-send *mid*  "mid"  #' mid-math-function)
-                 (mute-part *lead* "lead")
-                 (mute-part *bass* "bass")
+                 (generate-and-send "mid"  #' mid-math-function)
+                 (mute-part "lead")
+                 (mute-part "bass")
                  (play-drums)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                (generate-and-send *mid*  "mid"  #' mid-math-function)
-                 (mute-part *lead* "lead")
-                 (mute-part *bass* "bass")
+                (generate-and-send "mid"  #' mid-math-function)
+                 (mute-part "lead")
+                 (mute-part "bass")
                  (mute-drums)))
            (if (= (nth 1 *oscrx*) 2)
                (progn
-                 (mute-part *mid* "mid")
-                 (generate-and-send *lead* "lead" #'lead-math-function)
-                 (generate-and-send *bass* "bass" #'bass-math-function)
+                 (mute-part "mid")
+                 (generate-and-send "lead" #'lead-math-function)
+                 (generate-and-send "bass" #'bass-math-function)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
-                 (mute-part *mid* "mid")
-                 (generate-and-send *lead* "lead" #'lead-math-function)
+                 (mute-part "mid")
+                 (generate-and-send "lead" #'lead-math-function)
                  (play-drums)
                  (hh-base))))
       (when s (USOCKET:socket-close s)))))
@@ -249,9 +247,9 @@
 
 ;; ==== live transformations
 ;(update-part *lead* "lead")
-(generate-and-send *lead* "lead" #'lead-math-function)
-(generate-and-send *mid*  "mid"  #' mid-math-function)
-(generate-and-send *bass* "bass" #'bass-math-function)
+(generate-and-send "lead" #'lead-math-function)
+(generate-and-send "mid"  #' mid-math-function)
+(generate-and-send "bass" #'bass-math-function)
 ;;; mute drums
 (clear-patt)
 (update-drums)
