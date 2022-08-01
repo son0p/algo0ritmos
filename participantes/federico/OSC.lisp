@@ -109,9 +109,6 @@
  (setf *hh* '(1 0 1 1 1 0 1 1 1 0 1 1 1 0 1 1))
   (update-drums))
 
-(defun clear-patt (pattern)
-     (setf pattern (loop for i from 1 to 16 collecting 0)))
-
 (defun quantize-frequency (unquantized-value)
   "Quantize to frequencies in musical scale
 
@@ -177,13 +174,13 @@
   local-pattern))
 
 (defun generate-and-send (osc-name part-math-function)
-   (send-part (pattern-generate osc-name part-math-function)
-                 osc-name))
+  (send-part (pattern-generate osc-name part-math-function)
+             osc-name))
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
-  (send-part local-pattern osc-name)))
+    (send-part local-pattern osc-name)))
 
 (defun mute-drums ()
   (setf *bd*   (clear-patt *bd*))
@@ -248,7 +245,7 @@
 ;; ==== live transformations
 ;(update-part *lead* "lead")
 (generate-and-send "lead" #'lead-math-function)
-(generate-and-send "mid"  #' mid-math-function)
+(generate-and-send "mid"  #'mid-math-function)
 (generate-and-send "bass" #'bass-math-function)
 ;;; mute drums
 (clear-patt)
