@@ -80,6 +80,27 @@
     (sample '(90 10) (list (nth 15 lst) 0)) ;14
     (sample '(20 80) (list (nth 16 lst) 0)))));15
 
+(defun bass-probability(lst)
+  (flatten
+   (list
+    (sample '(90 10) (list (nth 1  lst) 0)) ;00
+    (sample '(10 90) (list (nth 2  lst) 0)) ;01
+    (sample '(40 60) (list (nth 3  lst) 0)) ;02
+    (sample '(90 10) (list (nth 4  lst) 0)) ;03
+    (sample '(90 10) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(30 70) (list (nth 7  lst) 0)) ;06
+    (sample '(70 30) (list (nth 8  lst) 0)) ;07
+    (sample '(90 10) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(20 80) (list (nth 11 lst) 0)) ;10
+    (sample '(90 10) (list (nth 12 lst) 0)) ;11
+    (sample '(05 95) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(40 60) (list (nth 15 lst) 0)) ;14
+    (sample '(40 60) (list (nth 16 lst) 0)))));15
+
+
 ;;; drums test pag 65
 (defun refresh-bd()
   (flatten
@@ -201,6 +222,10 @@
   (send-part (insert-probability  (pattern-generate osc-name part-math-function))
              osc-name))
 
+(defun bass-generate-and-send (osc-name part-math-function)
+  (send-part (bass-probability  (pattern-generate osc-name part-math-function))
+             osc-name))
+
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
@@ -259,7 +284,7 @@
                (progn
                  (mute-part "mid")
                  (prob-generate-and-send "lead" #'lead-math-function)
-                 (generate-and-send "bass" #'bass-math-function)
+                 (bass-generate-and-send "bass" #'bass-math-function)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
