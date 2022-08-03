@@ -56,9 +56,29 @@
 (defun sample (lst-lenghts lst-values)
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
-(defun lead-math-function (x) (+ (* 4 (random 200)) (sin x)))
-(defun mid-math-function  (x) (+ (* 8 (random 200)) (sin x)))
-(defun bass-math-function (x) (+ (* 8 (random 100)) (tan x)))
+(defun lead-math-function (x) (+ (* 5 (* (random 200) 2)) (* (sin x) (sin x))))
+(defun mid-math-function  (x) (+ (* 3 (random 200)) (sin x)))
+(defun bass-math-function (x) (+ (* 2 (random 100)) (tan x)))
+
+(defun insert-probability(lst)
+  (flatten
+   (list
+    (sample '(01 99) (list (nth 1  lst) 0)) ;00
+    (sample '(10 90) (list (nth 2  lst) 0)) ;01
+    (sample '(90 10) (list (nth 3  lst) 0)) ;02
+    (sample '(01 99) (list (nth 4  lst) 0)) ;03
+    (sample '(90 10) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(01 99) (list (nth 7  lst) 0)) ;06
+    (sample '(70 30) (list (nth 8  lst) 0)) ;07
+    (sample '(01 99) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(20 80) (list (nth 11 lst) 0)) ;10
+    (sample '(10 90) (list (nth 12 lst) 0)) ;11
+    (sample '(90 10) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(90 10) (list (nth 15 lst) 0)) ;14
+    (sample '(20 80) (list (nth 16 lst) 0)))));15
 
 ;;; drums test pag 65
 (defun refresh-bd()
@@ -177,6 +197,10 @@
   (send-part (pattern-generate osc-name part-math-function)
              osc-name))
 
+(defun prob-generate-and-send (osc-name part-math-function)
+  (send-part (insert-probability  (pattern-generate osc-name part-math-function))
+             osc-name))
+
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
@@ -188,6 +212,12 @@
   (setf *htom* (clear-patt *htom*))
   (setf *hh*   (clear-patt *hh*))
   (update-drums))
+
+(defun mute-drums ()
+  (mute-part "bd")
+  (mute-part "sd")
+  (mute-part "htom")
+  (mute-part "hh"))
 
 (defun play-drums ()
   (progn
@@ -221,21 +251,21 @@
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                (generate-and-send "mid"  #' mid-math-function)
+                (prob-generate-and-send "mid"  #' mid-math-function)
                  (mute-part "lead")
                  (mute-part "bass")
                  (mute-drums)))
            (if (= (nth 1 *oscrx*) 2)
                (progn
                  (mute-part "mid")
-                 (generate-and-send "lead" #'lead-math-function)
+                 (prob-generate-and-send "lead" #'lead-math-function)
                  (generate-and-send "bass" #'bass-math-function)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
                  (mute-part "mid")
-                 (generate-and-send "lead" #'lead-math-function)
+                 (prob-generate-and-send "lead" #'lead-math-function)
                  (play-drums)
                  (hh-base))))
       (when s (USOCKET:socket-close s)))))
@@ -243,10 +273,8 @@
 (osc-receive 6667)
 
 ;; ==== live transformations
-;(update-part *lead* "lead")
+(prob-generate-and-send "lead" #'lead-math-function)
+
 (generate-and-send "lead" #'lead-math-function)
 (generate-and-send "mid"  #'mid-math-function)
 (generate-and-send "bass" #'bass-math-function)
-;;; mute drums
-(clear-patt)
-(update-drums)
