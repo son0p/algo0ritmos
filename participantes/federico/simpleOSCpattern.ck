@@ -20,7 +20,7 @@ oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
 // instrument classes
 kjzTT101 htom;
 htom.output => dac;
-htom.setBaseFreq(1567);
+htom.setBaseFreq(100);
 
 Moogi mo;
 mo.output => NRev moRev => dac;
@@ -54,7 +54,7 @@ e => dac;
 // set up delay, gain, and mix
 1500::ms => e.max => e.delay;
 3000::ms => e2.max => e2.delay;
-1 => g.gain;
+0.5 => g.gain;
 .5 => e.gain;
 .25 => e2.gain;
 .1 => r.mix;
@@ -66,9 +66,9 @@ imp.radius( 0.999 );
 
 // midi port
 0 => midi01.open;
-1 => midi02.open;
+//1 => midi02.open;
 1 => midi01.set_channel;
-2 => midi02.set_channel;
+//2 => midi02.set_channel;
 
 // mixer --------------------
 0.03 => lib.sqr0.gain;
@@ -77,6 +77,7 @@ imp.radius( 0.999 );
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
 0.25 => lib.hh.gain;
+0.15 => lib.fat.gain;
 
 // send OSC to change patterns
 // destination host name
@@ -225,7 +226,7 @@ fun void player(int notes[])
 {
     while(true)
     {
-        if( notes[Global.mod16] == 1 )
+        if( notes[Global.mod16] > 1 )
         {
             htom.hit(.5 );
             Global.beat => now;
@@ -293,12 +294,12 @@ fun void drumPlayer(int notes[], ADSR instrumentEnv)
 {
     while(true)
     {
-        if( notes[Global.mod16] == 1 && instrumentEnv != lib.bd )
+        if( notes[Global.mod16] > 1 && instrumentEnv != lib.bd )
         {
             lib.playDrums(instrumentEnv);
             Global.beat => now;
         }
-        else if( notes[Global.mod16] == 1 && instrumentEnv == lib.bd )
+        else if( notes[Global.mod16] > 1 && instrumentEnv == lib.bd )
         {
             lib.playDrums(instrumentEnv, lib.bdImpulse);
             Global.beat => now;
@@ -327,10 +328,13 @@ fun void rollCounter()
 }
 
 //// SPORKS --------------------
-spork~ player     (Global.inmutableLEAD);
+//spork~ player     (Global.inmutableLEAD);
+spork~ player     (Global.inmutableLEAD,lib.tri0env, lib.tri0);
+spork~ player     (Global.inmutableLEAD, mo);
 spork~ player     (Global.inmutableMID, mo);
 //spork~ player     (Global.inmutableMID, sk);
-spork~ player     (Global.inmutableMID, sit);
+//spork~ player     (Global.inmutableMID, sit);
+spork~ player     (Global.inmutableMID, lib.sin0env, lib.sin0 );
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
@@ -338,7 +342,7 @@ spork~ player     (Global.inmutableHTOM);
 spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
-spork~ oscTxFloat();
+//spork~ oscTxFloat();
 
 // keep sporks alive
 Global.beat * 16 => now;

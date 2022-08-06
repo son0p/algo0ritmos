@@ -56,9 +56,111 @@
 (defun sample (lst-lenghts lst-values)
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
-(defun lead-math-function (x) (+ (* 5 (* (random 200) 2)) (* (sin x) (sin x))))
+(defun always-one (x) (/ (+ x 1) (+ x 1)))
+(defun lead-math-function (x) (+ (* 3 (* (random 200) 1)) (* (sin x) (sin x))))
 (defun mid-math-function  (x) (+ (* 3 (random 200)) (sin x)))
 (defun bass-math-function (x) (+ (* 2 (random 100)) (tan x)))
+
+(defun base-probability(lst)
+  (flatten
+   (list
+    (sample '(34 66) (list (nth 1  lst) 0)) ;00
+    (sample '(02 98) (list (nth 2  lst) 0)) ;01
+    (sample '(18 82) (list (nth 3  lst) 0)) ;02
+    (sample '(13 87) (list (nth 4  lst) 0)) ;03
+    (sample '(14 86) (list (nth 5  lst) 0)) ;04
+    (sample '(09 91) (list (nth 6  lst) 0)) ;05
+    (sample '(19 81) (list (nth 7  lst) 0)) ;06
+    (sample '(11 89) (list (nth 8  lst) 0)) ;07
+    (sample '(13 87) (list (nth 9  lst) 0)) ;08
+    (sample '(12 88) (list (nth 10 lst) 0)) ;09
+    (sample '(15 85) (list (nth 11 lst) 0)) ;10
+    (sample '(11 89) (list (nth 12 lst) 0)) ;11
+    (sample '(15 85) (list (nth 13 lst) 0)) ;12
+    (sample '(12 88) (list (nth 14 lst) 0)) ;13
+    (sample '(13 87) (list (nth 15 lst) 0)) ;14
+    (sample '(03 97) (list (nth 16 lst) 0)))));15
+
+(defun baiao-bd-probability(lst)
+  (flatten
+   (list
+    (sample '(99 01) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(01 99) (list (nth 3  lst) 0)) ;02
+    (sample '(99 01) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(99 01) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(99 01) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(01 99) (list (nth 11 lst) 0)) ;10
+    (sample '(99 01) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
+(defun baiao-hh-probability(lst)
+  (flatten
+   (list
+    (sample '(99 01) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(01 99) (list (nth 3  lst) 0)) ;02
+    (sample '(99 01) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(99 01) (list (nth 6  lst) 0)) ;05
+    (sample '(01 99) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(99 01) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(99 01) (list (nth 11 lst) 0)) ;10
+    (sample '(01 99) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(99 01) (list (nth 14 lst) 0)) ;13
+    (sample '(01 99) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
+(defun baiao-sn-probability(lst)
+  (flatten
+   (list
+    (sample '(01 99) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(99 01) (list (nth 3  lst) 0)) ;02
+    (sample '(01 99) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(99 01) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(01 99) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(99 01) (list (nth 11 lst) 0)) ;10
+    (sample '(01 99) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
+(defun baiao-htom-probability(lst)
+  (flatten
+   (list
+    (sample '(01 99) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(01 99) (list (nth 3  lst) 0)) ;02
+    (sample '(01 99) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(99 01) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(01 99) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(01 99) (list (nth 11 lst) 0)) ;10
+    (sample '(01 99) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
 
 (defun insert-probability(lst)
   (flatten
@@ -85,11 +187,11 @@
    (list
     (sample '(90 10) (list (nth 1  lst) 0)) ;00
     (sample '(10 90) (list (nth 2  lst) 0)) ;01
-    (sample '(40 60) (list (nth 3  lst) 0)) ;02
-    (sample '(90 10) (list (nth 4  lst) 0)) ;03
+    (sample '(50 50) (list (nth 3  lst) 0)) ;02
+    (sample '(80 20) (list (nth 4  lst) 0)) ;03
     (sample '(90 10) (list (nth 5  lst) 0)) ;04
     (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(30 70) (list (nth 7  lst) 0)) ;06
+    (sample '(50 50) (list (nth 7  lst) 0)) ;06
     (sample '(70 30) (list (nth 8  lst) 0)) ;07
     (sample '(90 10) (list (nth 9  lst) 0)) ;08
     (sample '(01 99) (list (nth 10 lst) 0)) ;09
@@ -97,8 +199,8 @@
     (sample '(90 10) (list (nth 12 lst) 0)) ;11
     (sample '(05 95) (list (nth 13 lst) 0)) ;12
     (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(40 60) (list (nth 15 lst) 0)) ;14
-    (sample '(40 60) (list (nth 16 lst) 0)))));15
+    (sample '(50 50) (list (nth 15 lst) 0)) ;14
+    (sample '(50 50) (list (nth 16 lst) 0)))));15
 
 
 ;;; drums test pag 65
@@ -218,25 +320,18 @@
   (send-part (pattern-generate osc-name part-math-function)
              osc-name))
 
-(defun prob-generate-and-send (osc-name part-math-function)
-  (send-part (insert-probability  (pattern-generate osc-name part-math-function))
+(defun prob-generate-and-send (osc-name part-math-function prob-distribution)
+  (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
              osc-name))
 
 (defun bass-generate-and-send (osc-name part-math-function)
-  (send-part (bass-probability  (pattern-generate osc-name part-math-function))
+  (send-part (base-probability  (pattern-generate osc-name part-math-function))
              osc-name))
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
-
-(defun mute-drums ()
-  (setf *bd*   (clear-patt *bd*))
-  (setf *sd*   (clear-patt *sd*))
-  (setf *htom* (clear-patt *htom*))
-  (setf *hh*   (clear-patt *hh*))
-  (update-drums))
 
 (defun mute-drums ()
   (mute-part "bd")
@@ -298,8 +393,17 @@
 (osc-receive 6667)
 
 ;; ==== live transformations
-(prob-generate-and-send "lead" #'lead-math-function)
+(play-drums)
+(mute-drums)
+(prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+(prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
+(prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
+(prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
+(prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)
 
 (generate-and-send "lead" #'lead-math-function)
 (generate-and-send "mid"  #'mid-math-function)
-(generate-and-send "bass" #'bass-math-function)
+(mute-part "mid")
+(mute-part "lead")
+(mute-part "bass")
+(bass-generate-and-send "bass" #'bass-math-function)
