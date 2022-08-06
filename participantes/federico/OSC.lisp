@@ -316,16 +316,8 @@
   (send-part local-pattern osc-name)
   local-pattern))
 
-(defun generate-and-send (osc-name part-math-function)
-  (send-part (pattern-generate osc-name part-math-function)
-             osc-name))
-
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
   (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
-             osc-name))
-
-(defun bass-generate-and-send (osc-name part-math-function)
-  (send-part (base-probability  (pattern-generate osc-name part-math-function))
              osc-name))
 
 (defun mute-part (osc-name)
@@ -379,7 +371,7 @@
                (progn
                  (mute-part "mid")
                  (prob-generate-and-send "lead" #'lead-math-function)
-                 (bass-generate-and-send "bass" #'bass-math-function)
+                 (prob-generate-and-send "bass" #'bass-math-function)
                  (four-on-floor)
                  (hh-base)))
            (if (= (nth 1 *oscrx*) 3)
@@ -395,15 +387,16 @@
 ;; ==== live transformations
 (play-drums)
 (mute-drums)
-(prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+(progn
+  (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+  (prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
+  (prob-generate-and-send "bass" #'bass-math-function #'base-probability))
+
 (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
 (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
 (prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
 (prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)
 
-(generate-and-send "lead" #'lead-math-function)
-(generate-and-send "mid"  #'mid-math-function)
 (mute-part "mid")
 (mute-part "lead")
 (mute-part "bass")
-(bass-generate-and-send "bass" #'bass-math-function)
