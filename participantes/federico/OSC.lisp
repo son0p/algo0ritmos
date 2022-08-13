@@ -1,11 +1,10 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)--------------------
 
-(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
+(uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
-(ql:quickload :osc)
-(ql:quickload :usocket)
-(ql:quickload :random-sample)
+(ql:quickload '(osc usocket random-sample cl-patterns))
+(use-package 'cl-patterns)
 (load "percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
@@ -26,11 +25,9 @@
   (defvar *scale* nil)  ; make local let
   (defvar num-seq (loop :for n :below 16 :collect n))) ; TODO: es +constante+?
 
-(setf *scale* '(16.35 18.35 20.60 21.83 24.50 27.50 30.87 32.70 36.71 41.20
-                43.65 49.00 55.00 61.74 65.41 73.42 82.41 87.31 98.00 110.00
-                123.47 130.81 146.83 164.81 174.61 196.00 220.00 246.94 261.63
-                293.66 329.63 349.23 392.00  440 493.88 523.25 587.33 659.25 698.46
-                783.99 880.00 987.77 1046.50 1174.66 1318.51 1396.91 1567.98 ))
+(setf *scale* (multi-channel-funcall #'floor
+                                     (multi-channel-funcall #'midinote-freq
+                                                            (scale-midinotes "lydian" :root 10 :octave :all))))
 
 ;;; funciones
 (defun modify-list (list position value)
@@ -203,6 +200,10 @@
   (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
   (prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
   (prob-generate-and-send "bass" #'bass-math-function #'base-probability))
+
+(prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+(prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
+(prob-generate-and-send "bass" #'bass-math-function #'base-probability)
 
 (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
 (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
