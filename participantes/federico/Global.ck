@@ -3,6 +3,9 @@ public class Global
     int inmutableArray[16];
     int inmutableEnvNotes[16];
     static float inmutableLEAD[];
+    static int midiLEAD[];
+    static int midiMID[];
+    static int midiBASS[];
     static float inmutableMID[];
     static float inmutableBASS[];
     static int inmutableBD[];
@@ -29,6 +32,9 @@ public class Global
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableLEAD;
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableMID;
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableBASS;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.midiLEAD;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.midiMID;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.midiBASS;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableBD;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableSD;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHTOM;

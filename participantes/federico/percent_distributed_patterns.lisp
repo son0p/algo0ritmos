@@ -1,3 +1,23 @@
+(defun all-probability(lst)
+  (flatten
+   (list
+    (sample '(99 01) (list (nth 1  lst) 0)) ;00
+    (sample '(99 01) (list (nth 2  lst) 0)) ;01
+    (sample '(99 01) (list (nth 3  lst) 0)) ;02
+    (sample '(99 01) (list (nth 4  lst) 0)) ;03
+    (sample '(99 01) (list (nth 5  lst) 0)) ;04
+    (sample '(99 01) (list (nth 6  lst) 0)) ;05
+    (sample '(99 01) (list (nth 7  lst) 0)) ;06
+    (sample '(99 01) (list (nth 8  lst) 0)) ;07
+    (sample '(99 01) (list (nth 9  lst) 0)) ;08
+    (sample '(99 01) (list (nth 10 lst) 0)) ;09
+    (sample '(99 01) (list (nth 11 lst) 0)) ;10
+    (sample '(99 01) (list (nth 12 lst) 0)) ;11
+    (sample '(99 01) (list (nth 13 lst) 0)) ;12
+    (sample '(99 01) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(99 01) (list (nth 16 lst) 0)))));15
+
 (defun base-probability(lst)
   (flatten
    (list

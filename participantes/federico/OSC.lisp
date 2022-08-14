@@ -3,9 +3,9 @@
 (uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
-(ql:quickload '(osc usocket random-sample cl-patterns))
-(use-package 'cl-patterns)
-(load "percent_distributed_patterns.lisp")
+;;(ql:quickload '(osc usocket random-sample cl-patterns))
+;;(use-package 'cl-patterns)
+(load "/home/ff/Builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
@@ -25,11 +25,15 @@
   (defvar *scale* nil)  ; make local let
   (defvar num-seq (loop :for n :below 16 :collect n))) ; TODO: es +constante+?
 
-(setf *scale* (multi-channel-funcall #'floor
-                                     (multi-channel-funcall #'midinote-freq
-                                                            (scale-midinotes "lydian" :root 10 :octave :all))))
+(setf *scale*
+      (cl-patterns:multi-channel-funcall #'floor
+                                         (cl-patterns:scale-midinotes "lydian" :root 36 :octave :all)))
 
 ;;; funciones
+(defun random-from-range (start end)
+  (+ start (random (+ 1 (- end start)))))
+
+
 (defun modify-list (list position value)
   (setf (nth position list) value))
 
@@ -57,25 +61,20 @@
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
-(defun lead-math-function (x) (+ (* 3 (* (random 200) 1)) (* (sin x) (sin x))))
-(defun mid-math-function  (x) (+ (* 3 (random 200)) (sin x)))
-(defun bass-math-function (x) (+ (* 2 (random 100)) (tan x)))
+(defun lead-math-function (x)  (random-from-range 70 127))
+(defun mid-math-function  (x)  (random-from-range 50 70))
+(defun bass-math-function (x)  (random-from-range 38 50))
 
-(defun quantize-frequency (unquantized-value)
-  "Quantize to frequencies in musical scale
+(defun nearest (input list)
+  "Get the element in LIST nearest to INPUT.
 
-- Select the NTH element of the quantized-list.
-- Gets the position of the lowest difference element.
-- find the differences between value and each element of the quantized list.
-
-"
-  (nth
-   (position
-    (reduce #'min (mapcar #'(lambda (x) (abs (- x unquantized-value)))
-                          *scale*))
-    (mapcar #'(lambda (x) (abs (- x unquantized-value)))
-            *scale*))
-   *scale*))
+See also: `near-p'"
+  (reduce (lambda (a b)
+            (if (> (abs (- input a))
+                   (abs (- input b)))
+                b
+                a))
+          list))
 
 (defun osc-send (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
@@ -87,6 +86,7 @@
     (unwind-protect
          (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
+
 
 ;;; change to individual parts
 (defun send-part (part-patt osc-name)
@@ -119,15 +119,17 @@
    (let ((local-pattern nil))
   (setf local-pattern
         (mapcar #'(lambda (x)
-                    (quantize-frequency
-                     (funcall part-math-function x)))
+                    (nearest
+                     (funcall part-math-function x) *scale*))
                 num-seq))
   (send-part local-pattern osc-name)
-  local-pattern))
+     local-pattern
+     (print local-pattern)))
 
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
   (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
-             osc-name))
+             osc-name)
+  (print osc-name))
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -201,9 +203,12 @@
   (prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
   (prob-generate-and-send "bass" #'bass-math-function #'base-probability))
 
-(prob-generate-and-send "lead" #'lead-math-function #'base-probability)
-(prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
-(prob-generate-and-send "bass" #'bass-math-function #'base-probability)
+(progn
+  (prob-generate-and-send "midilead" #'lead-math-function #'all-probability)
+  (prob-generate-and-send "midimid"  #'mid-math-function  #'base-probability)
+  (prob-generate-and-send "midibass" #'bass-math-function #'base-probability))
+
+(prob-generate-and-send "midilead" #'lead-math-function #'all-probability)
 
 (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
 (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)

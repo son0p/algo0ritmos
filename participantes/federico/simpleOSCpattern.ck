@@ -9,13 +9,16 @@ OSC_Read osc;
 OscIn oin;
 OscMsg msg;
 6450 => oin.port;
-oin.addAddress( "/audio/2/lead, ffffffffffffffff" );
-oin.addAddress( "/audio/2/mid,  ffffffffffffffff" );
-oin.addAddress( "/audio/2/bass, ffffffffffffffff" );
-oin.addAddress( "/audio/2/bd,   iiiiiiiiiiiiiiii" );
-oin.addAddress( "/audio/2/sd,   iiiiiiiiiiiiiiii" );
-oin.addAddress( "/audio/2/htom, iiiiiiiiiiiiiiii" );
-oin.addAddress( "/audio/2/hh,   iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/lead,     ffffffffffffffff" );
+oin.addAddress( "/audio/2/mid,      ffffffffffffffff" );
+oin.addAddress( "/audio/2/bass,     ffffffffffffffff" );
+oin.addAddress( "/audio/2/midilead, iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/midimid,  iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/midibass, iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/bd,       iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/sd,       iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/htom,     iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/hh,       iiiiiiiiiiiiiiii" );
 
 // instrument classes
 kjzTT101 htom;
@@ -141,6 +144,18 @@ fun void oscTxFloat()
             {
                 for(0 => int i; i < 16; i++){ msg.getFloat(i) => Global.inmutableBASS[i]; }
             }
+             if (addr == "/audio/2/midilead" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i) => Global.midiLEAD[i]; }
+            }
+            else if (addr == "/audio/2/midimid" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i) => Global.midiMID[i]; }
+            }
+            else if (addr == "/audio/2/midibass" )
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i) => Global.midiBASS[i]; }
+            }
             else if (addr == "/audio/2/bd" )
             {
                 for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableBD[i]; }
@@ -192,9 +207,28 @@ fun void player(float notes[], ADSR instrumentEnv, Fat instrument)
         {
             noteFreq => instrument.freq;
             instrumentEnv.keyOn();
-            midi02.noteon((Std.ftoi(Std.ftom(noteFreq))), 30);
+            midi01.noteon((Std.ftoi(Std.ftom(noteFreq))), 30);
             Global.beat => now;
-            midi02.noteoff(Std.ftoi(Std.ftom(noteFreq)));
+            midi01.noteoff(Std.ftoi(Std.ftom(noteFreq)));
+        }
+        else
+        {
+             Global.beat => now;
+        }
+
+
+    }
+}
+fun void midiPlayer(int notes[], int velocity, int channel)
+{
+    while(true)
+    {
+        notes[Global.mod16] => int midiNote;
+        if( midiNote > 20 )
+        {
+            midi01.noteon(midiNote, velocity, channel);
+            Global.beat => now;
+            midi01.noteoff(midiNote, channel);
         }
         else
         {
@@ -332,6 +366,10 @@ fun void rollCounter()
 spork~ player     (Global.inmutableLEAD,lib.tri0env, lib.tri0);
 spork~ player     (Global.inmutableLEAD, mo);
 spork~ player     (Global.inmutableMID, mo);
+spork~ midiPlayer (Global.inmutableBD, 30, 4);
+spork~ midiPlayer (Global.midiLEAD, 30, 1);
+spork~ midiPlayer (Global.midiMID, 30, 2);
+spork~ midiPlayer (Global.midiBASS, 30, 3);
 //spork~ player     (Global.inmutableMID, sk);
 //spork~ player     (Global.inmutableMID, sit);
 spork~ player     (Global.inmutableMID, lib.sin0env, lib.sin0 );
