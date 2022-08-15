@@ -1,11 +1,11 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)--------------------
 
-(uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
+(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
 ;;(ql:quickload '(osc usocket random-sample cl-patterns))
 ;;(use-package 'cl-patterns)
-(load "/home/ff/Builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
+(load "/home/ff/builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
@@ -27,12 +27,13 @@
 
 (setf *scale*
       (cl-patterns:multi-channel-funcall #'floor
-                                         (cl-patterns:scale-midinotes "lydian" :root 36 :octave :all)))
+                                         (cl-patterns:scale-midinotes "lydian"
+                                                                      :root 36
+                                                                      :octave :all)))
 
 ;;; funciones
 (defun random-from-range (start end)
   (+ start (random (+ 1 (- end start)))))
-
 
 (defun modify-list (list position value)
   (setf (nth position list) value))
@@ -61,9 +62,9 @@
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
-(defun lead-math-function (x)  (random-from-range 70 127))
-(defun mid-math-function  (x)  (random-from-range 50 70))
-(defun bass-math-function (x)  (random-from-range 38 50))
+(defun lead-math-function (x) (+ 100 (* (random-from-range 5 10) (sin x))))
+(defun mid-math-function  (x) (+  50 (* (random-from-range 5 10) (cos x))))
+(defun bass-math-function (x) (+  30 (* (random-from-range 2  5) (tan x))))
 
 (defun nearest (input list)
   "Get the element in LIST nearest to INPUT.
@@ -87,7 +88,6 @@ See also: `near-p'"
          (USOCKET:socket-send s b (length b))
       (when s (USOCKET:socket-close s)))))
 
-
 ;;; change to individual parts
 (defun send-part (part-patt osc-name)
   (osc-send #(127 0 0 1) 6450
@@ -95,25 +95,6 @@ See also: `near-p'"
                         (osc-name osc-name)
                         (patt part-patt))
                     (cons (concatenate 'string addr osc-name) patt))))
-
-(defun update-drums ()
-  (progn
-    (osc-send #(127 0 0 1) 6450
-                    (let ((addr "/audio/2/bd")
-                          (patt  *bd*))
-                      (cons addr patt)))
-    (osc-send #(127 0 0 1) 6450
-                    (let ((addr "/audio/2/sd")
-                          (patt *sd*))
-                      (cons addr patt)))
-    (osc-send #(127 0 0 1) 6450
-                    (let ((addr "/audio/2/htom")
-                          (patt *htom*))
-                      (cons addr patt)))
-    (osc-send #(127 0 0 1) 6450
-                    (let ((addr "/audio/2/hh")
-                          (patt *hh*))
-                      (cons addr patt)))))
 
 (defun pattern-generate (osc-name part-math-function)
    (let ((local-pattern nil))
@@ -141,12 +122,6 @@ See also: `near-p'"
   (mute-part "sd")
   (mute-part "htom")
   (mute-part "hh"))
-
-(defun play-drums ()
-  (progn
-    (setf *bd* (refresh-bd))
-    (setf *sd* (refresh-sd))
-    (update-drums)))
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
