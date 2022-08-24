@@ -1,11 +1,9 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)--------------------
 
-(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
-
 ;;; librerias
 ;;(ql:quickload '(osc usocket random-sample cl-patterns))
 ;;(use-package 'cl-patterns)
-(load "/home/ff/builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
+(load "percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
