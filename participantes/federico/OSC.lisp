@@ -14,7 +14,7 @@
 ;;(use-package 'cl-patterns)
 
 ;; cargarlo después de tener update-drums
-(load "/home/ff/Builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
+(load "percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
