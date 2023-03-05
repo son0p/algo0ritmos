@@ -1,11 +1,20 @@
-;;;; test with simpleOSCpattern.ck (ChucK)--------------------
+;;;; test with simpleOSCpattern.ck (ChucK)
+;;;; and MIDI Ardour morph--------------------
+;;; librerias
+(ql:quickload :osc)
+(ql:quickload :usocket)
+(ql:quickload :random-sample)
+(ql:quickload :alexandria)
+(ql:quickload :cl-patterns)
 
-(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
+(uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
 ;;(ql:quickload '(osc usocket random-sample cl-patterns))
 ;;(use-package 'cl-patterns)
-(load "/home/ff/builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
+
+;; cargarlo después de tener update-drums
+(load "/home/ff/Builds/algo0ritmos/participantes/federico/percent_distributed_patterns.lisp")
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
@@ -23,13 +32,22 @@
   (defvar *htom-actives* nil)
   (defvar *oscRx* nil)
   (defvar *scale* nil)  ; make local let
+  (defvar *scale-midi* nil)  ; make local let
   (defvar num-seq (loop :for n :below 16 :collect n))) ; TODO: es +constante+?
 
-(setf *scale*
+
+(defun midi-to-frequency (notes)
+  "Convert a list of MIDI note numbers to their corresponding frequencies"
+  (mapcar (lambda (note)
+            (float (* 440 (expt 2 (/ (- note 69) 12)))))
+          notes))
+
+(setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
-                                         (cl-patterns:scale-midinotes "lydian"
-                                                                      :root 36
+                                         (cl-patterns:scale-midinotes "Harmonic Minor"
+                                                                      :root 38
                                                                       :octave :all)))
+(setf *scale* (midi-to-frequency *scale-midi*))
 
 ;;; funciones
 (defun random-from-range (start end)
@@ -62,9 +80,9 @@
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
-(defun lead-math-function (x) (+ 100 (* (random-from-range 5 10) (sin x))))
-(defun mid-math-function  (x) (+  50 (* (random-from-range 5 10) (cos x))))
-(defun bass-math-function (x) (+  30 (* (random-from-range 2  5) (tan x))))
+(defun lead-math-function (x) (* x 100))
+(defun mid-math-function  (x) (+ 50 (* (random-from-range 5 10) (* (sin x) (sin x)))))
+(defun bass-math-function (x) (+ 30 (* (random-from-range 1  2) (+ (expt x 1)  (sin (* 8 x)   )))))
 
 (defun nearest (input list)
   "Get the element in LIST nearest to INPUT.
@@ -94,23 +112,28 @@ See also: `near-p'"
                   (let ((addr "/audio/2/")
                         (osc-name osc-name)
                         (patt part-patt))
-                    (cons (concatenate 'string addr osc-name) patt))))
+                    (cons (concatenate 'string addr osc-name) patt)))
+      ;;(write part-patt) (write osc-name)  (format t "~&") ;; debug
+  )
 
 (defun pattern-generate (osc-name part-math-function)
+  " Para cada x de num-seq llame la función matemática (que se pasa como argumento) y busque el valor más cercano de *scale*"
    (let ((local-pattern nil))
   (setf local-pattern
         (mapcar #'(lambda (x)
-                    (nearest
-                     (funcall part-math-function x) *scale*))
+                    (write osc-name)(format t " patt ~&") ;; debug
+                    (write (nearest
+                     (funcall part-math-function x) *scale*)))
                 num-seq))
   (send-part local-pattern osc-name)
-     local-pattern
-     (print local-pattern)))
+     local-pattern))
+
+(prob-generate-and-send "lead" #'lead-math-function #'all-probability)
 
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
+  " imprime dos veces porque se llama send-part antes de la distribución TODO"
   (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
-             osc-name)
-  (print osc-name))
+             osc-name))
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -174,22 +197,49 @@ See also: `near-p'"
 (play-drums)
 (mute-drums)
 (progn
-  (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+  (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
   (prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
   (prob-generate-and-send "bass" #'bass-math-function #'base-probability))
 
 (progn
-  (prob-generate-and-send "midilead" #'lead-math-function #'all-probability)
+  (prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
   (prob-generate-and-send "midimid"  #'mid-math-function  #'base-probability)
   (prob-generate-and-send "midibass" #'bass-math-function #'base-probability))
 
-(prob-generate-and-send "midilead" #'lead-math-function #'all-probability)
+(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
+
+(prob-generate-and-send "midimid"  #'mid-math-function  #'base-probability)
+
+(prob-generate-and-send "midibass" #'bass-math-function #'baiao-bass-probability)
+
+(prob-generate-and-send "midilead" #'lead-math-function #'base-verbose-probability)
+
+(prob-generate-and-send "midimid"  #'mid-math-function  #'base-verbose-probability)
+
+(prob-generate-and-send "midibass" #'bass-math-function #'base-verbose-probability)
 
 (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
 (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
 (prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
 (prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)
 
-(mute-part "mid")
+;; ====== test 
+(cl-patterns:multi-channel-funcall #'mute-part '("lead" "midilead" "mid" "midimid" "bass" "midibass"))
+(mute-part "midilead")
+(mute-part "bass")
 (mute-part "lead")
 (mute-part "bass")
+
+(ql:quickload 'cl-patterns/alsa-midi)
+(use-package 'cl-patterns)
+(defparameter *pat* (pbind :foo (pseq '(1 2 3))
+                           :bar (prand '(9 8 7) 5)))
+
+(defparameter *pstream* (as-pstream *pat*))
+(next-n *pstream* 3)
+
+(pb :automatic-jazz
+  :note (pshuf (scale-notes :minor) 4)
+  :octave (pr (pwhite 2 7))
+  :root (pr (pwhite 0 12))
+  :dur (pshuf (list 1/3 1/4)))

@@ -38,6 +38,45 @@
     (sample '(13 87) (list (nth 15 lst) 0)) ;14
     (sample '(03 97) (list (nth 16 lst) 0)))));15
 
+(defun base-verbose-probability(lst)
+  (flatten
+   (list
+    (sample '(44 56) (list (nth 1  lst) 0)) ;00
+    (sample '(12 88) (list (nth 2  lst) 0)) ;01
+    (sample '(28 72) (list (nth 3  lst) 0)) ;02
+    (sample '(23 77) (list (nth 4  lst) 0)) ;03
+    (sample '(24 76) (list (nth 5  lst) 0)) ;04
+    (sample '(09 91) (list (nth 6  lst) 0)) ;05
+    (sample '(29 71) (list (nth 7  lst) 0)) ;06
+    (sample '(21 79) (list (nth 8  lst) 0)) ;07
+    (sample '(23 77) (list (nth 9  lst) 0)) ;08
+    (sample '(22 78) (list (nth 10 lst) 0)) ;09
+    (sample '(25 75) (list (nth 11 lst) 0)) ;10
+    (sample '(21 79) (list (nth 12 lst) 0)) ;11
+    (sample '(25 75) (list (nth 13 lst) 0)) ;12
+    (sample '(22 78) (list (nth 14 lst) 0)) ;13
+    (sample '(23 77) (list (nth 15 lst) 0)) ;14
+    (sample '(13 87) (list (nth 16 lst) 0)))));15
+(defun baiao-bass-probability(lst)
+  (flatten
+   (list
+    (sample '(99 01) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(18 82) (list (nth 3  lst) 0)) ;02
+    (sample '(99 01) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(19 81) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(13 87) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(15 85) (list (nth 11 lst) 0)) ;10
+    (sample '(11 89) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
 (defun baiao-bd-probability(lst)
   (flatten
    (list
@@ -79,6 +118,26 @@
     (sample '(01 99) (list (nth 16 lst) 0)))));15
 
 (defun baiao-sn-probability(lst)
+  (flatten
+   (list
+    (sample '(01 99) (list (nth 1  lst) 0)) ;00
+    (sample '(01 99) (list (nth 2  lst) 0)) ;01
+    (sample '(99 01) (list (nth 3  lst) 0)) ;02
+    (sample '(01 99) (list (nth 4  lst) 0)) ;03
+    (sample '(01 99) (list (nth 5  lst) 0)) ;04
+    (sample '(01 99) (list (nth 6  lst) 0)) ;05
+    (sample '(99 01) (list (nth 7  lst) 0)) ;06
+    (sample '(01 99) (list (nth 8  lst) 0)) ;07
+    (sample '(01 99) (list (nth 9  lst) 0)) ;08
+    (sample '(01 99) (list (nth 10 lst) 0)) ;09
+    (sample '(99 01) (list (nth 11 lst) 0)) ;10
+    (sample '(01 99) (list (nth 12 lst) 0)) ;11
+    (sample '(01 99) (list (nth 13 lst) 0)) ;12
+    (sample '(01 99) (list (nth 14 lst) 0)) ;13
+    (sample '(99 01) (list (nth 15 lst) 0)) ;14
+    (sample '(01 99) (list (nth 16 lst) 0)))));15
+
+(defun fill-001-sn(lst)
   (flatten
    (list
     (sample '(01 99) (list (nth 1  lst) 0)) ;00

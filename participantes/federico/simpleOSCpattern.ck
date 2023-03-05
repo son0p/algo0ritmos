@@ -364,12 +364,15 @@ fun void rollCounter()
 //// SPORKS --------------------
 //spork~ player     (Global.inmutableLEAD);
 spork~ player     (Global.inmutableLEAD,lib.tri0env, lib.tri0);
-spork~ player     (Global.inmutableLEAD, mo);
+//spork~ player     (Global.inmutableLEAD, mo);
 spork~ player     (Global.inmutableMID, mo);
 spork~ midiPlayer (Global.inmutableBD, 30, 4);
-spork~ midiPlayer (Global.midiLEAD, 30, 1);
-spork~ midiPlayer (Global.midiMID, 30, 2);
-spork~ midiPlayer (Global.midiBASS, 30, 3);
+spork~ midiPlayer (Global.midiLEAD, 70, 1);
+spork~ midiPlayer (Global.midiMID, 70, 2);
+spork~ midiPlayer (Global.midiBASS, 70, 3);
+spork~ midiPlayer (Global.inmutableBD, 70, 10);
+spork~ midiPlayer (Global.inmutableSD, 70, 11);
+spork~ midiPlayer (Global.inmutableHH, 70, 12);
 //spork~ player     (Global.inmutableMID, sk);
 //spork~ player     (Global.inmutableMID, sit);
 spork~ player     (Global.inmutableMID, lib.sin0env, lib.sin0 );
