@@ -1,20 +1,35 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)
-;;;; and MIDI Ardour morph--------------------
-;;; librerias
-(ql:quickload :osc)
-(ql:quickload :usocket)
-(ql:quickload :random-sample)
-(ql:quickload :alexandria)
-(ql:quickload :cl-patterns)
-
-(uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
+;;;; or MIDI Ardour morph--------------------
+(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
-;;(ql:quickload '(osc usocket random-sample cl-patterns))
-;;(use-package 'cl-patterns)
+(ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix))
 
 ;; cargarlo después de tener update-drums
-(load "percent_distributed_patterns.lisp")
+(load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
+
+(defun prob-generate-and-send (osc-name part-math-function prob-distribution)
+  " Envía por OSC un patrón que contiene las alturas definidas por la función matemática y la activación de cada paso, definida por la distribución de probabilidades. TODO: imprime dos veces porque se llama send-part antes de la distribución"
+  (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
+             osc-name))
+
+(defun pattern-generate (osc-name part-math-function)
+  " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) y busqua el valor más cercano de *SCALE*"
+  (format t "~& ===>>") ;; debug
+  (let ((local-pattern nil))
+    (setf local-pattern
+          (mapcar #'(lambda (x)
+                      (write osc-name) ;; debug
+                      (write (nearest
+                              (funcall part-math-function x) *scale*)))
+                  num-seq))
+    (send-part local-pattern osc-name)
+    local-pattern))
+
+(defun lead-math-function (x) (* x 100))
+(defun mid-math-function  (x) (+ 50 (* (random-from-range 5 10) (* (sin x) (sin x)))))
+(defun bass-math-function (x) (+ 30 (* (random-from-range 1  2) (+ (expt x 1)  (sin (* 8 x)   )))))
+(defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
@@ -35,19 +50,19 @@
   (defvar *scale-midi* nil)  ; make local let
   (defvar num-seq (loop :for n :below 16 :collect n))) ; TODO: es +constante+?
 
-
-(defun midi-to-frequency (notes)
-  "Convert a list of MIDI note numbers to their corresponding frequencies"
-  (mapcar (lambda (note)
-            (float (* 440 (expt 2 (/ (- note 69) 12)))))
-          notes))
-
 (setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
                                          (cl-patterns:scale-midinotes "Harmonic Minor"
                                                                       :root 38
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
+
+
+(defun midi-to-frequency (notes)
+  "Convert a list of MIDI note numbers to their corresponding frequencies"
+  (mapcar (lambda (note)
+            (float (* 440 (expt 2 (/ (- note 69) 12)))))
+          notes))
 
 ;;; funciones
 (defun random-from-range (start end)
@@ -79,10 +94,6 @@
 (defun sample (lst-lenghts lst-values)
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
-(defun always-one (x) (/ (+ x 1) (+ x 1)))
-(defun lead-math-function (x) (* x 100))
-(defun mid-math-function  (x) (+ 50 (* (random-from-range 5 10) (* (sin x) (sin x)))))
-(defun bass-math-function (x) (+ 30 (* (random-from-range 1  2) (+ (expt x 1)  (sin (* 8 x)   )))))
 
 (defun nearest (input list)
   "Get the element in LIST nearest to INPUT.
@@ -116,24 +127,11 @@ See also: `near-p'"
       ;;(write part-patt) (write osc-name)  (format t "~&") ;; debug
   )
 
-(defun pattern-generate (osc-name part-math-function)
-  " Para cada x de num-seq llame la función matemática (que se pasa como argumento) y busque el valor más cercano de *scale*"
-   (let ((local-pattern nil))
-  (setf local-pattern
-        (mapcar #'(lambda (x)
-                    (write osc-name)(format t " patt ~&") ;; debug
-                    (write (nearest
-                     (funcall part-math-function x) *scale*)))
-                num-seq))
-  (send-part local-pattern osc-name)
-     local-pattern))
+
 
 (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
 
-(defun prob-generate-and-send (osc-name part-math-function prob-distribution)
-  " imprime dos veces porque se llama send-part antes de la distribución TODO"
-  (send-part (funcall prob-distribution  (pattern-generate osc-name part-math-function))
-             osc-name))
+
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -194,6 +192,7 @@ See also: `near-p'"
 (osc-receive 6667)
 
 ;; ==== live transformations
+
 (play-drums)
 (mute-drums)
 (progn
