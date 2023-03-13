@@ -1,6 +1,6 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)
 ;;;; or MIDI Ardour morph--------------------
-(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
+;;(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
 (ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix))
@@ -15,18 +15,17 @@
 
 (defun pattern-generate (osc-name part-math-function)
   " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) y busqua el valor más cercano de *SCALE*"
-  (format t "~& ===>>") ;; debug
+  (format t "~& ===>> ~s" osc-name) ;; debug
   (let ((local-pattern nil))
     (setf local-pattern
           (mapcar #'(lambda (x)
-                      (write osc-name) ;; debug
-                      (write (nearest
+                      (print (nearest
                               (funcall part-math-function x) *scale*)))
                   num-seq))
     (send-part local-pattern osc-name)
     local-pattern))
 
-(defun lead-math-function (x) (* x 100))
+(defun lead-math-function (x) (* (sin x) (random-from-range 500 600)))
 (defun mid-math-function  (x) (+ 50 (* (random-from-range 5 10) (* (sin x) (sin x)))))
 (defun bass-math-function (x) (+ 30 (* (random-from-range 1  2) (+ (expt x 1)  (sin (* 8 x)   )))))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
@@ -130,7 +129,6 @@ See also: `near-p'"
 
 
 (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
-
 
 
 (defun mute-part (osc-name)
