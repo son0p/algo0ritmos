@@ -98,18 +98,18 @@ fun void oscTxFloat()
     while( true )
     {
         // en mod64 cambia en 60
-        if (Global.mod64 == 0)
+        if (Global.mod32 == 0)
         {
             // start the message...
             xmit.start( "/foo/no" );
 
             // add int argument
-            //Math.random2( 0, 4 ) => xmit.add;
+            // Math.random2( 0, 4 ) => xmit.add;
             Global.cursor % 4  => xmit.add;
-            // add float argument
+            // add float argument, TODO: ¿para qué?
             Math.random2f( .1, .5 ) => xmit.add;
 
-            // send it
+            // send msg formated like: ("/foo/no" 3 0.48002946)
             xmit.send();
 
             Global.cursor++;
@@ -383,7 +383,7 @@ spork~ player     (Global.inmutableHTOM);
 spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
-//spork~ oscTxFloat();
+spork~ oscTxFloat();
 
 // keep sporks alive
 Global.beat * 16 => now;

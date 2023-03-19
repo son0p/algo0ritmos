@@ -159,19 +159,6 @@ public class OscCom
         lib.print(rec);
     }
 
-    fun void oscRxFloat()
-    {
-        while(true)
-        {
-            oin => now;
-            while (oin.recv(msg)){
-                for(0 => int i; i < 16; i++){
-                    msg.getFloat(i) => Global.bassFromOsc[i];
-                }
-            }
-        }
-    }
-
     fun void oscRxFloat2()
     {
         while(true)

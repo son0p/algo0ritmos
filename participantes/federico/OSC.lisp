@@ -1,6 +1,6 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)
 ;;;; or MIDI Ardour morph--------------------
-;;(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
+(uiop:chdir "/home/ff/builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
 (ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix))
@@ -15,7 +15,7 @@
 
 (defun pattern-generate (osc-name part-math-function)
   " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) y busqua el valor más cercano de *SCALE*"
-  (format t "~& ===>> ~s" osc-name) ;; debug
+ ;; (format t "~& ===>> ~s" osc-name) ;; debug
   (let ((local-pattern nil))
     (setf local-pattern
           (mapcar #'(lambda (x)
@@ -26,8 +26,8 @@
     local-pattern))
 
 (defun lead-math-function (x) (* (sin x) (random-from-range 500 600)))
-(defun mid-math-function  (x) (+ 50 (* (random-from-range 5 10) (* (sin x) (sin x)))))
-(defun bass-math-function (x) (+ 30 (* (random-from-range 1  2) (+ (expt x 1)  (sin (* 8 x)   )))))
+(defun mid-math-function  (x) (* (sin x) (random-from-range 200 300)))
+(defun bass-math-function (x) (* (sin x) (random-from-range 400 500)))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
@@ -49,19 +49,18 @@
   (defvar *scale-midi* nil)  ; make local let
   (defvar num-seq (loop :for n :below 16 :collect n))) ; TODO: es +constante+?
 
+(defun midi-to-frequency (notes)
+  "Convert a list of MIDI note numbers to their corresponding frequencies"
+  (mapcar (lambda (note)
+            (float (* 440 (expt 2 (/ (- note 69) 12)))))
+          notes))
+
 (setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
                                          (cl-patterns:scale-midinotes "Harmonic Minor"
                                                                       :root 38
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
-
-
-(defun midi-to-frequency (notes)
-  "Convert a list of MIDI note numbers to their corresponding frequencies"
-  (mapcar (lambda (note)
-            (float (* 440 (expt 2 (/ (- note 69) 12)))))
-          notes))
 
 ;;; funciones
 (defun random-from-range (start end)
@@ -130,6 +129,12 @@ See also: `near-p'"
 
 (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
 
+(defun play-drums ()
+  (progn
+    (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
+    (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
+    (prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
+    (prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)))
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -146,6 +151,8 @@ See also: `near-p'"
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. .
   - TODO funciones para sileciar par y poder ejecutar una estructura
+  - TODO ¿para qué se recibe un flotante como tercer argumento?
+  - ERROR: al recibir 0 genera un patron con valor mínimo que se traduce en freq 73
 "
   (let ((s (USOCKET:socket-connect nil nil
                                    :local-port port
@@ -159,32 +166,34 @@ See also: `near-p'"
            (USOCKET:socket-receive s buffer (length buffer))
            (format t "received -=> ~S~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
+           (write *oscRx*)
            (if (= (nth 1 *oscrx*) 0)
                (progn
-                 (generate-and-send "mid"  #' mid-math-function)
-                 (mute-part "lead")
-                 (mute-part "bass")
                  (play-drums)
-                 (hh-base)))
+                 (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
+                 ))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                (prob-generate-and-send "mid"  #' mid-math-function)
-                 (mute-part "lead")
-                 (mute-part "bass")
-                 (mute-drums)))
+                 (prob-generate-and-send "mid"  #'mid-math-function #'base-probability)
+                ;; (mute-part "lead")
+                ;; (mute-part "bass")
+                 (mute-drums)
+                 ))
            (if (= (nth 1 *oscrx*) 2)
                (progn
-                 (mute-part "mid")
-                 (prob-generate-and-send "lead" #'lead-math-function)
-                 (prob-generate-and-send "bass" #'bass-math-function)
-                 (four-on-floor)
-                 (hh-base)))
+                 (play-drums)
+                 ;;(mute-part "mid")
+                 (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+                 (prob-generate-and-send "bass" #'bass-math-function #'all-probability)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
-                 (mute-part "mid")
-                 (prob-generate-and-send "lead" #'lead-math-function)
                  (play-drums)
-                 (hh-base))))
+                 (mute-part "mid")
+                 (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
+                 ;;(play-drums)
+                 ;;(hh-base)
+                 ))
+               )
       (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)
@@ -215,10 +224,7 @@ See also: `near-p'"
 
 (prob-generate-and-send "midibass" #'bass-math-function #'base-verbose-probability)
 
-(prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
-(prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
-(prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
-(prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)
+
 
 ;; ====== test 
 (cl-patterns:multi-channel-funcall #'mute-part '("lead" "midilead" "mid" "midimid" "bass" "midibass"))
