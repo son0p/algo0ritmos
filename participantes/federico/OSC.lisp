@@ -5,8 +5,7 @@
 ;;; librerias
 (ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix))
 
-;; cargarlo después de tener update-drums
-(load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
+
 
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
   " Envía por OSC un patrón que contiene las alturas definidas por la función matemática y la activación de cada paso, definida por la distribución de probabilidades. TODO: imprime dos veces porque se llama send-part antes de la distribución"
@@ -14,7 +13,7 @@
              osc-name))
 
 (defun pattern-generate (osc-name part-math-function)
-  " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) y busqua el valor más cercano de *SCALE*"
+  " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) luego busca el valor más cercano de *SCALE*"
   ;;(format t "~& ===>> ~s" osc-name) ;; debug
   (let ((local-pattern nil))
     (setf local-pattern
@@ -26,8 +25,8 @@
     local-pattern))
 
 (defun lead-math-function (x) (* (sin x) (random-from-range 500 600)))
-(defun mid-math-function  (x) (* (sin x) (random-from-range 200 300)))
-(defun bass-math-function (x) (* (sin x) (random-from-range 400 500)))
+(defun mid-math-function  (x) (* (cos x) (random-from-range 200 300)))
+(defun bass-math-function (x) (* (tan x) (random-from-range 400 500)))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
@@ -57,12 +56,16 @@
 
 (setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
-                                         (cl-patterns:scale-midinotes "Harmonic Minor"
+                                         (cl-patterns:scale-midinotes "Lydian Minor"
                                                                       :root 38
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
 
 ;;; funciones
+(defun random-function (function-list)
+  (let ((random-index (random (length function-list))))
+    (nth random-index function-list)))
+
 (defun random-from-range (start end)
   (+ start (random (+ 1 (- end start)))))
 
@@ -124,10 +127,8 @@ See also: `near-p'"
                     (cons (concatenate 'string addr osc-name) patt)))
       ;;(write part-patt) (write osc-name)  (format t "~&") ;; debug
   )
-
-
-
-(prob-generate-and-send "lead" #'lead-math-function #'all-probability)
+;;(prob-generate-and-send "lead" #'lead-math-function #'all-probability) ;; test
+;;(prob-generate-and-send "bd"   #'always-one         (random-function *prob-list*))
 
 (defun play-drums ()
   (progn
@@ -146,6 +147,8 @@ See also: `near-p'"
   (mute-part "sd")
   (mute-part "htom")
   (mute-part "hh"))
+
+(mute-part "bass")
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
@@ -170,13 +173,13 @@ See also: `near-p'"
            (if (= (nth 1 *oscrx*) 0)
                (progn
                  (play-drums)
-                 (prob-generate-and-send "lead" #'lead-math-function #'all-probability)
+                 (prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
                  ))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                 (prob-generate-and-send "mid"  #'mid-math-function #'base-probability)
+                 (prob-generate-and-send "mid"  #'mid-math-function (random-function *prob-list*))
                 ;; (mute-part "lead")
-                ;; (mute-part "bass")
+                 (mute-part "bass")
                  (mute-drums)
                  ))
            (if (= (nth 1 *oscrx*) 2)
@@ -184,7 +187,7 @@ See also: `near-p'"
                  (play-drums)
                  ;;(mute-part "mid")
                  (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
-                 (prob-generate-and-send "bass" #'bass-math-function #'all-probability)))
+                 (prob-generate-and-send "bass" #'bass-math-function (random-function *prob-list*))))
            (if (= (nth 1 *oscrx*) 3)
                (progn
                  (play-drums)
@@ -197,6 +200,9 @@ See also: `near-p'"
       (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)
+
+;; cargarlo después de tener update-drums
+(load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
 
 ;; ==== live transformations
 

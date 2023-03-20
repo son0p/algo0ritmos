@@ -38,6 +38,7 @@
     (sample '(13 87) (list (nth 15 lst) 0)) ;14
     (sample '(03 97) (list (nth 16 lst) 0)))));15
 
+
 (defun base-verbose-probability(lst)
   (flatten
    (list
@@ -57,6 +58,7 @@
     (sample '(22 78) (list (nth 14 lst) 0)) ;13
     (sample '(23 77) (list (nth 15 lst) 0)) ;14
     (sample '(13 87) (list (nth 16 lst) 0)))));15
+
 (defun baiao-bass-probability(lst)
   (flatten
    (list
@@ -265,3 +267,11 @@
 (defun hh-base()
  (setf *hh* '(1 0 1 1 1 0 1 1 1 0 1 1 1 0 1 1))
   (update-drums))
+
+(defvar *prob-list* nil)
+(setf *prob-list* (list
+                   #'all-probability
+                   #'base-probability
+                   #'base-verbose-probability
+                   #'baiao-bass-probability
+                   #'bass-probability))
