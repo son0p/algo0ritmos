@@ -27,9 +27,9 @@
     (send-part local-pattern osc-name)
     local-pattern))
 
-(defun lead-math-function (x) (* (sin x) 1000))
-(defun mid-math-function  (x) (* (cos x) 400))
-(defun bass-math-function (x) (* (tan x) 100))
+(defun lead-math-function (x) (change-range (sin x) -1 1 600 4698))
+(defun mid-math-function  (x) (change-range (cos x) -1 1 300 600))
+(defun bass-math-function (x) (change-range (tan x) -1 1 70 300))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
@@ -71,6 +71,16 @@
 
 (defun random-from-range (start end)
   (+ start (random (+ 1 (- end start)))))
+
+(defun change-range (value old-min old-max new-min new-max)
+  ;; new_value = ((old_value - min_value) * factor) + new_min_value
+  (let* ((factor (/ (- new-max new-min) (- old-max old-min))))
+    (+ (* factor (- value old-min)) new-min)))
+
+;; (write
+;;  (let ((x (list 1 2 3 4 5 6 7 8 9 10)))
+;;    (mapcar (lambda(x) (change-range (sin x) -1 1 100 200))
+;;            x)))  ;; test
 
 (defun modify-list (list position value)
   (setf (nth position list) value))
@@ -207,7 +217,8 @@ See also: `near-p'"
 (load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
 
 ;; ==== live transformations
-(prob-generate-and-send "lead" #'lead-math-function #'all-probability) ;; test
+;;(prob-generate-and-send "lead" #'lead-math-function #'all-probability) ;; test
+;;(prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
 ;;(prob-generate-and-send "bd"   #'always-one         (random-function *prob-list*))
 
 (play-drums)
