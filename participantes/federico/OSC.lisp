@@ -1,11 +1,10 @@
 ;;;; test with simpleOSCpattern.ck (ChucK)
 ;;;; or MIDI Ardour morph--------------------
+;;;; favs in Scripts/music_patterns.ldg
 (uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
-(ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix))
-
-
+(ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix local-time))
 
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
   " Envía por OSC un patrón que contiene las alturas definidas por la función matemática y la activación de cada paso, definida por la distribución de probabilidades. TODO: imprime dos veces porque se llama send-part antes de la distribución"
@@ -13,7 +12,7 @@
   (let ((part (funcall prob-distribution
                        (pattern-generate osc-name part-math-function))))
     (send-part part osc-name)
-    (write (append (list osc-name) part))))
+    (write (append (list (local-time:now)) (list osc-name) part))))
 
 (defun pattern-generate (osc-name part-math-function)
   " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) luego busca el valor más cercano de *SCALE*"
@@ -27,8 +26,8 @@
     (send-part local-pattern osc-name)
     local-pattern))
 
-(defun lead-math-function (x) (change-range (sin x) -1 1 600 4698))
-(defun mid-math-function  (x) (change-range (cos x) -1 1 300 600))
+(defun lead-math-function (x) (change-range (- (expt (sin x) (random-from-range 2 4)) 0.3) -1 1 500 4698))
+(defun mid-math-function  (x) (change-range (expt (cos x) 4) -1 1 200 600))
 (defun bass-math-function (x) (change-range (tan x) -1 1 70 300))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
 
@@ -59,7 +58,7 @@
 
 (setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
-                                         (cl-patterns:scale-midinotes "Lydian Minor"
+                                         (cl-patterns:scale-midinotes "Natural Minor"
                                                                       :root 38
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
@@ -223,15 +222,12 @@ See also: `near-p'"
 
 (play-drums)
 (mute-drums)
-(progn
-  (prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
-  (prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
-  (prob-generate-and-send "bass" #'bass-math-function #'base-probability))
-
-(progn
-  (mute-part "lead")
-  (mute-part "mid")
-  (mute-part "bass"))
+(prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
+(prob-generate-and-send "mid"  #'mid-math-function  (random-function *prob-list*))
+(prob-generate-and-send "bass" #'bass-math-function #'base-probability)
+(mute-part "lead")
+(mute-part "mid")
+(mute-part "bass")
 
 (progn
   (prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
