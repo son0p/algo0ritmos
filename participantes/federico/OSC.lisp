@@ -16,7 +16,6 @@
 
 (defun pattern-generate (osc-name part-math-function)
   " Para cada X de NUM-SEQ llama la función matemática (que se pasa como argumento) luego busca el valor más cercano de *SCALE*"
-
   (let ((local-pattern nil))
     (setf local-pattern
           (mapcar #'(lambda (x)
@@ -25,11 +24,6 @@
                   num-seq))
     (send-part local-pattern osc-name)
     local-pattern))
-
-(defun lead-math-function (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 400 4698))
-(defun mid-math-function  (x) (change-range (expt (cos x) 4) -1 1 200 600))
-(defun bass-math-function (x) (change-range (sin x) -1 1 70 300))
-(defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
@@ -118,7 +112,6 @@
              acc))
     (reverse (rflatten lst nil))))
 
-
 (defun distributed-sample-generator (lst-lenghts lst-values)
   "Toma los tamaños y los valores de dos listas, genera una lista aplanada"
   (if (/= (reduce #'+ lst-lenghts)  100)
@@ -158,10 +151,11 @@ See also: `near-p'"
                   (let ((addr "/audio/2/")
                         (osc-name osc-name)
                         (patt part-patt))
-                    (cons (concatenate 'string addr osc-name) patt)))
-      ;;(write part-patt) (write osc-name)  (format t "~&") ;; debug
-  )
+                    (cons (concatenate 'string addr osc-name) patt))))
 
+(defun new-part (distribution-list math-function osc-name)
+  (send-part (pattern-from-distribution distribution-list
+                                        (pattern-generate osc-name math-function)) osc-name))
 
 (defun play-drums ()
   (progn
@@ -182,6 +176,16 @@ See also: `near-p'"
   (mute-part "hh"))
 
 (mute-part "bass")
+
+(defun new-lead ()
+  (new-part metronome-prob-dist
+            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "lead"))
+(defun new-mid ()
+  (new-part base-prob-dist
+          (lambda (x) (change-range (expt (cos x) 4) -1 1 200 600)) "mid"))
+(defun new-bass ()
+  (new-part base-prob-dist
+            (lambda (x) (change-range (sin x) -1 1 70 300))   "bass"))
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
@@ -206,69 +210,46 @@ See also: `near-p'"
            (if (= (nth 1 *oscrx*) 0)
                (progn
                  (play-drums)
-                 (prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
-                 ))
+                 (new-lead)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
-                 (prob-generate-and-send "mid"  #'mid-math-function (random-function *prob-list*))
+                 (new-mid)
                 ;; (mute-part "lead")
                  (mute-part "bass")
-                 (mute-drums)
-                 ))
+                 (mute-drums)))
            (if (= (nth 1 *oscrx*) 2)
                (progn
                  (play-drums)
                  ;;(mute-part "mid")
-                 (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
-                 (prob-generate-and-send "bass" #'bass-math-function (random-function *prob-list*))))
+                 (new-lead)
+                 (new-bass)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
                  (play-drums)
                  (mute-part "mid")
-                 (prob-generate-and-send "lead" #'lead-math-function #'base-probability)
-                 ;;(play-drums)
-                 ;;(hh-base)
-                 ))
-               )
+                 (new-lead))))
       (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)
 
 ;; cargarlo después de tener update-drums
 (load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
-
 ;; ==== live transformations
-;;(prob-generate-and-send "lead" #'lead-math-function #'all-probability) ;; test
-;;(prob-generate-and-send "mid"  #'mid-math-function  #'base-probability)
-;;(prob-generate-and-send "bd"   #'always-one         (random-function *prob-list*))
+(new-lead)
+(new-mid)
+(new-bass)
+;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
 
 (play-drums)
 (mute-drums)
-(prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
-(prob-generate-and-send "mid"  #'mid-math-function  (random-function *prob-list*))
-(prob-generate-and-send "bass" #'bass-math-function #'base-probability)
+;;(prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
+
 (mute-part "lead")
 (mute-part "mid")
 (mute-part "bass")
 
-(progn
-  (prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
-  (prob-generate-and-send "midimid"  #'mid-math-function  #'base-probability)
-  (prob-generate-and-send "midibass" #'bass-math-function #'base-probability))
-
-(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
-
-(prob-generate-and-send "midimid"  #'mid-math-function  #'base-probability)
-
-(prob-generate-and-send "midibass" #'bass-math-function #'baiao-bass-probability)
-
-(prob-generate-and-send "midilead" #'lead-math-function #'base-verbose-probability)
-
-(prob-generate-and-send "midimid"  #'mid-math-function  #'base-verbose-probability)
-
-(prob-generate-and-send "midibass" #'bass-math-function #'base-verbose-probability)
-
-
+;; legacy midi
+;;(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
 
 ;; ====== test 
 (cl-patterns:multi-channel-funcall #'mute-part '("lead" "midilead" "mid" "midimid" "bass" "midibass"))
