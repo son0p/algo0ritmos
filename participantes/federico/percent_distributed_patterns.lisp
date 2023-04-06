@@ -1,278 +1,45 @@
-(defun all-probability(lst)
-  "cada elemento nth de la lista-argumento tiene una probabilidad entre cero y un numero aleatorio entre digamos (34 66) siendo 34% probable que sea el valor de la lista-argumento y 66% de probabilida que sea cero, pero otra forma sería dos listas, una con los valores y otra con las probabilidades"
-  (flatten
-   (list
-    (sample '(99 01) (list (nth 1  lst) 0)) ;00
-    (sample '(99 01) (list (nth 2  lst) 0)) ;01
-    (sample '(99 01) (list (nth 3  lst) 0)) ;02
-    (sample '(99 01) (list (nth 4  lst) 0)) ;03
-    (sample '(99 01) (list (nth 5  lst) 0)) ;04
-    (sample '(99 01) (list (nth 6  lst) 0)) ;05
-    (sample '(99 01) (list (nth 7  lst) 0)) ;06
-    (sample '(99 01) (list (nth 8  lst) 0)) ;07
-    (sample '(99 01) (list (nth 9  lst) 0)) ;08
-    (sample '(99 01) (list (nth 10 lst) 0)) ;09
-    (sample '(99 01) (list (nth 11 lst) 0)) ;10
-    (sample '(99 01) (list (nth 12 lst) 0)) ;11
-    (sample '(99 01) (list (nth 13 lst) 0)) ;12
-    (sample '(99 01) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(99 01) (list (nth 16 lst) 0)))));15
+(defconstant all-prob            (make-list 16 :initial-element 100))
 
-(defun base-probability(lst)
-  (flatten
-   (list
-    (sample '(34 66) (list (nth 1  lst) 0)) ;00
-    (sample '(02 98) (list (nth 2  lst) 0)) ;01
-    (sample '(18 82) (list (nth 3  lst) 0)) ;02
-    (sample '(13 87) (list (nth 4  lst) 0)) ;03
-    (sample '(14 86) (list (nth 5  lst) 0)) ;04
-    (sample '(09 91) (list (nth 6  lst) 0)) ;05
-    (sample '(19 81) (list (nth 7  lst) 0)) ;06
-    (sample '(11 89) (list (nth 8  lst) 0)) ;07
-    (sample '(13 87) (list (nth 9  lst) 0)) ;08
-    (sample '(12 88) (list (nth 10 lst) 0)) ;09
-    (sample '(15 85) (list (nth 11 lst) 0)) ;10
-    (sample '(11 89) (list (nth 12 lst) 0)) ;11
-    (sample '(15 85) (list (nth 13 lst) 0)) ;12
-    (sample '(12 88) (list (nth 14 lst) 0)) ;13
-    (sample '(13 87) (list (nth 15 lst) 0)) ;14
-    (sample '(03 97) (list (nth 16 lst) 0)))));15
+(defconstant metronome-prob-dist
+  '(100 0  0    0  100  0   0   0   100  0  0   0   100 0   0    0))
 
+(defconstant base-prob-dist
+  '(34  02  18  13  14  09  19  11  13  12  15  11  15  12  13  03))
 
-(defun base-verbose-probability(lst)
-  (flatten
-   (list
-    (sample '(44 56) (list (nth 1  lst) 0)) ;00
-    (sample '(12 88) (list (nth 2  lst) 0)) ;01
-    (sample '(28 72) (list (nth 3  lst) 0)) ;02
-    (sample '(23 77) (list (nth 4  lst) 0)) ;03
-    (sample '(24 76) (list (nth 5  lst) 0)) ;04
-    (sample '(09 91) (list (nth 6  lst) 0)) ;05
-    (sample '(29 71) (list (nth 7  lst) 0)) ;06
-    (sample '(21 79) (list (nth 8  lst) 0)) ;07
-    (sample '(23 77) (list (nth 9  lst) 0)) ;08
-    (sample '(22 78) (list (nth 10 lst) 0)) ;09
-    (sample '(25 75) (list (nth 11 lst) 0)) ;10
-    (sample '(21 79) (list (nth 12 lst) 0)) ;11
-    (sample '(25 75) (list (nth 13 lst) 0)) ;12
-    (sample '(22 78) (list (nth 14 lst) 0)) ;13
-    (sample '(23 77) (list (nth 15 lst) 0)) ;14
-    (sample '(13 87) (list (nth 16 lst) 0)))));15
+(defconstant base-verbose-prob-dist
+  '(44  12  28  23  24  09  29  21  23  22  25  21  25  22  33  13))
 
-(defun baiao-bass-probability(lst)
-  (flatten
-   (list
-    (sample '(99 01) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(18 82) (list (nth 3  lst) 0)) ;02
-    (sample '(99 01) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(19 81) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(13 87) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(15 85) (list (nth 11 lst) 0)) ;10
-    (sample '(11 89) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant baiao-bass-prob-dist
+  '(99  01  18  99  01  01  19  01  13  01  15  11  01  01  99  01))
 
-(defun baiao-bd-probability(lst)
-  (flatten
-   (list
-    (sample '(99 01) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(01 99) (list (nth 3  lst) 0)) ;02
-    (sample '(99 01) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(99 01) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(99 01) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(01 99) (list (nth 11 lst) 0)) ;10
-    (sample '(99 01) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant baiao-bd-probability
+  '(99  01  01  99  01  01  99  01  99  01  01  99  01  01  99  01))
 
-(defun baiao-hh-probability(lst)
-  (flatten
-   (list
-    (sample '(99 01) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(01 99) (list (nth 3  lst) 0)) ;02
-    (sample '(99 01) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(99 01) (list (nth 6  lst) 0)) ;05
-    (sample '(01 99) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(99 01) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(99 01) (list (nth 11 lst) 0)) ;10
-    (sample '(01 99) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(99 01) (list (nth 14 lst) 0)) ;13
-    (sample '(01 99) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant baiao-hh-probability
+  '(99  01  01  99  01  99  01  01  99  01  99  01  01  99  01  01))
 
-(defun baiao-sn-probability(lst)
-  (flatten
-   (list
-    (sample '(01 99) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(99 01) (list (nth 3  lst) 0)) ;02
-    (sample '(01 99) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(99 01) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(01 99) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(99 01) (list (nth 11 lst) 0)) ;10
-    (sample '(01 99) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant baiao-sn-probability
+  '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defun fill-001-sn(lst)
-  (flatten
-   (list
-    (sample '(01 99) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(99 01) (list (nth 3  lst) 0)) ;02
-    (sample '(01 99) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(99 01) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(01 99) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(99 01) (list (nth 11 lst) 0)) ;10
-    (sample '(01 99) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant fill-001-sn(lst)
+  '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defun baiao-htom-probability(lst)
-  (flatten
-   (list
-    (sample '(01 99) (list (nth 1  lst) 0)) ;00
-    (sample '(01 99) (list (nth 2  lst) 0)) ;01
-    (sample '(01 99) (list (nth 3  lst) 0)) ;02
-    (sample '(01 99) (list (nth 4  lst) 0)) ;03
-    (sample '(01 99) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(99 01) (list (nth 7  lst) 0)) ;06
-    (sample '(01 99) (list (nth 8  lst) 0)) ;07
-    (sample '(01 99) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(01 99) (list (nth 11 lst) 0)) ;10
-    (sample '(01 99) (list (nth 12 lst) 0)) ;11
-    (sample '(01 99) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(99 01) (list (nth 15 lst) 0)) ;14
-    (sample '(01 99) (list (nth 16 lst) 0)))));15
+(defconstant baiao-htom-probability
+  '(01  01  01  01  01  01  99  01  01  01  01  01  01  01  99  01))
 
-(defun insert-probability(lst)
-  (flatten
-   (list
-    (sample '(01 99) (list (nth 1  lst) 0)) ;00
-    (sample '(10 90) (list (nth 2  lst) 0)) ;01
-    (sample '(90 10) (list (nth 3  lst) 0)) ;02
-    (sample '(01 99) (list (nth 4  lst) 0)) ;03
-    (sample '(90 10) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(01 99) (list (nth 7  lst) 0)) ;06
-    (sample '(70 30) (list (nth 8  lst) 0)) ;07
-    (sample '(01 99) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(20 80) (list (nth 11 lst) 0)) ;10
-    (sample '(10 90) (list (nth 12 lst) 0)) ;11
-    (sample '(90 10) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(90 10) (list (nth 15 lst) 0)) ;14
-    (sample '(20 80) (list (nth 16 lst) 0)))));15
+(defconstant insert-probability
+  '(01  10  90  01  90  01  01  70  01  01  20  10  90  01  90  20))
 
-(defun bass-probability(lst)
-  (flatten
-   (list
-    (sample '(90 10) (list (nth 1  lst) 0)) ;00
-    (sample '(10 90) (list (nth 2  lst) 0)) ;01
-    (sample '(50 50) (list (nth 3  lst) 0)) ;02
-    (sample '(80 20) (list (nth 4  lst) 0)) ;03
-    (sample '(90 10) (list (nth 5  lst) 0)) ;04
-    (sample '(01 99) (list (nth 6  lst) 0)) ;05
-    (sample '(50 50) (list (nth 7  lst) 0)) ;06
-    (sample '(70 30) (list (nth 8  lst) 0)) ;07
-    (sample '(90 10) (list (nth 9  lst) 0)) ;08
-    (sample '(01 99) (list (nth 10 lst) 0)) ;09
-    (sample '(20 80) (list (nth 11 lst) 0)) ;10
-    (sample '(90 10) (list (nth 12 lst) 0)) ;11
-    (sample '(05 95) (list (nth 13 lst) 0)) ;12
-    (sample '(01 99) (list (nth 14 lst) 0)) ;13
-    (sample '(50 50) (list (nth 15 lst) 0)) ;14
-    (sample '(50 50) (list (nth 16 lst) 0)))));15
+(defconstant bass-probability
+  '(90  10  50  80  90  01  50  70  90  01  20  90  05  01  50  50))
 
 ;;; drums test pag 65
-(defun refresh-bd()
-  (flatten
-   (list
-    (sample '(90 10) '(1 0)) ;00
-    (sample '(10 90) '(1 0)) ;01
-    (sample '(40 60) '(1 0)) ;02
-    (sample '(90 10) '(1 0)) ;03
-    (sample '(05 95) '(1 0)) ;04
-    (sample '(10 90) '(1 0)) ;05
-    (sample '(30 70) '(1 0)) ;06
-    (sample '(20 80) '(1 0)) ;07
-    (sample '(90 10) '(1 0)) ;08
-    (sample '(05 95) '(1 0)) ;09
-    (sample '(20 80) '(1 0)) ;10
-    (sample '(90 10) '(1 0)) ;11
-    (sample '(05 95) '(1 0)) ;12
-    (sample '(10 90) '(1 0)) ;13
-    (sample '(40 60) '(1 0)) ;14
-    (sample '(40 60) '(1 0)))));15
-
-(defun four-on-floor ()
-  (setf *bd* '(1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0))
-  (update-drums))
-
-(defun refresh-sd()
-  (flatten
-   (list
-    (sample '(01 99) '(1 0)) ;00
-    (sample '(10 90) '(1 0)) ;01
-    (sample '(90 10) '(1 0)) ;02
-    (sample '(01 99) '(1 0)) ;03
-    (sample '(90 10) '(1 0)) ;04
-    (sample '(01 99) '(1 0)) ;05
-    (sample '(01 99) '(1 0)) ;06
-    (sample '(01 99) '(1 0)) ;07
-    (sample '(01 99) '(1 0)) ;08
-    (sample '(01 99) '(1 0)) ;09
-    (sample '(20 80) '(1 0)) ;10
-    (sample '(10 90) '(1 0)) ;11
-    (sample '(90 10) '(1 0)) ;12
-    (sample '(01 99) '(1 0)) ;13
-    (sample '(01 99) '(1 0)) ;14
-    (sample '(20 80) '(1 0)))));15
-
-(defun hh-base()
- (setf *hh* '(1 0 1 1 1 0 1 1 1 0 1 1 1 0 1 1))
-  (update-drums))
+(defconstant refresh-bd
+  '(90  10  40  90  05  10  30  20  90  05  20  90  05  10  40  40))
 
 (defvar *prob-list* nil)
 (setf *prob-list* (list
-                   #'all-probability
-                   #'base-probability
-                   #'base-verbose-probability
-                   #'baiao-bass-probability
-                   #'bass-probability))
+                   all-prob
+                   base-prob-dist
+                   base-verbose-prob-dist
+                   baiao-bass-prob-dist))
