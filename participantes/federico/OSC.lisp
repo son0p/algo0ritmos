@@ -199,7 +199,7 @@ See also: `near-p'"
 (new-mid)
 
 (defun new-bass ()
-  (new-part (random-list)
+  (new-part (random-element *prob-list*)
             (lambda (x) (change-range (sin x) -1 1 70 250))   "bass"))
 (new-bass)
 (defun new-bd ()
