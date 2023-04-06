@@ -62,6 +62,10 @@
   (let ((random-index (random (length function-list))))
     (nth random-index function-list)))
 
+(defun random-list ()
+  "Generate a list of 16 random numbers between 0 and 100"
+  (loop repeat 16 collect (random 101)))
+
 (defun random-from-range (start end)
   (+ start (random (+ 1 (- end start)))))
 
@@ -88,6 +92,12 @@
 
 (defun random-element (lst)
   (nth (random (length lst)) lst))
+
+(defun call-function-every-some-time (time my-function)
+  "Call my-function every x seconds"
+  (loop
+    (funcall my-function)
+    (sleep time)))
 
 (defun pattern-from-distribution (distribution frequencies)
   (let ((dist distribution) (freqs frequencies))
@@ -163,6 +173,7 @@ See also: `near-p'"
     (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
     (prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
     (prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)))
+(play-drums)
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -178,14 +189,31 @@ See also: `near-p'"
 (mute-part "bass")
 
 (defun new-lead ()
-  (new-part metronome-prob-dist
+  (new-part base-verbose-prob-dist
             (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "lead"))
+(new-lead)
+
 (defun new-mid ()
   (new-part base-prob-dist
-          (lambda (x) (change-range (expt (cos x) 4) -1 1 200 600)) "mid"))
+            (lambda (x) (change-range (expt (cos x) 4) -1 1 200 600)) "mid"))
+(new-mid)
+
 (defun new-bass ()
-  (new-part base-prob-dist
-            (lambda (x) (change-range (sin x) -1 1 70 300))   "bass"))
+  (new-part (random-list)
+            (lambda (x) (change-range (sin x) -1 1 70 250))   "bass"))
+(new-bass)
+(defun new-bd ()
+  (new-part (random-list)
+            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "bd"))
+(new-bd)
+
+(defun new-all ()
+  (new-lead)
+  (new-mid)
+  (new-bass)
+  (new-bd))
+
+(call-function-every-some-time 2 #'new-all)
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
@@ -235,12 +263,10 @@ See also: `near-p'"
 ;; cargarlo después de tener update-drums
 (load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
 ;; ==== live transformations
-(new-lead)
-(new-mid)
-(new-bass)
+
 ;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
 
-(play-drums)
+
 (mute-drums)
 ;;(prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
 
