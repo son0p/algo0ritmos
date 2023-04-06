@@ -206,14 +206,26 @@ See also: `near-p'"
   (new-part (random-list)
             (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "bd"))
 (new-bd)
+(defun new-sd ()
+  (new-part baiao-sn-prob-dist
+            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "sd"))
+(new-sd)
+(defun new-fill-sd ()
+  (new-part (random-list)
+            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "sd"))
+(new-fill-sd)
 
 (defun new-all ()
   (new-lead)
   (new-mid)
   (new-bass)
-  (new-bd))
+  (new-bd)
+  (new-sd))
+(new-all)
 
 (call-function-every-some-time 2 #'new-all)
+(call-function-every-some-time 8 #'new-fill-sd)
+
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.

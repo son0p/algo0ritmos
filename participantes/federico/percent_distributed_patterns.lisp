@@ -12,22 +12,22 @@
 (defconstant baiao-bass-prob-dist
   '(99  01  18  99  01  01  19  01  13  01  15  11  01  01  99  01))
 
-(defconstant baiao-bd-probability
+(defconstant baiao-bd-prob-dist
   '(99  01  01  99  01  01  99  01  99  01  01  99  01  01  99  01))
 
-(defconstant baiao-hh-probability
+(defconstant baiao-hh-prob-dist
   '(99  01  01  99  01  99  01  01  99  01  99  01  01  99  01  01))
 
-(defconstant baiao-sn-probability
+(defconstant baiao-sn-prob-dist
   '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defconstant fill-001-sn(lst)
+(defconstant fill-001-sn
   '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defconstant baiao-htom-probability
+(defconstant baiao-htom-prob-dist
   '(01  01  01  01  01  01  99  01  01  01  01  01  01  01  99  01))
 
-(defconstant insert-probability
+(defconstant insert-prob
   '(01  10  90  01  90  01  01  70  01  01  20  10  90  01  90  20))
 
 (defconstant bass-probability
