@@ -88,6 +88,22 @@
   (mapcar #'- list1 list2))
 ;;(subtract-lists (make-list 16 :initial-element 100) '(90 10 11))
 
+(defun subtract-from-list (list value)
+  "warning: negative, or non numeric values"
+  (mapcar (lambda (x) (if (not (zerop x)) (- value x) x)) list))
+
+(defun random-element (lst)
+  (nth (random (length lst)) lst))
+
+(defun pattern-from-distribution (distribution frequencies)
+  (let ((dist distribution) (freqs frequencies))
+    (mapcar #'(lambda (x y)
+                (random-element (append
+                                 (make-list (- 100 x) :initial-element 0)
+                                 (make-list x :initial-element y)))) dist freqs)))
+;; example call
+;; (pattern-from-distribution (make-list 16 :initial-element 50) (pattern-generate "lead" #'lead-math-function))
+
 (defun sample-segment-generator (lenght value)
    (loop for i from 0 to lenght collecting value))
 
@@ -102,6 +118,7 @@
              acc))
     (reverse (rflatten lst nil))))
 
+
 (defun distributed-sample-generator (lst-lenghts lst-values)
   "Toma los tamaños y los valores de dos listas, genera una lista aplanada"
   (if (/= (reduce #'+ lst-lenghts)  100)
@@ -109,6 +126,7 @@
   (flatten (mapcar #'sample-segment-generator lst-lenghts lst-values)))
 
 (defun sample (lst-lenghts lst-values)
+  "hace una lista de 1 elemento tomando valores de una lista llena según sample-segment-generator con un valor"
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
 
 

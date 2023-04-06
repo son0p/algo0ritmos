@@ -1,4 +1,5 @@
 (defun all-probability(lst)
+  "cada elemento nth de la lista-argumento tiene una probabilidad entre cero y un numero aleatorio entre digamos (34 66) siendo 34% probable que sea el valor de la lista-argumento y 66% de probabilida que sea cero, pero otra forma sería dos listas, una con los valores y otra con las probabilidades"
   (flatten
    (list
     (sample '(99 01) (list (nth 1  lst) 0)) ;00
