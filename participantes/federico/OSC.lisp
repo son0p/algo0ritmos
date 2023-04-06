@@ -26,9 +26,9 @@
     (send-part local-pattern osc-name)
     local-pattern))
 
-(defun lead-math-function (x) (change-range (- (expt (sin x) (random-from-range 2 4)) 0.3) -1 1 500 4698))
+(defun lead-math-function (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 400 4698))
 (defun mid-math-function  (x) (change-range (expt (cos x) 4) -1 1 200 600))
-(defun bass-math-function (x) (change-range (tan x) -1 1 70 300))
+(defun bass-math-function (x) (change-range (sin x) -1 1 70 300))
 (defun always-one (x) (/ (+ x 1) (+ x 1)))
 
 ;;; manejo de errores
@@ -83,6 +83,10 @@
 
 (defun modify-list (list position value)
   (setf (nth position list) value))
+
+(defun subtract-lists (list1 list2)
+  (mapcar #'- list1 list2))
+;;(subtract-lists (make-list 16 :initial-element 100) '(90 10 11))
 
 (defun sample-segment-generator (lenght value)
    (loop for i from 0 to lenght collecting value))
