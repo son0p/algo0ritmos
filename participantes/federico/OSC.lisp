@@ -95,9 +95,9 @@
 
 (defun call-function-every-some-time (time my-function)
   "Call my-function every x seconds"
-  (loop
-    (funcall my-function)
-    (sleep time)))
+  (loop repeat 5
+        do (funcall my-function)
+        do (sleep time))))
 
 (defun pattern-from-distribution (distribution frequencies)
   (let ((dist distribution) (freqs frequencies))
@@ -164,8 +164,16 @@ See also: `near-p'"
                     (cons (concatenate 'string addr osc-name) patt))))
 
 (defun new-part (distribution-list math-function osc-name)
-  (send-part (pattern-from-distribution distribution-list
-                                        (pattern-generate osc-name math-function)) osc-name))
+  (format t "~& ")
+  (let ((patt (pattern-from-distribution
+              distribution-list
+              (pattern-generate osc-name math-function))))
+    (send-part patt osc-name)
+    (write (append (list (local-time:now)) (list osc-name) patt))))
+
+(defun inject-part-from-list (lst osc-name)
+  (send-part lst osc-name))
+    
 
 (defun play-drums ()
   (progn
@@ -189,30 +197,50 @@ See also: `near-p'"
 (mute-part "bass")
 
 (defun new-lead ()
-  (new-part base-verbose-prob-dist
-            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "lead"))
+  (new-part (random-element *prob-list*)
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698))
+            "lead"))
 (new-lead)
 
 (defun new-mid ()
   (new-part base-prob-dist
-            (lambda (x) (change-range (expt (cos x) 4) -1 1 200 600)) "mid"))
+            (lambda (x) (change-range
+                         (expt (cos x) 4)
+                         -1 1 200 600))
+            "mid"))
 (new-mid)
 
 (defun new-bass ()
   (new-part (random-element *prob-list*)
-            (lambda (x) (change-range (sin x) -1 1 70 250))   "bass"))
+            (lambda (x) (change-range
+                         (sin x) -1 1 70 250))
+            "bass"))
 (new-bass)
+
 (defun new-bd ()
   (new-part (random-list)
-            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "bd"))
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698))
+            "bd"))
 (new-bd)
+
 (defun new-sd ()
   (new-part baiao-sn-prob-dist
-            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "sd"))
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698))
+            "sd"))
 (new-sd)
+
 (defun new-fill-sd ()
   (new-part (random-list)
-            (lambda (x) (change-range (- (expt (sin x) (random-from-range 1 3)) 0.4) -1 1 600 2698)) "sd"))
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698))
+            "sd"))
 (new-fill-sd)
 
 (defun new-all ()
@@ -223,9 +251,17 @@ See also: `near-p'"
   (new-sd))
 (new-all)
 
-(call-function-every-some-time 2 #'new-all)
-(call-function-every-some-time 8 #'new-fill-sd)
+;; test live transformations
+(new-lead)
+(new-mid)
+(new-bass)
+(new-bd)
+(mute-part "lead")
+(mute-part "mid")
+(mute-part "bass")
 
+(call-function-every-some-time 6 #'new-all)
+(call-function-every-some-time 8 #'new-fill-sd)
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
