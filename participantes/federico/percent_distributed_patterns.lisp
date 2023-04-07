@@ -33,9 +33,12 @@
 (defconstant bass-probability
   '(90  10  50  80  90  01  50  70  90  01  20  90  05  01  50  50))
 
+(defconstant toms-prob-dist
+  '(70 70  00  70 70 70  0  70 70 70  0  90 70 70  0  50))
+
 ;;; drums test pag 65
 (defconstant refresh-bd
-  '(90  10  40  90  05  10  30  20  90  05  20  90  05  10  40  40))
+  '(70  10  40  90  05  10  30  20  70  05  20 70  05  10  40  40))
 
 (defvar *prob-list* nil)
 (setf *prob-list* (list

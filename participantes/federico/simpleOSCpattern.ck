@@ -274,7 +274,7 @@ fun void player(float notes[])
         }
     }
 }
-fun void player(int notes[])
+fun void playerHtom(int notes[])
 {
     while(true)
     {
@@ -282,6 +282,7 @@ fun void player(int notes[])
         {
             htom.hit(.5 );
             Global.beat => now;
+            notes[Global.mod16] => htom.setBaseFreq; 
         }
         else
         {
@@ -397,7 +398,7 @@ spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
-spork~ player     (Global.inmutableHTOM);
+spork~ playerHtom     (Global.inmutableHTOM);
 spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();

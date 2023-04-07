@@ -221,8 +221,8 @@ See also: `near-p'"
 (defun new-htom ()
   (new-part toms-prob-dist
             (lambda (x) (change-range
-                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                         -1 1 600 2698))
+                         (sin x)
+                         -1 1 100 300))
             "htom"))
 (new-htom)
 (mute-part "htom")
