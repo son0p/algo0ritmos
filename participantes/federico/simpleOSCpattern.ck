@@ -123,6 +123,23 @@ fun void oscTxFloat()
 
     }
 }
+
+fun void oscTxCounter()
+{
+    while( true )
+    {
+        // start the message...
+        xmit.start( "/foo/counter" );
+        // add int argument
+        // Math.random2( 0, 4 ) => xmit.add;
+        Global.counter  => xmit.add;
+        // send msg formated like: ("/foo/no" 3 0.48002946)
+        xmit.send();
+        Global.beat => now;     
+    }
+
+}
+
 // Receive OSC data and fill array --------------------
  fun void oscRxFloat()
  {
@@ -197,6 +214,7 @@ fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
         }
     }
 }
+
 fun void player(float notes[], ADSR instrumentEnv, Fat instrument)
 {
     while(true)
@@ -384,6 +402,7 @@ spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
 spork~ oscTxFloat();
+spork~ oscTxCounter();
 
 // keep sporks alive
 Global.beat * 16 => now;

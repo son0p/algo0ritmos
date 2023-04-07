@@ -31,14 +31,6 @@
 
 ;;; variables
 (progn
-  (defvar *bd*   nil)
-  (defvar *sd*   nil)
-  (defvar *hh*   nil)
-  (defvar *htom* nil)
-  (defvar *bd-actives*   nil)
-  (defvar *sd-actives*   nil)
-  (defvar *hh-actives*   nil)
-  (defvar *htom-actives* nil)
   (defvar *oscRx* nil)
   (defvar *scale* nil)  ; make local let
   (defvar *scale-midi* nil)  ; make local let
@@ -205,8 +197,8 @@ See also: `near-p'"
 (defun new-bass ()
   (new-part (random-element *prob-list*)
             (lambda (x) (change-range
-                         (sin x)
-                         -1 1 70 250))
+                         (sin (* (random-from-range 1 10) x))
+                         -1 1 70 350))
             "bass"))
 (new-bass)
 
@@ -226,6 +218,15 @@ See also: `near-p'"
             "sd"))
 (new-sd)
 
+(defun new-htom ()
+  (new-part toms-prob-dist
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698))
+            "htom"))
+(new-htom)
+(mute-part "htom")
+
 (defun new-fill-sd ()
   (new-part (random-list)
             (lambda (x) (change-range
@@ -242,6 +243,10 @@ See also: `near-p'"
   (new-sd))
 (new-all)
 
+(defun new-drums ()
+  (new-bd)
+  (new-sd))
+
 ;; test live transformations
 (new-lead)
 (new-mid)
@@ -251,16 +256,12 @@ See also: `near-p'"
 (mute-part "mid")
 (mute-part "bass")
 
-(call-function-every-some-time 6 #'new-all)
-(call-function-every-some-time 8 #'new-fill-sd)
+;;(call-function-every-some-time 6 #'new-all)
+;;(call-function-every-some-time 8 #'new-fill-sd)
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
-  note ip#s need to be in the format #(127 0 0 1) for now.. .
-  - TODO funciones para sileciar par y poder ejecutar una estructura
-  - TODO ¿para qué se recibe un flotante como tercer argumento?
-  - ERROR: al recibir 0 genera un patron con valor mínimo que se traduce en freq 73
-"
+  note ip#s need to be in the format #(127 0 0 1) for now.. . "
   (let ((s (USOCKET:socket-connect nil nil
                                    :local-port port
                                    :local-host #(127 0 0 1)
@@ -271,12 +272,12 @@ See also: `near-p'"
     (unwind-protect
          (loop do
            (USOCKET:socket-receive s buffer (length buffer))
-           (format t "~%~%")
-           (format t "received -=> ~S~%~%" (osc:decode-bundle buffer))
+           ;;(format t "~%~%")
+           ;;(format t "received -=> ~S~%~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
            (if (= (nth 1 *oscrx*) 0)
                (progn
-                 (play-drums)
+                 (new-drums)
                  (new-lead)))
            (if (= (nth 1 *oscrx*) 1)
                (progn
@@ -286,15 +287,20 @@ See also: `near-p'"
                  (mute-drums)))
            (if (= (nth 1 *oscrx*) 2)
                (progn
-                 (play-drums)
+                 (new-drums)
                  ;;(mute-part "mid")
                  (new-lead)
                  (new-bass)))
            (if (= (nth 1 *oscrx*) 3)
                (progn
-                 (play-drums)
+                 (new-drums)
                  (mute-part "mid")
-                 (new-lead))))
+                 (new-lead)))
+           (if (= (mod (nth 1 *oscrx*) 64) 50)
+               (progn
+                 (new-htom)
+                 (sleep 2) ;; better solution please
+                 (mute-part "htom"))))
       (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)
