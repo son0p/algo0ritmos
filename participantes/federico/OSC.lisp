@@ -97,7 +97,7 @@
   "Call my-function every x seconds"
   (loop repeat 5
         do (funcall my-function)
-        do (sleep time))))
+        do (sleep time)))
 
 (defun pattern-from-distribution (distribution frequencies)
   (let ((dist distribution) (freqs frequencies))
@@ -131,7 +131,6 @@
 (defun sample (lst-lenghts lst-values)
   "hace una lista de 1 elemento tomando valores de una lista llena según sample-segment-generator con un valor"
   (random-sample:random-sample (distributed-sample-generator lst-lenghts lst-values) 1))
-
 
 (defun nearest (input list)
   "Get the element in LIST nearest to INPUT.
@@ -173,15 +172,6 @@ See also: `near-p'"
 
 (defun inject-part-from-list (lst osc-name)
   (send-part lst osc-name))
-    
-
-(defun play-drums ()
-  (progn
-    (prob-generate-and-send "bd"   #'always-one         #'baiao-bd-probability)
-    (prob-generate-and-send "hh"   #'always-one         #'baiao-hh-probability)
-    (prob-generate-and-send "sd"   #'always-one         #'baiao-sn-probability)
-    (prob-generate-and-send "htom" #'always-one         #'baiao-htom-probability)))
-(play-drums)
 
 (defun mute-part (osc-name)
   (let ((local-pattern nil))
@@ -215,7 +205,8 @@ See also: `near-p'"
 (defun new-bass ()
   (new-part (random-element *prob-list*)
             (lambda (x) (change-range
-                         (sin x) -1 1 70 250))
+                         (sin x)
+                         -1 1 70 250))
             "bass"))
 (new-bass)
 
