@@ -178,6 +178,17 @@ See also: `near-p'"
 
 (mute-part "bass")
 
+(defun refresh-parts (&key lead mid bass)
+  (case lead
+    (:mute (write "lead-mute"))
+    (:new2 (write "lead-new2")))
+  (case mid
+    (:new (write "mid-new"))
+    (:mute (write "mid-mute")))
+  (case bass
+    (:new (write "bass-new"))
+    (:mute (write "bass-mute"))))
+
 (defun new-lead ()
   (new-part (random-element *prob-list*)
             (lambda (x) (change-range
