@@ -150,11 +150,20 @@ See also: `near-p'"
 ;;; change to individual parts
 (defun send-part (part-patt osc-name)
   (osc-send #(127 0 0 1) 6450
-                  (let ((addr "/audio/2/")
-                        (osc-name osc-name)
-                        (patt part-patt))
-                    (cons (concatenate 'string addr osc-name) patt))))
+            (let ((addr "/audio/2/")
+                  (osc-name osc-name)
+                  (patt part-patt))
+              (cons (concatenate 'string addr osc-name) patt))))
 
+(defun send-part-from-selected (part-patt osc-name)
+  (format t "~& ")
+   (let ((addr "/audio/2/")
+         (osc-name osc-name)
+         (patt part-patt))
+     (osc-send #(127 0 0 1) 6450
+               (cons (concatenate 'string addr osc-name) patt))
+               (write (append (list (local-time:now)) (list osc-name) patt))))
+ 
 (defun new-part (distribution-list math-function osc-name)
   (format t "~& ")
   (let ((patt (pattern-from-distribution
@@ -171,7 +180,7 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom gain)
+(defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
     (:new  (new-part (random-element *prob-list*)
@@ -190,7 +199,8 @@ See also: `near-p'"
             (lambda (x) (change-range
                          (sin (* (random-from-range 1 10) x))
                          -1 1 70 350)) "bass"))
-    (:mute (mute-part "bass")))
+    (:mute (mute-part "bass"))
+    (:selected (send-part-from-selected (write (random-element *selected-bass*)) "bass")))
   (case bd
     (:new (new-part (random-list)
             (lambda (x) (change-range
@@ -238,7 +248,8 @@ See also: `near-p'"
  
 ;; test live transformations
 (refresh-parts :lead :new)
-(refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
+(refresh-parts :mid :new)
+(refresh-parts :lead :new :mid :new :bass :selected :bd :new :sd :new :hh :new)
 (refresh-parts :fill-sd :new)
 (refresh-parts :fill-htom :new)
 ;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
@@ -260,7 +271,7 @@ See also: `near-p'"
            ;;(format t "received -=> ~S~%~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
            (if (= (nth 1 *oscrx*) 0)
-               (refresh-parts :lead :new :bd :new :sd :new :hh :new))
+               (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
            (if (= (nth 1 *oscrx*) 1)
                (refresh-parts :mid :new :bass :mute :bd :mute :sd :mute))
            (if (= (nth 1 *oscrx*) 2)

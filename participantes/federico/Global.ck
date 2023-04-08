@@ -23,7 +23,7 @@ public class Global
     static int mod32;
     static int mod64;
     static int mod256;
-    200::ms => static dur beat; // if called without local assignation value is 0
+    static dur beat; // if called without local assignation value is 0
     static int root;
     static int cursor;
 }

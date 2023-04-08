@@ -1,7 +1,7 @@
 (defconstant all-prob            (make-list 16 :initial-element 100))
 
 (defconstant gain-base-curve
-  '(100 0 0  70  100 20  50  70   100  20 50  70   100 20 50  70)) 
+  '(100 70 90  80  100 70  90  80   100  70 90  80   100 70 90  80)) 
 
 (defconstant metronome-prob-dist
   '(100 0  0    0  100  0   0   0   100  0  0   0   100 0   0    0))
@@ -49,3 +49,20 @@
                    base-prob-dist
                    base-verbose-prob-dist
                    baiao-bass-prob-dist))
+
+(defvar *selected-bass* nil)
+(setf *selected-bass* (list
+                      '(220.0 0 174.61412 261.62555 0 0 0 0  0 0 0 0 0 0 130.81277 0)
+                      '(220.0 0 0 0 0 0 0 0 0 0 329.62756 220.0 0 116.54095 261.62555 0)
+                      '(164.81378 0 0 174.61412 0 0  130.81277 220.0 0 0 110.0 0 0 0 261.62555 0)
+                      '(164.81378 0 0 174.61412 0 0 0 0 261.62555 0 0 0 0 0 261.62555 0)))
+
+(defvar *selected-lead* nil)
+(setf *selected-lead* (list
+                       '(1174.659 0 0 0 0 0 0 0 0 0 0 0  1046.5022 0 0 0)
+                       '(1174.659 0 0 1174.659 0 0 0 0 0 0 0 0 0 0 2349.318 0))
+
+(defvar *selected-mid* nil)
+(setf *selected-mid* (list
+                       '( 0 0 0 0 0 0 0 0 0 523.2511 0 391.99542 0 0 391.99542 0)
+                       '(1174.659 0 0 1174.659 0 0 0 0 0 0 0 0 0 0 2349.318 0))

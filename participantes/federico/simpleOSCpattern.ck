@@ -1,6 +1,8 @@
 // first run initialize.ck
 // tested with  OSC.lisp
 
+300::ms => Global.beat;
+
 Library lib;
 MIDIsender midi01;
 MIDIsender midi02;
