@@ -12,6 +12,7 @@ public class Global
     static int inmutableSD[];
     static int inmutableHTOM[];
     static int inmutableHH[];
+    static int inmutableGAIN[];
     static float bassFromOsc[];
     static float bassFromOscComp[];
     int inmutableEnvBass[16];
@@ -39,5 +40,6 @@ public class Global
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableSD;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHTOM;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHH;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableGAIN;
 //[0.] @=> Global.bassFromOsc;
 200::ms => Global.beat;

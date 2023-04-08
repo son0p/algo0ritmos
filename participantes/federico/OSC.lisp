@@ -171,7 +171,7 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom)
+(defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom gain)
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
     (:new  (new-part (random-element *prob-list*)
@@ -229,10 +229,12 @@ See also: `near-p'"
               (new-part (random-list)
                         (lambda (x) (change-range
                                      (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                                     -1 1 600 2698)) "htom")
+                                     -1 1 100 250)) "htom")
               (sleep *fill-time*)
               (refresh-parts :htom :mute)))
-     (:mute (mute-part "htom"))))
+     (:mute (mute-part "htom")))
+  (case gain
+    (:base (send-part gain-base-curve "gain"))))
  
 ;; test live transformations
 (refresh-parts :lead :new)

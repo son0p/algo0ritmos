@@ -1,5 +1,8 @@
 (defconstant all-prob            (make-list 16 :initial-element 100))
 
+(defconstant gain-base-curve
+  '(100 0 0  70  100 20  50  70   100  20 50  70   100 20 50  70)) 
+
 (defconstant metronome-prob-dist
   '(100 0  0    0  100  0   0   0   100  0  0   0   100 0   0    0))
 

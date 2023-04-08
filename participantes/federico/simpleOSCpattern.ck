@@ -19,6 +19,7 @@ oin.addAddress( "/audio/2/bd,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/sd,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/htom,     iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/hh,       iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/gain,       iiiiiiiiiiiiiiii" );
 
 // instrument classes
 kjzTT101 htom;
@@ -189,10 +190,23 @@ fun void oscTxCounter()
             {
                 for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableHH[i]; }
             }
+            else if (addr == "/audio/2/gain")
+            {
+                for(0 => int i; i < 16; i++){ msg.getInt(i) => Global.inmutableGAIN[i]; }
+            }
 
         }
      }
  }
+
+fun void playerGain()
+{
+    while(true)
+    {
+        (Global.inmutableGAIN[Global.mod16] $ float)/100 =>  lib.bass.gain;
+        Global.beat => now;
+    }
+}
 
 // play some instruments --------------------
 fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
@@ -398,7 +412,8 @@ spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
-spork~ playerHtom     (Global.inmutableHTOM);
+spork~ playerHtom (Global.inmutableHTOM);
+spork~ playerGain ();
 spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
