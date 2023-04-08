@@ -31,6 +31,7 @@
 
 ;;; variables
 (progn
+  (defvar *fill-time* 2 ) ; FIX: debe ser en beats, si sobrepasa el tiempo del beat se refresca chuck y no se aplica
   (defvar *oscRx* nil)
   (defvar *scale* nil)  ; make local let
   (defvar *scale-midi* nil)  ; make local let
@@ -170,105 +171,75 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun mute-drums ()
-  (mute-part "bd")
-  (mute-part "sd")
-  (mute-part "htom")
-  (mute-part "hh"))
-
-(mute-part "bass")
-
-(defun refresh-parts (&key lead mid bass)
+(defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom)
+  "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
-    (:mute (write "lead-mute"))
-    (:new2 (write "lead-new2")))
+    (:new  (new-part (random-element *prob-list*)
+                     (lambda (x) (change-range
+                                  (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                                  -1 1 600 2698)) "lead"))
+    (:mute (mute-part "lead")))
   (case mid
-    (:new (write "mid-new"))
-    (:mute (write "mid-mute")))
+    (:new  (new-part base-prob-dist
+                     (lambda (x) (change-range
+                                  (expt (cos x) 4)
+                                  -1 1 200 600)) "mid"))
+    (:mute (mute-part "mid")))
   (case bass
-    (:new (write "bass-new"))
-    (:mute (write "bass-mute"))))
-
-(defun new-lead ()
-  (new-part (random-element *prob-list*)
-            (lambda (x) (change-range
-                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                         -1 1 600 2698))
-            "lead"))
-(new-lead)
-
-(defun new-mid ()
-  (new-part base-prob-dist
-            (lambda (x) (change-range
-                         (expt (cos x) 4)
-                         -1 1 200 600))
-            "mid"))
-(new-mid)
-
-(defun new-bass ()
-  (new-part (random-element *prob-list*)
+    (:new (new-part (random-element *prob-list*)
             (lambda (x) (change-range
                          (sin (* (random-from-range 1 10) x))
-                         -1 1 70 350))
-            "bass"))
-(new-bass)
-
-(defun new-bd ()
-  (new-part (random-list)
+                         -1 1 70 350)) "bass"))
+    (:mute (mute-part "bass")))
+  (case bd
+    (:new (new-part (random-list)
             (lambda (x) (change-range
                          (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                         -1 1 600 2698))
-            "bd"))
-(new-bd)
-
-(defun new-sd ()
-  (new-part baiao-sn-prob-dist
+                         -1 1 600 2698)) "bd"))
+    (:mute (mute-part "bd")))
+  (case sd
+    (:new (new-part baiao-sn-prob-dist
             (lambda (x) (change-range
                          (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                         -1 1 600 2698))
-            "sd"))
-(new-sd)
-
-(defun new-htom ()
-  (new-part toms-prob-dist
+                         -1 1 600 2698)) "sd"))
+    (:mute (mute-part "sd")))
+  (case hh
+    (:new (new-part (random-list)
+            (lambda (x) (change-range
+                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                         -1 1 600 2698)) "hh"))
+    (:mute (mute-part "hh")))
+  (case htom
+    (:new  (new-part toms-prob-dist
             (lambda (x) (change-range
                          (sin x)
-                         -1 1 100 300))
-            "htom"))
-(new-htom)
-(mute-part "htom")
-
-(defun new-fill-sd ()
-  (new-part (random-list)
-            (lambda (x) (change-range
-                         (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                         -1 1 600 2698))
-            "sd"))
-(new-fill-sd)
-
-(defun new-all ()
-  (new-lead)
-  (new-mid)
-  (new-bass)
-  (new-bd)
-  (new-sd))
-(new-all)
-
-(defun new-drums ()
-  (new-bd)
-  (new-sd))
-
+                         -1 1 100 300)) "htom"))
+    (:mute (mute-part "htom")))
+  (case fill-sd
+    (:new  (progn
+             (new-part (random-list)
+                       (lambda (x) (change-range
+                                    (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                                    -1 1 600 2698)) "sd")
+             (sleep *fill-time*)
+             (refresh-parts :sd :new)))
+    (:mute (mute-part "sd")))
+   (case fill-htom
+     (:new  (progn
+              (new-part (random-list)
+                        (lambda (x) (change-range
+                                     (- (expt (sin x) (random-from-range 1 3)) 0.4)
+                                     -1 1 600 2698)) "htom")
+              (sleep *fill-time*)
+              (refresh-parts :htom :mute)))
+     (:mute (mute-part "htom"))))
+ 
 ;; test live transformations
-(new-lead)
-(new-mid)
-(new-bass)
-(new-bd)
-(mute-part "lead")
-(mute-part "mid")
-(mute-part "bass")
-
-;;(call-function-every-some-time 6 #'new-all)
-;;(call-function-every-some-time 8 #'new-fill-sd)
+(refresh-parts :lead :new)
+(refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
+(refresh-parts :fill-sd :new)
+(refresh-parts :fill-htom :new)
+;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
 
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
@@ -287,32 +258,16 @@ See also: `near-p'"
            ;;(format t "received -=> ~S~%~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
            (if (= (nth 1 *oscrx*) 0)
-               (progn
-                 (new-drums)
-                 (new-lead)))
+               (refresh-parts :lead :new :bd :new :sd :new :hh :new))
            (if (= (nth 1 *oscrx*) 1)
-               (progn
-                 (new-mid)
-                ;; (mute-part "lead")
-                 (mute-part "bass")
-                 (mute-drums)))
+               (refresh-parts :mid :new :bass :mute :bd :mute :sd :mute))
            (if (= (nth 1 *oscrx*) 2)
-               (progn
-                 (new-drums)
-                 ;;(mute-part "mid")
-                 (new-lead)
-                 (new-bass)))
+               (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
            (if (= (nth 1 *oscrx*) 3)
-               (progn
-                 (new-drums)
-                 (mute-part "mid")
-                 (new-lead)))
+                 (refresh-parts :lead :new :mid :mute :bass :new :bd :new :sd :new :hh :new))
            (if (= (mod (nth 1 *oscrx*) 64) 50)
-               (progn
-                 (new-htom)
-                 (sleep 2) ;; better solution please
-                 (mute-part "htom"))))
-      (when s (USOCKET:socket-close s)))))
+                (refresh-parts :fill-htom :new)))
+           (when s (USOCKET:socket-close s)))))
 
 (osc-receive 6667)
 
@@ -321,35 +276,6 @@ See also: `near-p'"
 ;; ==== live transformations
 
 ;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
-
-
-(mute-drums)
-;;(prob-generate-and-send "lead" #'lead-math-function (random-function *prob-list*))
-
-(mute-part "lead")
-(mute-part "mid")
-(mute-part "bass")
-
 ;; legacy midi
 ;;(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
 
-;; ====== test 
-(cl-patterns:multi-channel-funcall #'mute-part '("lead" "midilead" "mid" "midimid" "bass" "midibass"))
-(mute-part "midilead")
-(mute-part "bass")
-(mute-part "lead")
-(mute-part "bass")
-
-(ql:quickload 'cl-patterns/alsa-midi)
-(use-package 'cl-patterns)
-(defparameter *pat* (pbind :foo (pseq '(1 2 3))
-                           :bar (prand '(9 8 7) 5)))
-
-(defparameter *pstream* (as-pstream *pat*))
-(next-n *pstream* 3)
-
-(pb :automatic-jazz
-  :note (pshuf (scale-notes :minor) 4)
-  :octave (pr (pwhite 2 7))
-  :root (pr (pwhite 0 12))
-  :dur (pshuf (list 1/3 1/4)))
