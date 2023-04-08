@@ -6,6 +6,9 @@
 (defconstant metronome-prob-dist
   '(100 0  0    0  100  0   0   0   100  0  0   0   100 0   0    0))
 
+(defconstant arpeggio-prob-dist
+  '(100 05 100  05  100 05  90  05   100  05 90  05   100 05 90  0)) 
+
 (defconstant base-prob-dist
   '(34  02  18  13  14  09  19  11  13  12  15  11  15  12  13  03))
 

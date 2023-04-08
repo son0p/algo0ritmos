@@ -187,13 +187,18 @@ See also: `near-p'"
                      (lambda (x) (change-range
                                   (- (expt (sin x) (random-from-range 1 3)) 0.4)
                                   -1 1 600 2698)) "lead"))
-    (:mute (mute-part "lead")))
+    (:mute (mute-part "lead"))
+    (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead")))
   (case mid
     (:new  (new-part base-prob-dist
                      (lambda (x) (change-range
                                   (expt (cos x) 4)
                                   -1 1 200 600)) "mid"))
-    (:mute (mute-part "mid")))
+    (:mute (mute-part "mid"))
+    (:arpeggio  (new-part arpeggio-prob-dist
+                     (lambda (x) (change-range
+                                  (sin x) 
+                                  -1 1 200 600)) "mid")))
   (case bass
     (:new (new-part (random-element *prob-list*)
             (lambda (x) (change-range
@@ -249,9 +254,12 @@ See also: `near-p'"
 ;; test live transformations
 (refresh-parts :lead :new)
 (refresh-parts :mid :new)
-(refresh-parts :lead :new :mid :new :bass :selected :bd :new :sd :new :hh :new)
+(refresh-parts :mid :arpeggio)
+(refresh-parts :bass :new)
+(refresh-parts :lead :selected :mid :arpeggio :bass :selected :bd :new :sd :new :hh :new)
 (refresh-parts :fill-sd :new)
 (refresh-parts :fill-htom :new)
+(refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute)
 ;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
 
 (defun osc-receive (port)
