@@ -205,7 +205,7 @@ See also: `near-p'"
                          (sin (* (random-from-range 1 10) x))
                          -1 1 70 350)) "bass"))
     (:mute (mute-part "bass"))
-    (:selected (send-part-from-selected (write (random-element *selected-bass*)) "bass")))
+    (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
   (case bd
     (:new (new-part (random-list)
             (lambda (x) (change-range
@@ -223,7 +223,8 @@ See also: `near-p'"
             (lambda (x) (change-range
                          (- (expt (sin x) (random-from-range 1 3)) 0.4)
                          -1 1 600 2698)) "hh"))
-    (:mute (mute-part "hh")))
+    (:mute (mute-part "hh"))
+    (:metronome (send-part-from-selected metronome-prob-dist "hh")))
   (case htom
     (:new  (new-part toms-prob-dist
             (lambda (x) (change-range
@@ -249,14 +250,27 @@ See also: `near-p'"
               (refresh-parts :htom :mute)))
      (:mute (mute-part "htom")))
   (case gain
-    (:base (send-part gain-base-curve "gain"))))
+    (:base (send-part gain-base-curve "gain"))
+    (:fade-in (send-part gain-fade-in-curve "gain"))))
  
 ;; test live transformations
+(refresh-parts :hh :metronome)
+(refresh-parts :htom :new)
 (refresh-parts :lead :new)
-(refresh-parts :mid :new)
-(refresh-parts :mid :arpeggio)
+(refresh-parts :mid  :new)
+(refresh-parts :mid  :arpeggio)
 (refresh-parts :bass :new)
-(refresh-parts :lead :selected :mid :arpeggio :bass :selected :bd :new :sd :new :hh :new)
+(refresh-parts :bass :new)
+(refresh-parts :gain :fade-in)
+(refresh-parts :gain :base)
+(refresh-parts :lead :new
+               :mid  :new
+               :bass :new
+               :bd :new :sd :new :hh :new) ;; all new
+(refresh-parts :lead :selected
+               :mid  :selected
+               :bass :selected
+               :bd :new :sd :new :hh :new) ;; selected
 (refresh-parts :fill-sd :new)
 (refresh-parts :fill-htom :new)
 (refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute)

@@ -126,7 +126,7 @@ public class Library
   0.7 => blit0pan.pan;
   blit0env.set( 0::ms, 200::ms, .0, 100::ms );
     // Tri
-    TriOsc tri0 => ADSR tri0env => Pan2 tri0Pan => dac;
+    TriOsc tri0 => ADSR tri0env => NRev tri0rev => Pan2 tri0Pan => dac;
     -0.0 => tri0Pan.pan;
     tri0env.set( 0::ms, 500::ms, .0, 100::ms );
     // --Melody

@@ -80,10 +80,12 @@ imp.radius( 0.999 );
 0.03 => lib.sqr0.gain;
 0.05 => lib.sin0.gain;
 0.05 => lib.tri0.gain;
+0.10 => lib.tri0rev.mix;
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
 0.25 => lib.hh.gain;
 0.15 => lib.fat.gain;
+
 
 // send OSC to change patterns
 // destination host name

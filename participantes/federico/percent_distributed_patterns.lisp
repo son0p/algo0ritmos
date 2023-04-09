@@ -1,10 +1,13 @@
 (defconstant all-prob            (make-list 16 :initial-element 100))
 
 (defconstant gain-base-curve
-  '(100 70 90  80  100 70  90  80   100  70 90  80   100 70 90  80)) 
+  '(100 70 90  80  100 70  90  80   100  70 90  80   100 70 90  80))
+
+(defparameter gain-fade-in-curve
+  '(10 20 30  40  50 60  70  80   90  93 94  95  96 97 98  99)) 
 
 (defconstant metronome-prob-dist
-  '(100 0  0    0  100  0   0   0   100  0  0   0   100 0   0    0))
+  '(440 0   0   0  330  0   0  0    330  0  0   0      330 0  0   0))
 
 (defconstant arpeggio-prob-dist
   '(100 05 100  05  100 05  90  05   100  05 90  05   100 05 90  0)) 
