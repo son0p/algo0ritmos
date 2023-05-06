@@ -6,6 +6,9 @@
 ;;; librerias
 (ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix local-time))
 
+;; cargarlo después de tener update-drums
+(load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
+
 (defun prob-generate-and-send (osc-name part-math-function prob-distribution)
   " Envía por OSC un patrón que contiene las alturas definidas por la función matemática y la activación de cada paso, definida por la distribución de probabilidades. TODO: imprime dos veces porque se llama send-part antes de la distribución"
   (format t "~& ") ;; debug
@@ -304,10 +307,9 @@ See also: `near-p'"
                 (refresh-parts :fill-htom :new)))
            (when s (USOCKET:socket-close s)))))
 
-(osc-receive 6667)
+;;(osc-receive 6667)
 
-;; cargarlo después de tener update-drums
-(load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
+
 ;; ==== live transformations
 
 ;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
