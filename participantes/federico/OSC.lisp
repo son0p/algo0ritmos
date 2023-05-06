@@ -188,7 +188,8 @@ See also: `near-p'"
                                   (- (expt (sin x) (random-from-range 1 3)) 0.4)
                                   -1 1 600 2698)) "lead"))
     (:mute (mute-part "lead"))
-    (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead")))
+    (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
+    (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))
   (case mid
     (:new  (new-part base-prob-dist
                      (lambda (x) (change-range
@@ -276,6 +277,24 @@ See also: `near-p'"
 (refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute)
 ;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
 
+(defun osc-cases ()
+  (if (= (nth 1 *oscrx*) 0)
+      (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
+  (if (= (nth 1 *oscrx*) 1)
+      (refresh-parts :mid :new :bass :mute :bd :mute :sd :mute))
+  (if (= (nth 1 *oscrx*) 2)
+      (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
+  (if (= (nth 1 *oscrx*) 3)
+      (refresh-parts :lead :new :mid :mute :bass :new :bd :new :sd :new :hh :new))
+  (if (= (mod (nth 1 *oscrx*) 64) 50)
+      (refresh-parts :fill-htom :new)))
+
+(defun osc-compare ()
+   (if (= (mod (nth 1 *oscrx*) 16) 15)
+      (refresh-parts :lead :2f934e3a) )
+    (if (= (mod (nth 1 *oscrx*) 32) 31)
+      (refresh-parts :lead :new)))
+
 (defun osc-receive (port)
   "a basic test function which attempts to decode an osc message on given port.
   note ip#s need to be in the format #(127 0 0 1) for now.. . "
@@ -292,17 +311,10 @@ See also: `near-p'"
            ;;(format t "~%~%")
            ;;(format t "received -=> ~S~%~%" (osc:decode-bundle buffer))
            (setf *oscRx* (osc:decode-bundle buffer))
-           (if (= (nth 1 *oscrx*) 0)
-               (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
-           (if (= (nth 1 *oscrx*) 1)
-               (refresh-parts :mid :new :bass :mute :bd :mute :sd :mute))
-           (if (= (nth 1 *oscrx*) 2)
-               (refresh-parts :lead :new :bass :new :bd :new :sd :new :hh :new))
-           (if (= (nth 1 *oscrx*) 3)
-                 (refresh-parts :lead :new :mid :mute :bass :new :bd :new :sd :new :hh :new))
-           (if (= (mod (nth 1 *oscrx*) 64) 50)
-                (refresh-parts :fill-htom :new)))
-           (when s (USOCKET:socket-close s)))))
+           (osc-compare))
+      (when s (USOCKET:socket-close s)))))
+
+
 
 (osc-receive 6667)
 
