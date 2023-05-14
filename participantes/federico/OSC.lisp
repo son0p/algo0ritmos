@@ -167,12 +167,12 @@ See also: `near-p'"
                (write (append (list patt osc-name)))))
  
 (defun new-part (distribution-list math-function osc-name)
-  (format t "~& ")
+  ;;(format t "~& ")
   (let ((patt (pattern-from-distribution
               distribution-list
               (pattern-generate osc-name math-function))))
     (send-part patt osc-name)
-    (write (append (list patt osc-name)))))
+    (append-result-to-file "/tmp/output.txt" #'append (list patt osc-name)))))
 
 (defun inject-part-from-list (lst osc-name)
   (send-part lst osc-name))
