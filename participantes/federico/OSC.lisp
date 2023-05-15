@@ -94,6 +94,21 @@
         do (funcall my-function)
         do (sleep time)))
 
+(defun append-result-to-file (file function &rest args)
+  "Append the result of FUNCTION with ARGS to FILE."
+  (with-open-file (stream file
+                          :direction :output
+                          :if-exists :append
+                          :if-does-not-exist :create)
+    (write (apply function args) :stream stream)))
+
+(defun append-string-to-file (file string)
+  (with-open-file (stream file
+                          :direction :output
+                          :if-exists :append
+                          :if-does-not-exist :create)
+    (format stream "~%~A~%" string)))
+
 (defun pattern-from-distribution (distribution frequencies)
   (let ((dist distribution) (freqs frequencies))
     (mapcar #'(lambda (x y)
@@ -172,7 +187,8 @@ See also: `near-p'"
               distribution-list
               (pattern-generate osc-name math-function))))
     (send-part patt osc-name)
-    (write (append (list patt osc-name)))))
+    ;(write (append (list patt osc-name)))
+    (append-result-to-file "/tmp/output.txt" #'append (list patt osc-name))))
 
 (defun inject-part-from-list (lst osc-name)
   (send-part lst osc-name))
@@ -254,7 +270,8 @@ See also: `near-p'"
      (:mute (mute-part "htom")))
   (case gain
     (:base (send-part gain-base-curve "gain"))
-    (:fade-in (send-part gain-fade-in-curve "gain"))))
+    (:fade-in (send-part gain-fade-in-curve "gain")))
+  (append-string-to-file "/tmp/output.txt" "===================="))
  
 ;; test live transformations
 (refresh-parts :hh :metronome)
