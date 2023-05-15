@@ -317,7 +317,6 @@ See also: `near-p'"
       (when s (USOCKET:socket-close s)))))
 
 
-
 ;;(osc-receive 6667)
 
 ;; ==== live transformations

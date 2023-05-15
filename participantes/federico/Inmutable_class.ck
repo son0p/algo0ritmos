@@ -10,6 +10,7 @@ public class Inmutable
     int inmutableSN[16];
     int inmutableHTOM[16];
     int inmutableHH[16];
+    int inmutableGAIN[16];
     float container[100];
     static int counter;
     static int mod4;
