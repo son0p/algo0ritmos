@@ -164,7 +164,7 @@ See also: `near-p'"
          (patt part-patt))
      (osc-send #(127 0 0 1) 6450
                (cons (concatenate 'string addr osc-name) patt))
-               (write (append (list (local-time:now)) (list osc-name) patt))))
+               (write (append (list patt osc-name)))))
  
 (defun new-part (distribution-list math-function osc-name)
   (format t "~& ")
@@ -172,7 +172,7 @@ See also: `near-p'"
               distribution-list
               (pattern-generate osc-name math-function))))
     (send-part patt osc-name)
-    (write (append (list (local-time:now)) (list osc-name) patt))))
+    (write (append (list patt osc-name)))))
 
 (defun inject-part-from-list (lst osc-name)
   (send-part lst osc-name))
