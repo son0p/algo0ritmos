@@ -1,95 +1,33 @@
-(ql:quickload :cl-ledger)
-
-(ledger:csv-report "/home/ff/Scripts/music_patterns.ldg"
-                        :note "doc" )
-
-(nth (list "/home/ff/Scripts/music_patterns.ldg" 84 (list 25687 12368 0) nil "bd"
-  (85 "patron:bd" "p 1.120" nil "; doc: (list 1174.659 0 0 1396.913 0 293.66476 0 0  0 0 659.2551 2349.318 1567.9817 0 2349.318 0) \"bd\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 88462fdb")) 0)
- ("/home/ff/Scripts/music_patterns.ldg" 94 (25687 12368 0) nil "mid"
-  (95 "patron:mid" "p 1.130" nil "; doc: (587.3295 0 0 0 0 0 0 0 0 523.2511 0 0 523.2511 0 0 0) \"mid\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: ad1a6a22"))
- ("/home/ff/Scripts/music_patterns.ldg" 104 (25650 18000 0) nil "lead"
-  (105 "patt:lead" "p 1.141" nil "; doc:  (1174.659 0 0 0 0 0 0 0 0 0 0 0 1567.9817 1760.0 2349.318 0) \"lead\"
-; id: f0a9880b"))
- ("/home/ff/Scripts/music_patterns.ldg" 110 (25687 12368 0) nil "lead"
-  (111 "patron:lead" "p 1.142" nil "; doc: ( 1174.659 0 2093.0044 1396.913 0 0 0  0 0 0 0 0 1046.5022 1760.0 2349.318 0) \"lead\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 782b0316"))
- ("/home/ff/Scripts/music_patterns.ldg" 125 (25687 12368 0) nil "lead"
-  (126 "patron:lead" "p 1.143" nil "; doc: ( 1174.659 0 0 1396.913 0 0 0 0 0 0 0  0 0 0 2349.318 0) \"lead\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 882e2b57"))
- ("/home/ff/Scripts/music_patterns.ldg" 137 (25687 12368 0) nil "hh"
-  (138 "patron:hh" "p 1.150" nil "; doc: (0 0 0 0 0 0 1174.659 1864.6552  2349.318 0 1046.5022 174.61412 1046.5022 0 2349.318 1567.9817) \"hh\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 6375eaa4"))
- ("/home/ff/Scripts/music_patterns.ldg" 147 (25687 12368 0) nil "==== Roca Vultra"
-  (148 "name" "p 2.000" nil "; doc: Roca Vultra
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 03596657"))
- ("/home/ff/Scripts/music_patterns.ldg" 157 (25687 12368 0) nil "bass"
-  (158 "patron:bass" "p 2.110" nil "; doc: (220.0 0 110.0 73.41619 0 0 0 0 0 0  329.62756 73.41619 0 0 329.62756 0) \"bass\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: c6e7c56f"))
- ("/home/ff/Scripts/music_patterns.ldg" 167 (25687 12368 0) nil "mid"
-  (168 "patron:mid" "p 2.120" nil "; doc: (0 0 0 0 440.0 0 0 0 0 0 523.2511 0 0  523.2511 0 0) \"mid\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: a48f71f0"))
- ("/home/ff/Scripts/music_patterns.ldg" 177 (25687 12368 0) nil "lead"
-  (178 "patron:lead" "p 2.130" nil "; doc: (0 0 0 1396.913 0 0 0 0 0 0 1046.5022  0 0 0 0 0) \"lead\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 1ec1bf1c"))
-
-("/home/ff/Scripts/music_patterns.ldg" 188 (25687 12368 0) nil "bd"
-  (189 "patron:bd" "p 2.211" nil "; doc: (1174.659 1864.6552 0 0 0 220.0  1318.5103 0 2349.318 1567.9817 0 0 1567.9817 1760.0 2349.318 1864.6552) \"bd\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: f62c6cb4"))
-
-
- ("/home/ff/Scripts/music_patterns.ldg" 198 (25687 12368 0) nil "sd"
-  (199 "patron:sd" "p 2.212" nil "; doc: (0 0 2093.0044 0 0 0 1318.5103 0 0 0 1046.5022 0 0 0 2349.318 0) \"sd\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: 25d0f357"))
- ("/home/ff/Scripts/music_patterns.ldg" 208 (25687 12368 0) nil "hh"
-  (209 "patron:hh" "p 2.213" nil "; doc: (0 0 0 1396.913 0 2093.0044 0 1864.6552  2349.318 1318.5103 1046.5022 174.61412 659.2551 0 2349.318 0) \"hh\"
-; src:
-; context:
-; url:
-; status: nigredo
-; id: c53c3ba5")))
+(defvar f87107df  '(p 1.100 lead f87107df '(0 0 100.0 0 0 0 0 0 200.4 0 0 0 0 0 0 0) "lead"))
+(defvar 647d832a  '(p 1.110 bass 647d832a '(0 0 0 110.0 349.22824 0 0 0 0 0 0 0 0 116.54095 0 0) "bass"))
+(defvar 88462fdb  '(p 1.120 bd 88462fdb '(1174.659 0 0 1396.913 0 293.66476 0 0  0 0 659.2551 2349.318 1567.9817 0 2349.318 0) "bd"))
+(defvar ad1a6a22  '(p 1.130 mid ad1a6a22 '(587.3295 0 0 0 0 0 0 0 0 523.2511 0 0 523.2511 0 0 0) "mid"))
+(defvar f0a9880b  '(p 1.141 lead f0a9880b '(1174.659 0 0 0 0 0 0 0 0 0 0 0 1567.9817 1760.0 2349.318 0) "lead"))
+(defvar 782b0316  '(p 1.142 lead 782b0316 '( 1174.659 0 2093.0044 1396.913 0 0 0  0 0 0 0 0 1046.5022 1760.0 2349.318 0) "lead"))
+(defvar 882e2b57  '(p 1.143 lead 882e2b57 '( 1174.659 0 0 1396.913 0 0 0 0 0 0 0  0 0 0 2349.318 0) "lead"))
+(defvar 6375eaa4  '(p 1.150 hh 6375eaa4 '(0 0 0 0 0 0 1174.659 1864.6552  2349.318 0 1046.5022 174.61412 1046.5022 0 2349.318 1567.9817) "hh"))
+(defvar 03596657  '(p 2.000 ==== Roca Vultra 03596657 'Roca Vultra))
+(defvar 588d7064  '(p 2.100 lead 588d7064 '( 0 0 0 0 0 0 0 1567.9817 0 0 0 0 0 0) "lead"))
+(defvar c6e7c56f  '(p 2.110 bass c6e7c56f '(220.0 0 110.0 73.41619 0 0 0 0 0 0  329.62756 73.41619 0 0 329.62756 0) "bass"))
+(defvar a48f71f0  '(p 2.120 mid a48f71f0 '(0 0 0 0 440.0 0 0 0 0 0 523.2511 0 0  523.2511 0 0) "mid"))
+(defvar 1ec1bf1c  '(p 2.130 lead 1ec1bf1c '(0 0 0 1396.913 0 0 0 0 0 0 1046.5022  0 0 0 0 0) "lead"))
+(defvar c4a05d1f  '(p 2.200 bass c4a05d1f '(0 0 0 0 0 0 82.40689 0 73.41619 0 146.83238 0 0 349.22824 0 0) "bass"))
+(defvar f62c6cb4  '(p 2.211 bd f62c6cb4 '(1174.659 1864.6552 0 0 0 220.0  1318.5103 0 2349.318 1567.9817 0 0 1567.9817 1760.0 2349.318 1864.6552) "bd"))
+(defvar 25d0f357  '(p 2.212 sd 25d0f357 '(0 0 2093.0044 0 0 0 1318.5103 0 0 0 1046.5022 0 0 0 2349.318 0) "sd"))
+(defvar c53c3ba5  '(p 2.213 hh c53c3ba5 '(0 0 0 1396.913 0 2093.0044 0 1864.6552  2349.318 1318.5103 1046.5022 174.61412 659.2551 0 2349.318 0) "hh"))
+(defvar a2489b28  '(p 3.100 lead a2489b28 '( 1174.659 0 0 1396.913 0 0 0 0 0 0 0  0 0 0 2349.318 0) "lead"))
+(defvar 1ffdfe4f  '(p 3.200 mid 1ffdfe4f '(587.3295 0 0 0 440.0 0 0 0 0 0 0 0 0 0 391.99542 0) "mid"))
+(defvar 7f92cb81  '(p 3.300 bass 7f92cb81 '(0 0 0 174.61412 87.30706 0 130.81277  0 0 195.99771 0 0 0 0 0 0) "bass"))
+(defvar   '(r1.0 Leads  '(send-part '(0 0 587.33 0 1567.98 61.74 0 0 0 0 880.0 0 987.77 0 698.46 0) "lead")))
+(defvar   '(r4.0 Leads  '(send-part (0 0 493.88 0 1567.98 0 0 1567.98 0 0 0 0 783.99 0 329.63 0) "lead")))
+(defvar   '(r4.0 ensamble  '))
+(defvar   '(r4.0 ensamble  '))
+(defvar   '(r4.0 ensamble  '))
+(defvar   '(r4.0 bass  '))
+(defvar   '(r4.0 ensamble  '))
+(defvar   '(r4.1 Leads  '(send-part (146.83 0 0 110.0 65.41 0 0 0 146.83 0 0 146.83 0 0 0 0) "bass")))
+(defvar   '(r4.1 Leads  '(send-part (16.35 0 0 16.35 0 0 0 16.35 16.35 0 0 16.35 16.35 0 16.35 0) "bd")))
+(defvar   '(r4.2 Leads  '(send-part (123.47 123.47 0 73.42 130.81 0 0 16.35 146.83 0 0 146.83 0 0 98.0 0) "bass")))
+(defvar   '(r4.3 Leads  '(send-part (65.41 0 73.42 61.74 16.35 0 0 16.35 16.35 0 0 65.41 0 0 36.71 0) "bass")))
+(defvar   '(r4.3 Leads  '))
+(defvar   '(r5.0 Leads  '(send-part (587.33 0 0 246.94 659.25 0 0 783.99 30.87 0 0 329.63 0 0 493.88 0) "lead")))
