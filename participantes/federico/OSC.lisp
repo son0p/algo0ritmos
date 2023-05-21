@@ -208,18 +208,21 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun convert-string-to-function (string)
-  (multiple-value-bind (form error-p) (ignore-errors (read-from-string string))
-    (if error-p
-        (error "Invalid function string: ~a" string)
-        (if (functionp form)
-            form
-            (error "Invalid function string: ~a" string)))))
-
-(defun leadTable (exp)
+(defun lead-table ()
   (loop for i below 1024
     ;;(format t "~d " (sin (/ (* 2 x pi) 1048)))
-    collect (funcall (convert-string-to-function exp) i)))
+        collect (sin (/ (* 2 i pi) 1024))))
+
+;; test https://guicho271828.github.io/eazy-gnuplot/
+(use-package :eazy-gnuplot)
+(defun function-plot (output)
+  (with-plots (s :debug nil)
+    (gp-setup :terminal '(pngcairo) :output output)
+    ;;(plot "(sin(1/x) - cos(x))*erfc(x)"))
+    (plot #'lead-table))
+  output)
+
+(png-from-file (function-plot "images/function-plot.png"))
 
 (defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
