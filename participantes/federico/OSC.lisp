@@ -153,6 +153,17 @@ See also: `near-p'"
                 a))
           list))
 
+(defun equidistant-samples (list-of-elements num-samples)
+  (let* ((total-elements (length list-of-elements))
+         (step-size (/ total-elements num-samples)))
+    (loop for i from 0 below num-samples
+          collect (nth (round (* i step-size)) list-of-elements))))
+
+;; Example usage:
+;;(let ((my-list '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20)))
+;;  (equidistant-samples my-list 16))
+
+
 (defun osc-send (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
  note ip#s need to be in the format #(127 0 0 1) for now.. ."
@@ -197,9 +208,18 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun leadTable ()
-  (dotimes (x 1048)
-        (format t "~d " (sin (/ (* 2 x pi) 1048)))))
+(defun convert-string-to-function (string)
+  (multiple-value-bind (form error-p) (ignore-errors (read-from-string string))
+    (if error-p
+        (error "Invalid function string: ~a" string)
+        (if (functionp form)
+            form
+            (error "Invalid function string: ~a" string)))))
+
+(defun leadTable (exp)
+  (loop for i below 1024
+    ;;(format t "~d " (sin (/ (* 2 x pi) 1048)))
+    collect (funcall (convert-string-to-function exp) i)))
 
 (defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
