@@ -197,6 +197,10 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
+(defun leadTable ()
+  (dotimes (x 1048)
+        (format t "~d " (sin (/ (* 2 x pi) 1048)))))
+
 (defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
@@ -290,6 +294,7 @@ See also: `near-p'"
                :mid  :selected
                :bass :selected
                :bd :new :sd :new :hh :new) ;; selected
+(refresh-parts :bd :new :sd :new :hh :new) ;; new drums
 (refresh-parts :fill-sd :new)
 (refresh-parts :fill-htom :new)
 (refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute) ;; MUTE ALL
