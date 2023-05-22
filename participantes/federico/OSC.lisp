@@ -220,18 +220,22 @@ See also: `near-p'"
 
 (defun math_expression_to_list (size math-expression)
       (loop for i from 0 below size
-          for value = (eval `(let ((i ,i)) ,math-expression))
+          for value = (coerce (eval `(let ((i ,i)) ,math-expression)) 'single-float)
             collect value))
 ;; test:  (equidistant-samples (math_expression_to_list 1024 '(sin (/ (* 2 i pi) 1024))) 16)
+
+(defun math-expression-selected-values (number-of-values math-expression)
+  (mapcar (lambda (x) (change-range x -1 1 600 2698))
+          (equidistant-samples (math_expression_to_list 1024 math-expression) number-of-values)))
 
 (defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
-    (:new  (new-part (random-element *prob-list*)
-                     (lambda (x) (change-range
-                                  (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                                  -1 1 600 2698)) "lead"))
-    (:mute (mute-part "lead"))
+    (:new  (send-part-from-selected (mapcar
+                                     (lambda (x) (nearest x *scale*))
+                                     (math-expression-selected-values 16 '(sin (/ (* 2 i pi) 1024))))
+                                    "lead" ))
+     (:mute (mute-part "lead"))
     (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
     (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))
   (case mid
