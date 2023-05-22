@@ -208,21 +208,21 @@ See also: `near-p'"
     (setf local-pattern '(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
     (send-part local-pattern osc-name)))
 
-(defun lead-table ()
-  (loop for i below 1024
-    ;;(format t "~d " (sin (/ (* 2 x pi) 1048)))
-        collect (sin (/ (* 2 i pi) 1024))))
+(defun export_math_matrix_to_file (filename size math-expression)
+  "To draw with gnuplot"
+  (with-open-file (output-stream filename
+                                 :direction :output
+                                 :if-exists :supersede)
+    (loop for i from 0 below size
+          for value = (eval `(let ((i ,i)) ,math-expression))
+          do (format output-stream "~d ~f~%" i value))))
+;; test: (export_math_matrix_to_file "/tmp/output.txt" 1024 '(tan (/ (* 2 i pi) 1024)))
 
-;; test https://guicho271828.github.io/eazy-gnuplot/
-(use-package :eazy-gnuplot)
-(defun function-plot (output)
-  (with-plots (s :debug nil)
-    (gp-setup :terminal '(pngcairo) :output output)
-    ;;(plot "(sin(1/x) - cos(x))*erfc(x)"))
-    (plot #'lead-table))
-  output)
-
-(png-from-file (function-plot "images/function-plot.png"))
+(defun math_expression_to_list (size math-expression)
+      (loop for i from 0 below size
+          for value = (eval `(let ((i ,i)) ,math-expression))
+            collect value))
+;; test:  (equidistant-samples (math_expression_to_list 1024 '(sin (/ (* 2 i pi) 1024))) 16)
 
 (defun refresh-parts (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
