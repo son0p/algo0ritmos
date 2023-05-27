@@ -1,4 +1,4 @@
-;;;; test with simpleOSCpattern.ck (ChucK)
+;;;; test with simpleOSCpattern.ck (ChucK) y panel_lanzamientos.lisp
 ;;;; or MIDI Ardour morph--------------------
 ;;;; favs in Scripts/music_patterns.ldg
 (uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
@@ -163,6 +163,47 @@ See also: `near-p'"
 ;;(let ((my-list '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20)))
 ;;  (equidistant-samples my-list 16))
 
+(defun number-to-binary-16bit (number)
+  (format nil "~16,'0b" number))
+
+;; Example usage
+(let ((number 256))
+  (format t "Binary representation: ~a~%" (number-to-binary-16bit number)))
+
+(defun cross-expression-verify (x)
+  "Verifica si dos expresiones matemáticas son iguales (¿se cruzan?), en este caso dos funciones, una recta y una seno, uso: (loop for x from 1 to 100 collecting (cross-expression-verify x))"
+  (let ((offset-recta 0)
+        (pendiente-recta 45)
+        (y 5)
+        (offset-seno 0)
+        (multiplicador-seno 1)
+        (multiplicador-frecuencia 1))
+    (=
+     (+ offset-recta (* pendiente-recta y))
+     (+ offset-seno (* multiplicador-seno (sin (* multiplicador-frecuencia x)))))))
+
+(defun find-crossing-points (func1 func2 start end step)
+  (loop for x from start to end by step
+        for y1 = (funcall func1 x)
+        for y2 = (funcall func2 x)
+        when (< (abs (- y1 y2)) 0.101) ; Adjust the threshold as needed for precision
+        collect (list x y1)))
+
+;; Example usage
+(let ((offset-recta 0)
+      (pendiente-recta 0.5)
+      (offset-seno 0)
+      (multiplicador-seno 1)
+      (multiplicador-frecuencia 1))
+  (defun f1 (x)
+    (+ offset-recta (* pendiente-recta x)))
+  (defun f2 (x)
+    (+ offset-seno (* multiplicador-seno (sin (* multiplicador-frecuencia x))))))
+
+(let ((crossing-points (find-crossing-points #'f1 #'f2 -1000 1000 0.1)))
+  (dolist (point crossing-points)
+    (format t "Crossing point: ~a, ~a~%" (first point) (second point))))
+
 
 (defun osc-send (host port address-pattern)
   "a basic test function which sends osc test message to a given port/hostname.
@@ -303,29 +344,6 @@ See also: `near-p'"
     (:fade-in (send-part gain-fade-in-curve "gain")))
   (append-string-to-file "/tmp/output.txt" "===================="))
  
-;; test live transformations
-(refresh-parts :hh :metronome)
-(refresh-parts :htom :new)
-(refresh-parts :lead :new :lead-exp '(sin (/ (* 2 i pi) 1024)))
-(refresh-parts :mid  :new)
-(refresh-parts :mid  :arpeggio)
-(refresh-parts :bass :new)
-(refresh-parts :bass :new)
-(refresh-parts :gain :fade-in)
-(refresh-parts :gain :base)
-(refresh-parts :lead :new
-               :mid  :new
-               :bass :new
-               :bd :new :sd :new :hh :new) ;; all new
-(refresh-parts :lead :selected
-               :mid  :selected
-               :bass :selected
-               :bd :new :sd :new :hh :new) ;; selected
-(refresh-parts :bd :new :sd :new :hh :new) ;; new drums
-(refresh-parts :fill-sd :new)
-(refresh-parts :fill-htom :new)
-(refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute) ;; MUTE ALL
-;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
 
 (defun osc-cases ()
   (if (= (nth 1 *oscrx*) 0)
@@ -364,13 +382,4 @@ See also: `near-p'"
            (osc-compare))
       (when s (USOCKET:socket-close s)))))
 
-
-
-;;(osc-receive 6667)
-
-;; ==== live transformations
-
-;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
-;; legacy midi
-;;(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
 
