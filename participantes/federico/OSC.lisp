@@ -166,9 +166,11 @@ See also: `near-p'"
 (defun number-to-binary-16bit (number)
   (format nil "~16,'0b" number))
 
+(defun numbers-to-binary-16bit (numbers)
+  (format t "~{~a~&~}" (mapcar #'number-to-binary-16bit numbers)))
+
 ;; Example usage
-(let ((number 256))
-  (format t "Binary representation: ~a~%" (number-to-binary-16bit number)))
+;; (numbers-to-binary-16bit '(34952 2056 8738))
 
 (defun cross-expression-verify (x)
   "Verifica si dos expresiones matemáticas son iguales (¿se cruzan?), en este caso dos funciones, una recta y una seno, uso: (loop for x from 1 to 100 collecting (cross-expression-verify x))"
@@ -186,12 +188,12 @@ See also: `near-p'"
   (loop for x from start to end by step
         for y1 = (funcall func1 x)
         for y2 = (funcall func2 x)
-        when (< (abs (- y1 y2)) 0.101) ; Adjust the threshold as needed for precision
+        when (< (abs (- y1 y2)) 0.01) ; Adjust the threshold as needed for precision
         collect (list x y1)))
 
 ;; Example usage
 (let ((offset-recta 0)
-      (pendiente-recta 0.5)
+      (pendiente-recta 0.005)
       (offset-seno 0)
       (multiplicador-seno 1)
       (multiplicador-frecuencia 1))
@@ -200,9 +202,44 @@ See also: `near-p'"
   (defun f2 (x)
     (+ offset-seno (* multiplicador-seno (sin (* multiplicador-frecuencia x))))))
 
-(let ((crossing-points (find-crossing-points #'f1 #'f2 -1000 1000 0.1)))
+(let ((crossing-points (find-crossing-points #'f1 #'f2 0 1 0.01)))
   (dolist (point crossing-points)
     (format t "Crossing point: ~a, ~a~%" (first point) (second point))))
+
+(defun points-from-functions (func1 func2 start end step)
+  (loop for x from start to end by step
+        for y1 = (funcall func1 x)
+        for y2 = (funcall func2 x)
+        collect (list y1 y2)))
+
+(defun plot-x-y ()
+  (let ((crossing-points (find-crossing-points #'f1 #'f2 0 1 0.01)))
+    (dolist (point crossing-points)
+      (return (format t "~a, ~a~%" (first point) (second point) )))))
+
+(defun plot-two-functions ()
+  (let ((points (points-from-functions #'f1 #'f2 0 1024 1)))
+    (dolist (point points)
+      (format nil "~a, ~a~%" (first point) (second point)))))
+
+(defun plot-two-functions ()
+  (let ((points (points-from-functions #'f1 #'f2 0 1024 1)))
+    (loop for 0 to 1024 (point points)
+      (format nil "~a, ~a~%" (first point) (second point)))))
+
+(defun add-newline-every-two-values-recursion (lst)
+  (cond
+    ((null lst) nil)
+    ((null (cdr lst)) (list (car lst)))
+    (t (cons (car lst) (cons (cadr lst) (cons #\newline (add-newline-every-two-values-recursion (cddr lst))))))))
+
+;; Example usage
+(let ((values (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
+  (format t "~{~a ~}" (add-newline-every-two-values-recursion values)))
+
+(add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
+
+(append-result-to-file "/tmp/output.txt" #'add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
 
 
 (defun osc-send (host port address-pattern)
