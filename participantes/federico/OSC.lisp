@@ -110,6 +110,7 @@
     (format stream "~%~A~%" string)))
 
 (defun pattern-from-distribution (distribution frequencies)
+  "recibe dos listas?, hace una lista de 100 para seleccionar si suena o no?"
   (let ((dist distribution) (freqs frequencies))
     (mapcar #'(lambda (x y)
                 (random-element (append
@@ -229,12 +230,12 @@ See also: `near-p'"
 ;; Example usage
 (plot-two-functions)
 
-(let ((values (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
-  (format t "~{~a~}" (add-newline-every-two-values-recursion values)))
+;; (let ((values (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
+ ;; (format t "~{~a~}" (add-newline-every-two-values-recursion values)))
 
-(add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
+;;(add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
 
-(append-result-to-file "/tmp/output.txt" #'add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
+;;(append-result-to-file "/tmp/output.txt" #'add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
 
 
 (defun osc-send (host port address-pattern)
@@ -301,14 +302,15 @@ See also: `near-p'"
   (mapcar (lambda (x) (change-range x -1 1 600 2698))
           (equidistant-samples (math_expression_to_list 1024 math-expression) number-of-values)))
 
-(defun refresh-parts (&key lead lead-exp mid bass bd sd hh htom fill-sd fill-htom (gain :base))
+(defun refresh-parts (&key lead lead-exp lead-dist mid bass bass-exp bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
-    (:new  (send-part-from-selected (mapcar
-                                     (lambda (x) (nearest x *scale*))
-                                     (math-expression-selected-values 16 lead-exp))
-                                    "lead" ))
-     (:mute (mute-part "lead"))
+    (:new  (send-part-from-selected (pattern-from-distribution lead-dist
+                                                               (mapcar
+                                                                (lambda (x) (nearest x *scale*))
+                                                                (math-expression-selected-values 16 lead-exp)))
+                                                               "lead" ))
+    (:mute (mute-part "lead"))
     (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
     (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))
   (case mid
@@ -322,10 +324,10 @@ See also: `near-p'"
                                   (sin x) 
                                   -1 1 200 600)) "mid")))
   (case bass
-    (:new (new-part (random-element *prob-list*)
-            (lambda (x) (change-range
-                         (sin (* (random-from-range 1 10) x))
-                         -1 1 70 350)) "bass"))
+    (:new  (send-part-from-selected (mapcar
+                                     (lambda (x) (nearest x *scale*))
+                                     (math-expression-selected-values 16 bass-exp))
+                                    "bass" ))
     (:mute (mute-part "bass"))
     (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
   (case bd

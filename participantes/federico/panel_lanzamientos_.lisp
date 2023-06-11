@@ -12,16 +12,16 @@
 ;; test live transformations
 (refresh-parts :hh :metronome)
 (refresh-parts :htom :new)
-(refresh-parts :lead :new :lead-exp '(sin (/ (* 2 i pi) 1024)))
+(refresh-parts :lead :new :lead-dist base-prob-dist :lead-exp '(sin (/ (* 2 i pi) 1024))) ;; variaciones en id 3d8f3e7a
 (refresh-parts :mid  :new)
 (refresh-parts :mid  :arpeggio)
 (refresh-parts :bass :new)
 (refresh-parts :bass :new)
 (refresh-parts :gain :fade-in)
 (refresh-parts :gain :base)
-(refresh-parts :lead :new
+(refresh-parts :lead :new :lead-exp '(sin (sin i))
                :mid  :new
-               :bass :new
+               :bass :new :bass-exp '(* 1 (tan (/ (* 2 i pi) 1024)))
                :bd :new :sd :new :hh :new) ;; all new
 (refresh-parts :lead :selected
                :mid  :selected
