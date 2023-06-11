@@ -239,7 +239,7 @@ See also: `near-p'"
 
 (add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
 
-(append-result-to-file "/tmp/output.txt" #'add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
+(append-result-to-file "/tmp/output.txt" #'add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
 
 
 (defun osc-send (host port address-pattern)
