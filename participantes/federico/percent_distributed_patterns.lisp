@@ -1,52 +1,52 @@
-(defconstant all-prob            (make-list 16 :initial-element 100))
+(defvar all-prob            (make-list 16 :initial-element 100))
 
-(defconstant gain-base-curve
+(defvar gain-base-curve
   '(100 70 90  80  100 70  90  80   100  70 90  80   100 70 90  80))
 
 (defparameter gain-fade-in-curve
   '(10 20 30  40  50 60  70  80   90  93 94  95  96 97 98  99)) 
 
-(defconstant metronome-prob-dist
+(defvar metronome-prob-dist
   '(440 0   0   0  330  0   0  0    330  0  0   0      330 0  0   0))
 
-(defconstant arpeggio-prob-dist
+(defvar arpeggio-prob-dist
   '(100 05 100  05  100 05  90  05   100  05 90  05   100 05 90  0)) 
 
-(defconstant base-prob-dist
+(defvar base-prob-dist
   '(34  02  18  13  14  09  19  11  13  12  15  11  15  12  13  03))
 
-(defconstant base-verbose-prob-dist
+(defvar base-verbose-prob-dist
   '(44  12  28  23  24  09  29  21  23  22  25  21  25  22  33  13))
 
-(defconstant baiao-bass-prob-dist
+(defvar baiao-bass-prob-dist
   '(99  01  18  99  01  01  19  01  13  01  15  11  01  01  99  01))
 
-(defconstant baiao-bd-prob-dist
+(defvar baiao-bd-prob-dist
   '(99  01  01  99  01  01  99  01  99  01  01  99  01  01  99  01))
 
-(defconstant baiao-hh-prob-dist
+(defvar baiao-hh-prob-dist
   '(99  01  01  99  01  99  01  01  99  01  99  01  01  99  01  01))
 
-(defconstant baiao-sn-prob-dist
+(defvar baiao-sn-prob-dist
   '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defconstant fill-001-sn
+(defvar fill-001-sn
   '(01  01  99  01  01  01  99  01  01  01  99  01  01  01  99  01))
 
-(defconstant baiao-htom-prob-dist
+(defvar baiao-htom-prob-dist
   '(01  01  01  01  01  01  99  01  01  01  01  01  01  01  99  01))
 
-(defconstant insert-prob
+(defvar insert-prob
   '(01  10  90  01  90  01  01  70  01  01  20  10  90  01  90  20))
 
-(defconstant bass-probability
+(defvar bass-probability
   '(90  10  50  80  90  01  50  70  90  01  20  90  05  01  50  50))
 
-(defconstant toms-prob-dist
+(defvar toms-prob-dist
   '(70 70  00  70 70 70  0  70 70 70  0  90 70 70  0  50))
 
 ;;; drums test pag 65
-(defconstant refresh-bd
+(defvar refresh-bd
   '(70  10  40  90  05  10  30  20  70  05  20 70  05  10  40  40))
 
 (defvar *prob-list* nil)

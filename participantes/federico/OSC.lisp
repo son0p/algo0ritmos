@@ -193,10 +193,10 @@ See also: `near-p'"
 
 ;; Example usage
 (let ((offset-recta 0)
-      (pendiente-recta 0.005)
+      (pendiente-recta 0.0005)
       (offset-seno 0)
       (multiplicador-seno 1)
-      (multiplicador-frecuencia 1))
+      (multiplicador-frecuencia 0.012))
   (defun f1 (x)
     (+ offset-recta (* pendiente-recta x)))
   (defun f2 (x)
@@ -218,24 +218,19 @@ See also: `near-p'"
       (return (format t "~a, ~a~%" (first point) (second point) )))))
 
 (defun plot-two-functions ()
-  (let ((points (points-from-functions #'f1 #'f2 0 1024 1)))
+  (let ((result-string "") (points (points-from-functions #'f1 #'f2 0 1024 1)))
     (dolist (point points)
-      (format nil "~a, ~a~%" (first point) (second point)))))
-
-(defun plot-two-functions ()
-  (let ((points (points-from-functions #'f1 #'f2 0 1024 1)))
-    (loop for 0 to 1024 (point points)
-      (format nil "~a, ~a~%" (first point) (second point)))))
-
-(defun add-newline-every-two-values-recursion (lst)
-  (cond
-    ((null lst) nil)
-    ((null (cdr lst)) (list (car lst)))
-    (t (cons (car lst) (cons (cadr lst) (cons #\newline (add-newline-every-two-values-recursion (cddr lst))))))))
+      (setq result-string (concatenate 'string result-string (format nil "~a, ~a~%" (first point) (second point)))))
+    (with-open-file (output-file "/tmp/output.txt"
+                                 :direction :output
+                                 :if-exists :supersede)
+      (format output-file "~a" result-string))))
 
 ;; Example usage
+(plot-two-functions)
+
 (let ((values (flatten (points-from-functions #'f1 #'f2 0 1024 1))))
-  (format t "~{~a ~}" (add-newline-every-two-values-recursion values)))
+  (format t "~{~a~}" (add-newline-every-two-values-recursion values)))
 
 (add-newline-every-two-values-recursion (flatten (points-from-functions #'f1 #'f2 0 1024 1)))
 
