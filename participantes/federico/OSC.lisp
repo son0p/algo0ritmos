@@ -299,17 +299,19 @@ See also: `near-p'"
 ;; test:  (equidistant-samples (math_expression_to_list 1024 '(sin (/ (* 2 i pi) 1024))) 16)
 
 (defun math-expression-selected-values (number-of-values math-expression)
+  "TODO: pasar el rango como argumento, ¿qué pasa si sale un número negativo?"
   (mapcar (lambda (x) (change-range x -1 1 600 2698))
           (equidistant-samples (math_expression_to_list 1024 math-expression) number-of-values)))
 
 (defun refresh-parts (&key lead lead-exp lead-dist mid bass bass-exp bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
   (case lead
-    (:new  (send-part-from-selected (pattern-from-distribution lead-dist
-                                                               (mapcar
-                                                                (lambda (x) (nearest x *scale*))
-                                                                (math-expression-selected-values 16 lead-exp)))
-                                                               "lead" ))
+    (:new  (send-part-from-selected (pattern-from-distribution
+                                     lead-dist
+                                     (mapcar
+                                      (lambda (x) (nearest x *scale*))
+                                      (math-expression-selected-values 16 lead-exp)))
+                                    "lead" ))
     (:mute (mute-part "lead"))
     (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
     (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))

@@ -12,7 +12,7 @@
 ;; test live transformations
 (refresh-parts :hh :metronome)
 (refresh-parts :htom :new)
-(refresh-parts :lead :new :lead-dist base-prob-dist :lead-exp '(sin (/ (* 2 i pi) 1024))) ;; variaciones en id 3d8f3e7a
+(refresh-parts :lead :new :lead-dist baiao-bass-prob-dist :lead-exp '(sin (/ (* 2 i pi) 1024))) ;; variaciones en id 3d8f3e7a
 (refresh-parts :mid  :new)
 (refresh-parts :mid  :arpeggio)
 (refresh-parts :bass :new)
