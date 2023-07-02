@@ -15,13 +15,13 @@
 (refresh-parts :lead :new :lead-dist baiao-bass-prob-dist :lead-exp '(sin (/ (* 2 i pi) 1024))) ;; variaciones en id 3d8f3e7a
 (refresh-parts :mid  :new)
 (refresh-parts :mid  :arpeggio)
-(refresh-parts :bass :new)
+(refresh-parts :bass :new :bass-dist baiao-bass-prob-dist :bass-exp '(* 1 (tan (/ (* 2 i pi) 1024))))
 (refresh-parts :bass :new)
 (refresh-parts :gain :fade-in)
 (refresh-parts :gain :base)
-(refresh-parts :lead :new :lead-exp '(sin (sin i))
-               :mid  :new
-               :bass :new :bass-exp '(* 1 (tan (/ (* 2 i pi) 1024)))
+(refresh-parts :lead :new :lead-dist base-prob-dist :lead-exp '(sin (sin i))
+               :mid  :new :mid-dist base-verbose-prob-dist :mid-exp '(sin (sin i))
+               :bass :new :bass-dist baiao-bass-prob-dist :bass-exp '(* 1 (tan (/ (* 2 i pi) 1024)))
                :bd :new :sd :new :hh :new) ;; all new
 (refresh-parts :lead :selected
                :mid  :selected
