@@ -171,6 +171,17 @@ See also: `near-p'"
 (defun numbers-to-binary-16bit (numbers)
   (format t "~{~a~&~}" (mapcar #'number-to-binary-16bit numbers)))
 
+(defun binary-to-list (binary)
+  (map 'list (lambda (char) (if (char= char #\1) 1 0)) binary))
+
+(defun binary-pattern-from-number (number)
+    (binary-to-list (reverse (format nil "~&~8,'0B" number))))
+
+(defun binary-patterns-from-numbers (numbers)
+  (mapcar #'binary-pattern-from-number numbers))
+
+(dotimes (i 10) (print (binary-pattern-from-number i)))
+
 ;; Example usage
 ;; (numbers-to-binary-16bit '(34952 2056 8738))
 
