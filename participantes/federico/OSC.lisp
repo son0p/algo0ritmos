@@ -65,6 +65,7 @@
   (+ start (random (+ 1 (- end start)))))
 
 (defun change-range (value old-min old-max new-min new-max)
+  "ALERTA: la función que llama debe sanear _value_ verificando que esté dentro del rango, TODO: lanzar un error si _value_ esta fuera del rango _old-min_ _old-max_"
   ;; new_value = ((old_value - min_value) * factor) + new_min_value
   (let* ((factor (/ (- new-max new-min) (- old-max old-min))))
     (+ (* factor (- value old-min)) new-min)))
@@ -300,8 +301,9 @@ See also: `near-p'"
 
 (defun math-expression-selected-values (number-of-values math-expression min-range max-range)
   "TODO: pasar el rango como argumento, ¿qué pasa si sale un número negativo?"
-  (mapcar (lambda (x) (change-range x -1 1 min-range max-range))
-          (equidistant-samples (math_expression_to_list 1024 math-expression) number-of-values)))
+  (let ((values (math_expression_to_list 1024 math-expression)))
+    (mapcar (lambda (x) (change-range x (apply #'min values) (apply #'max values) min-range max-range))
+            (equidistant-samples values number-of-values))))
 
 (defun refresh-parts (&key lead lead-exp lead-dist mid mid-exp mid-dist bass bass-exp bass-dist bd sd hh htom fill-sd fill-htom (gain :base))
   "Aunque define los casos, el llamado podría ser más legible, el segundo parámentro sin los dos puntos, tipo :lead new"
@@ -332,7 +334,7 @@ See also: `near-p'"
                                      bass-dist
                                      (mapcar
                                       (lambda (x) (nearest x *scale*))
-                                      (math-expression-selected-values 16 bass-exp 60 200)))
+                                      (math-expression-selected-values 16 bass-exp 60 300)))
                                     "bass")) 
     (:mute (mute-part "bass"))
     (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
