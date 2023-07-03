@@ -175,7 +175,7 @@ See also: `near-p'"
   (map 'list (lambda (char) (if (char= char #\1) 1 0)) binary))
 
 (defun binary-pattern-from-number (number)
-    (binary-to-list (reverse (format nil "~&~8,'0B" number))))
+    (binary-to-list (reverse (format nil "~&~16,'0B" number))))
 
 (defun binary-patterns-from-numbers (numbers)
   (mapcar #'binary-pattern-from-number numbers))
@@ -345,7 +345,7 @@ See also: `near-p'"
                                      bass-dist
                                      (mapcar
                                       (lambda (x) (nearest x *scale*))
-                                      (math-expression-selected-values 16 bass-exp 60 300)))
+                                      (math-expression-selected-values 16 bass-exp 60 200)))
                                     "bass")) 
     (:mute (mute-part "bass"))
     (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
@@ -354,6 +354,7 @@ See also: `near-p'"
             (lambda (x) (change-range
                          (- (expt (sin x) (random-from-range 1 3)) 0.4)
                          -1 1 600 2698)) "bd"))
+    (:mz  (inject-part-from-list bd-manz-drop "bd"))
     (:mute (mute-part "bd")))
   (case sd
     (:new (new-part baiao-sn-prob-dist

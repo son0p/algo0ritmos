@@ -49,6 +49,10 @@
 (defvar refresh-bd
   '(70  10  40  90  05  10  30  20  70  05  20 70  05  10  40  40))
 
+(defvar bd-mz-drop
+  '(99  00  00  00  00  00  00  00  00  90  00  00  00  00  00  00))
+
+
 (defvar *prob-list* nil)
 (setf *prob-list* (list
                    all-prob
