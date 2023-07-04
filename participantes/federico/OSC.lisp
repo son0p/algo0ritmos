@@ -29,7 +29,10 @@
 
 ;;; manejo de errores
 (define-condition not-summing-100 (error)
-   ((message :initarg :message :reader message)))
+  ((message :initarg :message :reader message)))
+
+(define-condition not-in-range (error)
+  ((message :initarg :message :reader message)))
 
 ;;; variables
 (progn
@@ -65,8 +68,11 @@
   (+ start (random (+ 1 (- end start)))))
 
 (defun change-range (value old-min old-max new-min new-max)
-  "ALERTA: la función que llama debe sanear _value_ verificando que esté dentro del rango, TODO: lanzar un error si _value_ esta fuera del rango _old-min_ _old-max_"
+  "ALERTA: la función que llama debe sanear _value_ verificando que esté dentro del rango"
   ;; new_value = ((old_value - min_value) * factor) + new_min_value
+   (if (and (<= old-min value)
+            (<= value old-max))
+       (error 'not-in-range :message "value not inside original range"))
   (let* ((factor (/ (- new-max new-min) (- old-max old-min))))
     (+ (* factor (- value old-min)) new-min)))
 
