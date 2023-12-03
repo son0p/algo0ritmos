@@ -51,6 +51,21 @@
                :bass :new :bass-dist base-prob-dist :bass-exp '(cos (cos i))
                :bd :mz :sd :new :hh :new) ;; all new
 
+(defun build ()
+    (refresh-parts :lead :new :lead-dist base-verbose-prob-dist :lead-exp '(sin i)
+               :mid :new :mid-dist base-verbose-prob-dist :mid-exp '(sin (sin i))
+               :bass :mute :bass-dist base-prob-dist :bass-exp '(cos (cos i))
+                   :bd :mute :sd :new :hh :new))
+
+(defun drop ()
+    (refresh-parts :lead :new :lead-dist base-verbose-prob-dist :lead-exp '(sin i)
+               :mid :new :mid-dist base-verbose-prob-dist :mid-exp '(sin (sin i))
+               :bass :new :bass-dist base-prob-dist :bass-exp '(cos (cos i))
+                   :bd :new :sd :new :hh :new))
+(build)
+(drop)
+
+
 (refresh-parts :lead :selected
                :mid  :selected
                :bass :selected
@@ -62,3 +77,21 @@
 (refresh-parts :fill-htom :new)
 (refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute) ;; MUTE ALL
 ;;(call-function-every-some-time 6 #'refresh-parts :lead :new :mid :new :bass :new :bd :new :hh :new)
+
+;; === Roca Vultra
+(setf *scale-midi*
+      (cl-patterns:multi-channel-funcall #'floor
+                                         (cl-patterns:scale-midinotes "Harmonic Minor"
+                                                                      :root 38
+                                                                      :octave :all)))
+;; intro
+(send-part-from-selected '(0 0 0 1396.913 0 0 0 0 0 0 1046.5022  0 0 0 0 0) "lead")
+(send-part-from-selected '(0 0 0 0 440.0 0 0 0 0 0 523.2511 0 0  523.2511 0 0) "mid")
+(send-part-from-selected '(220.0 0 110.0 73.41619 0 0 0 0 0 0  329.62756 73.41619 0 0 329.62756 0) "bass")
+(send-part-from-selected '(1174.659 1864.6552 0 0 0 220.0  1318.5103 0 2349.318 1567.9817 0 0 1567.9817 1760.0 2349.318 1864.6552) "bd")
+(send-part-from-selected '(0 0 2093.0044 0 0 0 1318.5103 0 0 0 1046.5022 0 0 0 2349.318 0) "sd")
+(send-part-from-selected '(0 0 0 1396.913 0 2093.0044 0 1864.6552  2349.318 1318.5103 1046.5022 174.61412 659.2551 0 2349.318 0) "hh")
+
+;; cl-patterns try
+;; usa la forma (next-n (pseq (lista) bucles) tamaño)
+(send-part (cl-patterns::next-n (cl-patterns::pseq '(1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 1300 1400) 1) 16) "lead")

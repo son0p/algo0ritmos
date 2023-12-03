@@ -354,7 +354,7 @@ See also: `near-p'"
             (lambda (x) (change-range
                          (- (expt (sin x) (random-from-range 1 3)) 0.4)
                          -1 1 600 2698)) "bd"))
-    (:mz  (inject-part-from-list bd-manz-drop "bd"))
+    (:mz  (inject-part-from-list bd-mz-drop "bd"))
     (:mute (mute-part "bd")))
   (case sd
     (:new (new-part baiao-sn-prob-dist
