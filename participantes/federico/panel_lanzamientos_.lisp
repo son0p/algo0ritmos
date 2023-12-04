@@ -97,3 +97,13 @@
 (send-part (mapcar
             (lambda (x) (nearest x *scale*))
             (cl-patterns::next-n (cl-patterns::pseq '(1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 1300 1400) 1) 16)) "lead")
+
+(send-part (mapcar
+            (lambda (x) (nearest x *scale*))
+            (cl-patterns::next-upto-n (cl-patterns::protate (cl-patterns::pseq '(1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 1300 1400) 1) 3))) "lead")
+
+(send-part (mapcar
+            (lambda (x) (nearest x *scale*))
+            (cl-patterns::next-n (cl-patterns::prand '(1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 1300 1400) 16) 16)) "lead")
+
+
