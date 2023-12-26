@@ -55,7 +55,14 @@
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
 
-;;; funciones
+(defun partial-scale-to-freq (scale root range)
+  "Genera una escala en forma de lista de frecuencias, considerando un tipo de escala como string, raiz midi como root y una extensión en octavas dada por range en forma de lista de dos elementos
+  ej: (partial-scale-to-freq 'Natural Minor' 60 '(1 2))"
+   (let ((midiscale (cl-patterns:scale-midinotes scale
+                                :root root
+                                :octave range)))
+     (midi-to-frequency midiscale)))
+  
 (defun random-function (function-list)
   (let ((random-index (random (length function-list))))
     (nth random-index function-list)))
@@ -82,6 +89,7 @@
 ;;            x)))  ;; test
 
 (defun modify-list (list position value)
+  "Reemplaza un valor de la lista en la posición dada"
   (setf (nth position list) value))
 
 (defun subtract-lists (list1 list2)
