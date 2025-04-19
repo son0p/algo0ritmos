@@ -39,7 +39,7 @@ public class Library
         return selected;
     }
     // Recibe un array de 100, retorna un array con el porcentaje descrito en
-    // percent del valor a insertar 
+    // percent del valor a insertar
     fun static float[] insertChance( int percent, float actual[], float valueToInsert)
     {
         //float transitionArray[100];
@@ -159,7 +159,7 @@ public class Library
     0.19 => pulseRev3.mix;
     Math.random2f(0.1, 0.99)=> pulse3.width;
 
-    SqrOsc uplift => ADSR upliftADSR => NRev upliftRev => dac; 
+    SqrOsc uplift => ADSR upliftADSR => NRev upliftRev => dac;
     Phasor lfo => blackhole;
     // set period (an alternative to .freq)
     8::second => lfo.period;
@@ -213,7 +213,7 @@ public class Library
 
   // ============= Funciones
   //// ======= Arrays
-  fun int fillArray( int toFill[], int positions[], int values[] )
+  fun void fillArray( int toFill[], int positions[], int values[] )
   {
     for ( int i; i < positions.cap(); i++ )
       {
@@ -248,13 +248,14 @@ public class Library
     }
     return ref[index];
   }
-  // evalua la presencia de <target> en un array <seed[]>
+  // evalua la presencia de <target> en un array <seed[]> FIX: ¿que valor regresa si no lo encuentra (por ahora -1.0)?
   fun float evalFor(float seed[], float target)
   {
     for(0 => int i; i < seed.cap(); i++)
     {
       if( target == seed[i]){ return target;}
     }
+    return -1.0;
   }
   fun float[] semitonesGen(float freqFrom, float freqTo)
   {
@@ -321,7 +322,7 @@ public class Library
     instrument.keyOff();
     if( active == 1 ){ instrument.keyOn();  }
   }
-  
+
   // bees=================
   //Math.srandom(33679);   ////////  INTERESTING to control randomnes
   fun int bees(int C)
@@ -381,7 +382,7 @@ public class Library
   // TODO: la base de la mutación debe adaptarse a un nuevo arreglo que
   //       ya contiene las notas encontradas
   2 => int C;
-  fun int mutate(int base[], int sequence[][], int goal[] )
+  fun void mutate(int base[], int sequence[][], int goal[] )
   {
     Math.random2(0, C-1) => int seqToMutate;
     Math.random2(0, base.cap()-1) => int noteToMutate;
@@ -396,7 +397,7 @@ public class Library
         <<< "muta melodía ",seqToMutate,"\n">>>;
       }
   }
- 
+
 
   // establece la relación entre dos ADSR en sporks depredador/presa
   // con una estructura de control excluyente y un valor de
@@ -414,12 +415,12 @@ public class Library
   }
 
   // ====================== TIME -=======================
-  fun dur run(dur time)
+  fun void run(dur time)
   {
     time => now;
   }
 
- 
+
     // ================ Generators
     // ------- Rythm Generators
     // .... Euclidean
@@ -438,7 +439,6 @@ public class Library
                 false => seq[i];
             }
         }
-        return seq; 
+        return seq;
     }
 }
-

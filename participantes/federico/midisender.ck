@@ -43,7 +43,7 @@ public class MIDIsender
 		int portret;
 		0 => int portnum;
 
-		while(1) {
+		while(true) {
 			midiport.open(portnum) => portret;
 			if (!portret) {
 				<<< "No matching port found" >>>;
@@ -54,7 +54,11 @@ public class MIDIsender
 			}
 			portnum++;
 		}
+                // This will never be reached, but astisfies the compiler
+                return 0;
 	}
+
+
 
 	// sets the default channel for polymorphic functions.
 	fun void set_channel(int channel)
