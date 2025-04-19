@@ -4,7 +4,29 @@
 (uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
 
 ;;; librerias
-(ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix local-time))
+;;(ql:quickload '(osc usocket random-sample cl-patterns alexandria sb-posix local-time))
+
+;;para tener acceso recursivo sin quicklisp
+(asdf:initialize-source-registry
+ '(:source-registry
+   (:tree (:home ".guix-profile/share/common-lisp/sbcl/"))
+   (:tree (:home "Builds/"))
+   :inherit-configuration))
+
+(progn
+  (asdf:load-system "alexandria")
+  (asdf:load-system "trivia.trivial")
+  (asdf:load-system "sb-posix")
+  (asdf:load-system "usocket")
+  (asdf:load-system "local-time")
+  (asdf:load-system "random-sample")
+  (asdf:load-system "osc")
+  (asdf:load-system "cl-patterns")
+  (asdf:load-system "mutility"))
+
+;;(asdf:load-asd "~/.guix-profile/share/common-lisp/sbcl/trivia.trivial/trivia.trivial.asd")
+;;(asdf:load-system "trivia.trivial")
+;;(asdf:load-system "trivia.balland2006")
 
 (load (merge-pathnames "percent_distributed_patterns.lisp" (uiop:getcwd)))
 
@@ -165,7 +187,7 @@ See also: `near-p'"
      (osc-send #(127 0 0 1) 6450
                (cons (concatenate 'string addr osc-name) patt))
                (write (append (list patt osc-name)))))
- 
+
 (defun new-part (distribution-list math-function osc-name)
   (format t "~& ")
   (let ((patt (pattern-from-distribution
@@ -200,7 +222,7 @@ See also: `near-p'"
     (:mute (mute-part "mid"))
     (:arpeggio  (new-part arpeggio-prob-dist
                      (lambda (x) (change-range
-                                  (sin x) 
+                                  (sin x)
                                   -1 1 200 600)) "mid")))
   (case bass
     (:new (new-part (random-element *prob-list*)
@@ -255,7 +277,7 @@ See also: `near-p'"
   (case gain
     (:base (send-part gain-base-curve "gain"))
     (:fade-in (send-part gain-fade-in-curve "gain"))))
- 
+
 ;; test live transformations
 (refresh-parts :hh :metronome)
 (refresh-parts :htom :new)
@@ -324,4 +346,3 @@ See also: `near-p'"
 ;; (new-part (make-list 16 :initial-element 50) #'bass-math-function "bass")
 ;; legacy midi
 ;;(prob-generate-and-send "midilead" #'lead-math-function #'base-probability)
-
