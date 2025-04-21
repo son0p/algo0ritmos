@@ -69,7 +69,7 @@
 
 (setf *scale-midi*
       (cl-patterns:multi-channel-funcall #'floor
-                                         (cl-patterns:scale-midinotes "Natural Minor"
+                                         (cl-patterns:scale-midinotes :natural-minor
                                                                       :root 38
                                                                       :octave :all)))
 (setf *scale* (midi-to-frequency *scale-midi*))
