@@ -76,15 +76,36 @@ imp.radius( 0.999 );
 1 => midi01.set_channel;
 //2 => midi02.set_channel;
 
-// mixer --------------------
+// Bus intermedio para mezcla final
+Gain mix => Dyno comp => dac;
+1.0 => mix.gain;
+
+// Enruta los ADSR's al bus `mix`,
+lib.sqr0env => mix;
+lib.sin0env => mix;
+lib.tri0env => mix;
+lib.tri0rev => mix;
+lib.bd => mix;
+lib.sd => mix;
+lib.hh => mix;
+lib.bass => mix;
+
+// Ajusta ganancias por instrumento (mixer)
 0.03 => lib.sqr0.gain;
 0.05 => lib.sin0.gain;
 0.05 => lib.tri0.gain;
-0.10 => lib.tri0rev.mix;
+0.05 => lib.tri0rev.mix;
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
 0.25 => lib.hh.gain;
 0.15 => lib.fat.gain;
+
+// Configura Dyno (compresor)
+0.5 => comp.thresh;    // umbral
+5.0 => comp.ratio;     // relación de compresión
+10::ms => comp.attackTime;
+200::ms => comp.releaseTime;
+
 
 
 // send OSC to change patterns
@@ -140,7 +161,7 @@ fun void oscTxCounter()
         Global.counter  => xmit.add;
         // send msg formated like: ("/foo/no" 3 0.48002946)
         xmit.send();
-        Global.beat => now;     
+        Global.beat => now;
     }
 
 }
@@ -228,7 +249,8 @@ fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
 
         else
         {
-           Global.beat => now;
+             instrumentEnv.keyOff();
+             Global.beat => now;
         }
     }
 }
@@ -249,6 +271,7 @@ fun void player(float notes[], ADSR instrumentEnv, Fat instrument)
         }
         else
         {
+             instrumentEnv.keyOff();
              Global.beat => now;
         }
 
@@ -300,7 +323,7 @@ fun void playerHtom(int notes[])
         {
             htom.hit(.5 );
             Global.beat => now;
-            notes[Global.mod16] => htom.setBaseFreq; 
+            notes[Global.mod16] => htom.setBaseFreq;
         }
         else
         {
@@ -394,31 +417,32 @@ fun void rollCounter()
         Global.counter %  64 @=> Global.mod64;
         Global.counter % 256 @=> Global.mod256;
         Global.beat => now;
-       // <<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
+        // <<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
     }
 }
 
 //// SPORKS --------------------
-//spork~ player     (Global.inmutableLEAD);
-spork~ player     (Global.inmutableLEAD,lib.sin0env, lib.sin0);
+spork~ player     (Global.inmutableLEAD);
+//spork~ lib.print (Global.inmutableBASS);
+//spork~ player     (Global.inmutableLEAD,lib.sin0env, lib.sin0);
 //spork~ player     (Global.inmutableLEAD, mo);
-//spork~ player     (Global.inmutableMID, mo);
-spork~ midiPlayer (Global.inmutableBD, 30, 4);
-spork~ midiPlayer (Global.midiLEAD, 70, 1);
-spork~ midiPlayer (Global.midiMID, 70, 2);
-spork~ midiPlayer (Global.midiBASS, 70, 3);
-spork~ midiPlayer (Global.inmutableBD, 70, 10);
-spork~ midiPlayer (Global.inmutableSD, 70, 11);
-spork~ midiPlayer (Global.inmutableHH, 70, 12);
+spork~ player     (Global.inmutableMID, mo);
+//spork~ midiPlayer (Global.inmutableBD, 30, 4);
+//spork~ midiPlayer (Global.midiLEAD, 70, 1);
+//spork~ midiPlayer (Global.midiMID, 70, 2);
+//spork~ midiPlayer (Global.midiBASS, 70, 3);
+//spork~ midiPlayer (Global.inmutableBD, 70, 10);
+//spork~ midiPlayer (Global.inmutableSD, 70, 11);
+//spork~ midiPlayer (Global.inmutableHH, 70, 12);
 //spork~ player     (Global.inmutableMID, sk);
 //spork~ player     (Global.inmutableMID, sit);
-spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
+//spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
-spork~ playerHtom (Global.inmutableHTOM);
-spork~ playerGain ();
-spork~ drumPlayer (Global.inmutableHH,   lib.hh);
+//spork~ playerHtom (Global.inmutableHTOM);
+//spork~ playerGain ();
+//spork~ drumPlayer (Global.inmutableHH,   lib.hh);
 spork~ rollCounter();
 spork~ oscRxFloat();
 spork~ oscTxFloat();

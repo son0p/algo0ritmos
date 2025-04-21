@@ -113,6 +113,7 @@ public class Library
   // Sin
   SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => dac;
   -0.5 => sin0Pan.pan;
+  sin0env.keyOff();
   sin0env.set( 0::ms, 500::ms, .0, 100::ms );
   0.1 => sin0.gain;
   // Sqr
@@ -131,13 +132,15 @@ public class Library
     tri0env.set( 0::ms, 500::ms, .0, 100::ms );
     // --Melody
     BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
+    melody.keyOff();
     0.09 => melodyImpulse.gain;
     melody.set( 0::ms, 80::ms, 0.00, 500::ms );
     0.07 => mReverb.mix;
 
     // --bass
     Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => dac;
-    0.3 => fat.gain;  2800 => filterBass.freq;
+    bass.keyOff();
+    0.03 => fat.gain;  2800 => filterBass.freq;
     bass.set( 0::ms, 80::ms, fat.gain()/1.5, 100::ms );
     0.03 => fatRev.mix;
 
@@ -284,17 +287,17 @@ public class Library
 
 //////////// DYNAMICS ///////////////////////////
     //// CLASSIC: force decrease form beat possition: 1 > 3 > 4 > 2
-   fun void dynClassic(Gain inst, float maxGain){
-       while(true){
-           maxGain => inst.gain;
-           // grab the actual level
-           // counter modulo:  if 1->100%, if 3->75%, if 4->50%, if 2->25%
-           if(Global.mod16 % 4 == 3){ inst.gain() * 0.75 => inst.gain; }
-           if(Global.mod16 % 4 == 4){ inst.gain() * 0.50 => inst.gain; }
-           if(Global.mod16 % 4 == 2){ inst.gain() * 0.25 => inst.gain; }
-           Global.beat => now;
-       }
-   }
+  fun void dynClassic(Gain inst, float maxGain){
+    while(true){
+      maxGain => inst.gain;
+      // grab the actual level
+      // counter modulo:  if 1->100%, if 3->75%, if 4->50%, if 2->25%
+      if(Global.mod16 % 4 == 3){ inst.gain() * 0.75 => inst.gain; }
+      if(Global.mod16 % 4 == 4){ inst.gain() * 0.50 => inst.gain; }
+      if(Global.mod16 % 4 == 2){ inst.gain() * 0.25 => inst.gain; }
+      Global.beat => now;
+    }
+  }
 //////////// END DYNAMICS ////////////////
 
 // how many semintores between two freqs
