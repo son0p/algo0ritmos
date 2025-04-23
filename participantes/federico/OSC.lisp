@@ -278,6 +278,87 @@ See also: `near-p'"
     (:base (send-part gain-base-curve "gain"))
     (:fade-in (send-part gain-fade-in-curve "gain"))))
 
+(defun refresh-parts-llm (&key lead mid bass bd sd hh htom fill-sd fill-htom (gain :base))
+  "Refreshes musical parts based on provided parameters. Each part (e.g., lead, bass) can be set to:
+   :new (generate new part), :mute (mute part), or specific modes (e.g., :selected, :arpeggio).
+   Example: (refresh-parts :lead :new :bass :mute :gain :fade-in)"
+  ;; Helper function to create a new part with a probability distribution and transformation
+  (flet ((create-new-part (prob-dist transform-fn part-name &optional (range-min 600) (range-max 2698))
+           (new-part prob-dist
+                     (lambda (x) (change-range (funcall transform-fn x) -1 1 range-min range-max))
+                     part-name))
+         ;; Helper function for common sine-based transformation
+         (sine-transform (x &optional (exponent (random-from-range 1 3)) (offset 0.4))
+           (- (expt (sin x) exponent) offset))
+         ;; Helper function for fill parts with refresh
+         (create-fill-part (prob-dist part-name range-min range-max refresh-key refresh-val)
+           (create-new-part prob-dist #'sine-transform part-name range-min range-max)
+           (sleep *fill-time*)
+           (refresh-parts refresh-key refresh-val)))
+
+    ;; Lead part configuration
+    (case lead
+      (:new      (create-new-part (random-element *prob-list*)
+                                  (lambda (x) (sine-transform x (random-from-range 1 3) 0.4))
+                                  "lead" 600 2698))
+      (:mute     (mute-part "lead"))
+      (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
+      (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))
+
+    ;; Mid part configuration
+    (case mid
+      (:new      (create-new-part base-prob-dist
+                                  (lambda (x) (expt (cos x) 4))
+                                  "mid" 200 600))
+      (:mute     (mute-part "mid"))
+      (:arpeggio (create-new-part arpeggio-prob-dist
+                                  #'sin
+                                  "mid" 200 600)))
+
+    ;; Bass part configuration
+    (case bass
+      (:new      (create-new-part (random-element *prob-list*)
+                                  (lambda (x) (sin (* (random-from-range 1 10) x)))
+                                  "bass" 70 350))
+      (:mute     (mute-part "bass"))
+      (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
+
+    ;; Bass drum (bd) part configuration
+    (case bd
+      (:new      (create-new-part (random-list) #'sine-transform "bd"))
+      (:mute     (mute-part "bd")))
+
+    ;; Snare drum (sd) part configuration
+    (case sd
+      (:new      (create-new-part baiao-sn-prob-dist #'sine-transform "sd"))
+      (:mute     (mute-part "sd")))
+
+    ;; Hi-hat (hh) part configuration
+    (case hh
+      (:new      (create-new-part (random-list) #'sine-transform "hh"))
+      (:mute     (mute-part "hh"))
+      (:metronome (send-part-from-selected metronome-prob-dist "hh")))
+
+    ;; High tom (htom) part configuration
+    (case htom
+      (:new      (create-new-part toms-prob-dist #'sin "htom" 100 300))
+      (:mute     (mute-part "htom")))
+
+    ;; Snare drum fill (fill-sd) part configuration
+    (case fill-sd
+      (:new      (create-fill-part (random-list) "sd" 600 2698 :sd :new))
+      (:mute     (mute-part "sd")))
+
+    ;; High tom fill (fill-htom) part configuration
+    (case fill-htom
+      (:new      (create-fill-part (random-list) "htom" 100 250 :htom :mute))
+      (:mute     (mute-part "htom")))
+
+    ;; Gain control configuration
+    (case gain
+      (:base     (send-part gain-base-curve "gain"))
+      (:fade-in  (send-part gain-fade-in-curve "gain")))))
+
 ;; test live transformations
 (refresh-parts :hh :metronome)
 (refresh-parts :htom :new)
