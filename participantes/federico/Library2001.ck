@@ -1,5 +1,9 @@
 public class Library
 {
+    Gain masterVolume => dac;
+    fun void init() {
+        0.7 => masterVolume.gain;
+    }
     36 => float root;
     0 => static int counter;
    // ================== ARRAYS ======================
@@ -87,82 +91,82 @@ public class Library
     revNR.mix(0.02);
     fun void rev(UGen ob)
     {
-        ob => revNR => dac;
+        ob => revNR => masterVolume;
     }
 
   // instrumentos =========================================
     // --bassDrum
-  Impulse bdImpulse => ResonZ bdFilter => ADSR bd => HPF hpfBD => dac;
+  Impulse bdImpulse => ResonZ bdFilter => ADSR bd => HPF hpfBD => masterVolume;
   1000 => bdImpulse.gain;
   bdFilter.set(50.0, 10.0);
   bd.set( 1::ms, 150::ms, .50, 100::ms );
   70.0 => hpfBD.freq;
   // --snareDrum
-  Noise sdImpulse => ResonZ sdFilter => ADSR sd => Gain sdGain => dac;
+  Noise sdImpulse => ResonZ sdFilter => ADSR sd => Gain sdGain => masterVolume;
   0.9 => sdGain.gain;
   0.9 => sdImpulse.gain;
   sdFilter.set(400.0, 1.0);
   sd.set( 0::ms, 50::ms, .0, 100::ms );
   // --hiHat
-  Noise hhImpulse => ResonZ hhFilter => ADSR hh => dac;
+  Noise hhImpulse => ResonZ hhFilter => ADSR hh => masterVolume;
   0.5 => hhImpulse.gain;
   hhFilter.set(10000.0, 5.0);
   hh.set( 0::ms, 50::ms, .0, 100::ms );
 
   // === Melodic
   // Sin
-  SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => dac;
+  SinOsc sin0 => ADSR sin0env =>  Pan2 sin0Pan => revNR => masterVolume;
   -0.5 => sin0Pan.pan;
   sin0env.keyOff();
   sin0env.set( 0::ms, 500::ms, .0, 100::ms );
   0.1 => sin0.gain;
   // Sqr
-  SqrOsc sqr0 => ADSR sqr0env => dac;
+  SqrOsc sqr0 => ADSR sqr0env => masterVolume;
   0.15 => sqr0.gain;
   sqr0env.set( 0::ms, 300::ms, .0, 100::ms );
-  SqrOsc sqr1 => ADSR sqr1env => LPF sqr1filter => dac;
+  SqrOsc sqr1 => ADSR sqr1env => LPF sqr1filter => masterVolume;
   sqr1env.set( 0::ms, 500::ms, .0, 500::ms );
   // Blit
-  BlitSaw blit0 => ADSR blit0env => NRev blit0rev => Pan2 blit0pan => dac;
+  BlitSaw blit0 => ADSR blit0env => NRev blit0rev => Pan2 blit0pan => masterVolume;
   0.7 => blit0pan.pan;
   blit0env.set( 0::ms, 200::ms, .0, 100::ms );
     // Tri
-    TriOsc tri0 => ADSR tri0env => NRev tri0rev => Pan2 tri0Pan => dac;
+    TriOsc tri0 => ADSR tri0env => NRev tri0rev => Pan2 tri0Pan => masterVolume;
     -0.0 => tri0Pan.pan;
     tri0env.set( 0::ms, 500::ms, .0, 100::ms );
     // --Melody
-    BlitSaw melodyImpulse => ADSR melody => NRev mReverb => dac;
+    BlitSaw melodyImpulse => ADSR melody => NRev mReverb => masterVolume;
     melody.keyOff();
     0.09 => melodyImpulse.gain;
     melody.set( 0::ms, 80::ms, 0.00, 500::ms );
     0.07 => mReverb.mix;
 
     // --bass
-    Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => dac;
+    Fat fat  => ADSR bass => LPF filterBass => NRev fatRev => masterVolume;
     bass.keyOff();
     0.03 => fat.gain;  2800 => filterBass.freq;
     bass.set( 0::ms, 80::ms, fat.gain()/1.5, 100::ms );
     0.03 => fatRev.mix;
 
 
-    PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => dac;
+    PulseOsc pulse => ADSR pulseADSR => NRev pulseRev => masterVolume;
     0.02 => pulse.gain;
     pulseADSR.set( 0::ms, 80::ms, 0.00, 100::ms );
     0.02 => pulseRev.mix;
 
-    PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => dac;
+    PulseOsc pulse2 => ADSR pulseADSR2 => NRev pulseRev2 => Gain pulse2gain => masterVolume;
     0.03 => pulse2gain.gain;
     pulseADSR2.set( 0::ms, 80::ms, pulse2.gain()/2.5, 200::ms );
     0.19 => pulseRev2.mix;
     Math.random2f(0.1, 0.99)=> pulse2.width;
 
-    PulseOsc pulse3 => ADSR pulseADSR3 => NRev pulseRev3 => dac;
+    PulseOsc pulse3 => ADSR pulseADSR3 => NRev pulseRev3 => masterVolume;
     0.03 => pulse3.gain;
     pulseADSR3.set( 0::ms, 80::ms, pulse3.gain()/2.5, 200::ms );
     0.19 => pulseRev3.mix;
     Math.random2f(0.1, 0.99)=> pulse3.width;
 
-    SqrOsc uplift => ADSR upliftADSR => NRev upliftRev => dac;
+    SqrOsc uplift => ADSR upliftADSR => NRev upliftRev => masterVolume;
     Phasor lfo => blackhole;
     // set period (an alternative to .freq)
     8::second => lfo.period;
@@ -171,7 +175,7 @@ public class Library
 
 
     kjzTT101 t1;
-    t1.output => dac;
+    t1.output => masterVolume;
     0.01=> t1.setDriveGain;
 
   // modelado
@@ -195,7 +199,7 @@ public class Library
   30.0 => strike.gain;
 
   for (int i; i < 10; i++){
-    strike => modes[i] => dac;
+    strike => modes[i] => masterVolume;
     freqsNamps[i][0] => modes[i].freq;
     500 - (i*30) => modes[i].Q;
     freqsNamps[i][1] => modes[i].gain;
@@ -287,15 +291,15 @@ public class Library
 
 //////////// DYNAMICS ///////////////////////////
     //// CLASSIC: force decrease form beat possition: 1 > 3 > 4 > 2
-  fun void dynClassic(Gain inst, float maxGain){
+  fun void dynClassic(Gain inst, float maxGain, int mod16Value, dur beat){
     while(true){
       maxGain => inst.gain;
       // grab the actual level
       // counter modulo:  if 1->100%, if 3->75%, if 4->50%, if 2->25%
-      if(Global.mod16 % 4 == 3){ inst.gain() * 0.75 => inst.gain; }
-      if(Global.mod16 % 4 == 4){ inst.gain() * 0.50 => inst.gain; }
-      if(Global.mod16 % 4 == 2){ inst.gain() * 0.25 => inst.gain; }
-      Global.beat => now;
+      if(mod16Value % 4 == 3){ inst.gain() * 0.75 => inst.gain; }
+      if(mod16Value % 4 == 4){ inst.gain() * 0.50 => inst.gain; }
+      if(mod16Value % 4 == 2){ inst.gain() * 0.25 => inst.gain; }
+      beat => now;
     }
   }
 //////////// END DYNAMICS ////////////////
@@ -336,7 +340,7 @@ public class Library
     NRev r[C];
     Gain gBees;
     for ( 0 => int ii ; ii < C ; ++ii ) {
-      s[ii] => e[ii] => r[ii] => p[ii]  =>  gBees => dac;
+      s[ii] => e[ii] => r[ii] => p[ii]  =>  gBees => masterVolume;
       r[ii].mix(0.1);
       s[ii].gain(0.05/C);
       root/1 + Math.random2f(-2, 2) => s[ii].freq;
@@ -353,7 +357,7 @@ public class Library
     return NewValue;
   }
   // ==== bass pulse arpegiator
-  // PulseOsc pulse => ADSR ePulse => NRev rPulse=> dac;
+  // PulseOsc pulse => ADSR ePulse => NRev rPulse=> masterVolume;
   // rPulse.mix(0.0);
   // pulse.gain(0.2);
   // pulse.width(0.1);

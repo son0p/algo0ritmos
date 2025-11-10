@@ -1,6 +1,5 @@
 public class OscCom
 {
-   // Global glo;
     Library lib;
     OscIn oin;
     OscMsg msg;

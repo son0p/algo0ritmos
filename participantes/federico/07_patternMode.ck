@@ -3,11 +3,12 @@
 // TODO avoid gradual degradation of patterns after first round
 
 Library lib;
-Global glo;
+//Global glo;
 OSC_Read osc;
 OscIn oin;
 OscMsg msg;
 6449 => oin.port;
+
 
 // create an address in the receiver, store in new variable
 oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
@@ -16,6 +17,8 @@ oin.addAddress( "/ffxf/step1, ffffffffffffffff" );
 36 => Global.root;
 // cadena de audio -- drums
 Gain master => dac;
+3.0 => lib.masterVolume.gain;
+
 // instrumentos
 0.2 => float hhGain; // asignamos esta variable para afectarla en la función
 
@@ -258,7 +261,7 @@ fun void pitchUp()
     {
         Global.root * Global.mod64  => lib.pulse.freq;
         lib.pulseADSR.set(  Math.random2(0,20)::ms, Math.random2(5,180)::ms, 0.0, 100::ms);
-        Global.mod64/100 => lib.pulseRev.mix; 
+        Global.mod64/100 => lib.pulseRev.mix;
         Global.beat => now;
     }
 }
@@ -346,7 +349,7 @@ fun void playBreak(int type)
     {
         if(type == 1)
         {
-            // apaga todas las envolventes antes de empezar 
+            // apaga todas las envolventes antes de empezar
             for(0 => int i; i < envs.cap(); i++){ envs[i].keyOff(); }
             floatChance( chanceBreak[Global.mod16], 1, 0 )   => float breakSwitch;
             if( breakSwitch == 1 ){
@@ -435,7 +438,7 @@ fun int drop(int steps)
 
 fun void removeBreak()
 {
-    Machine.remove(breakShred.id()); 
+    Machine.remove(breakShred.id());
 }
 
 fun int postDrop(int steps)
@@ -447,13 +450,19 @@ fun int postDrop(int steps)
     Global.beat * steps => now;
     return steps;
 }
-
+// Función wrapper que pasa los valores de Global
+fun void dynClassicWrapper(Gain inst, float maxGain) {
+    while(true) {
+        lib.dynClassic(inst, maxGain, Global.mod16, Global.beat);
+        Global.beat => now;
+    }
+}
 // sporks ====================
 spork~ rollCounter();
 spork~ variations();
-spork~ oscRun();
-spork~ lib.dynClassic(lib.sdGain, 0.9); // gain dynamics on instrument level
-spork~ lib.dynClassic(lib.pulse2gain, 0.05);
+//spork~ oscRun();
+spork~ dynClassicWrapper(lib.sdGain, 0.9); // gain dynamics on instrument level
+spork~ dynClassicWrapper(lib.pulse2gain, 0.05);
 
 while(true)
 {
