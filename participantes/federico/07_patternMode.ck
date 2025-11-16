@@ -136,7 +136,6 @@ fun float[] insertChance( int percent, float actual[], float valueToInsert)
 
 fun void hitKick(int beats)
 {
-    <<<"hit K">>>;
     lib.bd.keyOn();  1.0 => lib.bdImpulse.next;
     Global.beat * beats => now;
     lib.bd.keyOff();
@@ -382,7 +381,7 @@ fun void rollCounter()
             Global.counter %  64 @=> Global.mod64;
             Global.counter % 256 @=> Global.mod256;
             Global.beat => now;
-            <<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
+            //<<< Global.counter, Global.mod16, Global.mod32, Global.mod64 >>>;
     }
 }
 
@@ -482,4 +481,5 @@ while(true)
 }
 
 Global.beat * 256 => now; // keep sporks alive
-Machine.add(me.dir()+"07_patternMode.ck:777"); // reload
+Machine.add(me.dir()+"07_patternMode.ck"); // reload
+//Machine.add(me.dir()+"07_patternMode.ck:777"); // reload with osc?
