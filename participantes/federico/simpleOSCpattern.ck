@@ -19,7 +19,8 @@ oin.addAddress( "/audio/2/midimid,  iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/midibass, iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/bd,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/sd,       iiiiiiiiiiiiiiii" );
-oin.addAddress( "/audio/2/htom,     iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/htom,     ffffffffffffffff" );
+oin.addAddress( "/audio/2/midihtom, iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/hh,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/gain,     iiiiiiiiiiiiiiii" );
 
@@ -98,7 +99,7 @@ lib.bass => mix;
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
 0.35 => lib.hh.gain;
-0.05 => htom.setDriveGain;
+0.09 => htom.setDriveGain;
 0.15 => lib.fat.gain;
 
 // Configura Dyno (compresor)
@@ -210,6 +211,10 @@ fun void oscTxCounter()
             }
             else if (addr == "/audio/2/htom" )
             {
+                for(0 => int i; i < 16; i++){ msg.getFloat(i)   => Global.inmutableHTOM[i]; }
+            }
+              else if (addr == "/audio/2/midihtom" )
+            {
                 for(0 => int i; i < 16; i++){ msg.getInt(i)   => Global.inmutableHTOM[i]; }
             }
             else if (addr == "/audio/2/hh" )
@@ -288,6 +293,7 @@ fun void midiPlayer(int notes[], int velocity, int channel)
         {
             midi01.noteon(midiNote, velocity, channel);
             Global.beat => now;
+            <<< midiNote, "midi">>>;
             midi01.noteoff(midiNote, channel);
         }
         else
@@ -316,15 +322,16 @@ fun void player(float notes[])
         }
     }
 }
-fun void playerHtom(int notes[])
+fun void playerHtom(float notes[])
 {
     while(true)
     {
-        if( notes[Global.mod16] > 1 )
+        notes[Global.mod16] => float baseFreq;  // capturarlo antes que el now
+        if( notes[Global.mod16] > 1.00 )
         {
+            baseFreq => htom.setBaseFreq;
             htom.hit(.5 );
             Global.beat => now;
-            notes[Global.mod16] => htom.setBaseFreq;
         }
         else
         {
@@ -446,7 +453,7 @@ spork~ midiPlayer (Global.midiBASS, 100, 3);
 spork~ midiPlayer (Global.inmutableBD,   70, 10);
 spork~ midiPlayer (Global.inmutableSD,   70, 11);
 spork~ midiPlayer (Global.inmutableHH,   70, 12);
-spork~ midiPlayer (Global.inmutableHTOM, 70, 13);
+spork~ midiPlayer (Global.midiHTOM, 100, 3);
 
 
 spork~ rollCounter();

@@ -7,13 +7,14 @@ public class Global
     static float inmutableBASS[];
     static int inmutableBD[];
     static int inmutableSD[];
-    static int inmutableHTOM[];
+    static float inmutableHTOM[];
     static int inmutableHH[];
     static int inmutableGAIN[];
     // --- MIDI
     static int midiLEAD[];
     static int midiMID[];
     static int midiBASS[];
+    static int midiHTOM[];
 
     static float bassFromOsc[];
     static float bassFromOscComp[];
@@ -40,7 +41,8 @@ public class Global
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.midiBASS;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableBD;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableSD;
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHTOM;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHTOM;
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.midiHTOM;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableHH;
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]    @=> Global.inmutableGAIN;
 //[0.] @=> Global.bassFromOsc;
