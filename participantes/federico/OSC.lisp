@@ -1,4 +1,6 @@
-;;;; test with simpleOSCpattern.ck (ChucK)
+;;;; chuck --loop
+;;;; chuck + initialize.ck (ChucK)
+;;;; chuck + simpleOSCpattern.ck (ChucK)
 ;;;; or MIDI Ardour morph--------------------
 ;;;; favs in Scripts/music_patterns.ldg
 (uiop:chdir "/home/ff/Builds/algo0ritmos/participantes/federico/")
@@ -363,6 +365,7 @@ See also: `near-p'"
 (refresh-parts :hh :metronome)
 (refresh-parts :htom :new)
 (refresh-parts :lead :new)
+(refresh-parts :mid :mute)
 (refresh-parts :mid  :new)
 (refresh-parts :mid  :arpeggio)
 (refresh-parts :bass :new)
@@ -372,7 +375,7 @@ See also: `near-p'"
 (refresh-parts :lead :new
                :mid  :new
                :bass :new
-               :bd :new :sd :new :hh :new) ;; all new
+               :bd :new :sd :new :hh :new :htom :new ) ;; all new
 (refresh-parts :lead :selected
                :mid  :selected
                :bass :selected

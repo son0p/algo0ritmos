@@ -21,7 +21,7 @@ oin.addAddress( "/audio/2/bd,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/sd,       iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/htom,     iiiiiiiiiiiiiiii" );
 oin.addAddress( "/audio/2/hh,       iiiiiiiiiiiiiiii" );
-oin.addAddress( "/audio/2/gain,       iiiiiiiiiiiiiiii" );
+oin.addAddress( "/audio/2/gain,     iiiiiiiiiiiiiiii" );
 
 // instrument classes
 kjzTT101 htom;
@@ -91,13 +91,14 @@ lib.hh => mix;
 lib.bass => mix;
 
 // Ajusta ganancias por instrumento (mixer)
-0.03 => lib.sqr0.gain;
+0.08 => lib.sqr0.gain;
 0.05 => lib.sin0.gain;
-0.05 => lib.tri0.gain;
+0.03 => lib.tri0.gain;
 0.05 => lib.tri0rev.mix;
 0.6 => lib.bd.gain;
 1.0 => lib.sd.gain;
-0.25 => lib.hh.gain;
+0.35 => lib.hh.gain;
+0.05 => htom.setDriveGain;
 0.15 => lib.fat.gain;
 
 // Configura Dyno (compresor)
@@ -424,25 +425,30 @@ fun void rollCounter()
 //// SPORKS --------------------
 spork~ player     (Global.inmutableLEAD);
 //spork~ lib.print (Global.inmutableBASS);
-//spork~ player     (Global.inmutableLEAD,lib.sin0env, lib.sin0);
+spork~ player     (Global.inmutableLEAD,lib.sin0env, lib.sin0);
 //spork~ player     (Global.inmutableLEAD, mo);
 spork~ player     (Global.inmutableMID, mo);
-//spork~ midiPlayer (Global.inmutableBD, 30, 4);
-//spork~ midiPlayer (Global.midiLEAD, 70, 1);
-//spork~ midiPlayer (Global.midiMID, 70, 2);
-//spork~ midiPlayer (Global.midiBASS, 70, 3);
-//spork~ midiPlayer (Global.inmutableBD, 70, 10);
-//spork~ midiPlayer (Global.inmutableSD, 70, 11);
-//spork~ midiPlayer (Global.inmutableHH, 70, 12);
 //spork~ player     (Global.inmutableMID, sk);
 //spork~ player     (Global.inmutableMID, sit);
-//spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
+spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
+// ---- DRUMS
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);
 spork~ drumPlayer (Global.inmutableSD,   lib.sd);
-//spork~ playerHtom (Global.inmutableHTOM);
+spork~ playerHtom (Global.inmutableHTOM);
 //spork~ playerGain ();
-//spork~ drumPlayer (Global.inmutableHH,   lib.hh);
+spork~ drumPlayer (Global.inmutableHH,   lib.hh);
+// -- MIDI
+spork~ midiPlayer (Global.midiLEAD, 100, 1);
+spork~ midiPlayer (Global.midiMID,  100, 2);
+spork~ midiPlayer (Global.midiBASS, 100, 3);
+//// -- midi drums
+spork~ midiPlayer (Global.inmutableBD,   70, 10);
+spork~ midiPlayer (Global.inmutableSD,   70, 11);
+spork~ midiPlayer (Global.inmutableHH,   70, 12);
+spork~ midiPlayer (Global.inmutableHTOM, 70, 13);
+
+
 spork~ rollCounter();
 spork~ oscRxFloat();
 spork~ oscTxFloat();

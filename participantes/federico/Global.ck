@@ -3,9 +3,6 @@ public class Global
     int inmutableArray[16];
     int inmutableEnvNotes[16];
     static float inmutableLEAD[];
-    static int midiLEAD[];
-    static int midiMID[];
-    static int midiBASS[];
     static float inmutableMID[];
     static float inmutableBASS[];
     static int inmutableBD[];
@@ -13,6 +10,11 @@ public class Global
     static int inmutableHTOM[];
     static int inmutableHH[];
     static int inmutableGAIN[];
+    // --- MIDI
+    static int midiLEAD[];
+    static int midiMID[];
+    static int midiBASS[];
+
     static float bassFromOsc[];
     static float bassFromOscComp[];
     int inmutableEnvBass[16];
@@ -28,7 +30,7 @@ public class Global
     static int cursor;
 }
 //init the array with something, else it would just stay an empty reference.
-[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.bassFromOsc;
+[0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.bassFromOsc;  // floats arrays have to start with float?
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.bassFromOscComp;
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableLEAD;
 [0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  @=> Global.inmutableMID;
