@@ -96,11 +96,11 @@ lib.bass => mix;
 0.05 => lib.sin0.gain;
 0.03 => lib.tri0.gain;
 0.05 => lib.tri0rev.mix;
-0.6 => lib.bd.gain;
-1.0 => lib.sd.gain;
+0.55 => lib.bd.gain;
+0.8 =>  lib.sd.gain;
 0.35 => lib.hh.gain;
-0.09 => htom.setDriveGain;
-0.15 => lib.fat.gain;
+0.25 => htom.setDriveGain;
+0.6 => lib.fat.gain;
 
 // Configura Dyno (compresor)
 0.5 => comp.thresh;    // umbral
@@ -245,14 +245,13 @@ fun void player(float notes[], ADSR instrumentEnv, Osc instrument)
     while(true)
     {
         notes[Global.mod16] => float noteFreq;
-        instrumentEnv.keyOff();
         if( noteFreq > 20 )
         {
             noteFreq => instrument.freq;
             instrumentEnv.keyOn();
             Global.beat => now;
+            instrumentEnv.keyOff();
         }
-
         else
         {
              instrumentEnv.keyOff();
@@ -293,7 +292,6 @@ fun void midiPlayer(int notes[], int velocity, int channel)
         {
             midi01.noteon(midiNote, velocity, channel);
             Global.beat => now;
-            <<< midiNote, "midi">>>;
             midi01.noteoff(midiNote, channel);
         }
         else
@@ -430,14 +428,17 @@ fun void rollCounter()
 }
 
 //// SPORKS --------------------
-spork~ player     (Global.inmutableLEAD);
+//spork~ player     (Global.inmutableLEAD);
 //spork~ lib.print (Global.inmutableBASS);
+
 spork~ player     (Global.inmutableLEAD,lib.sin0env, lib.sin0);
 //spork~ player     (Global.inmutableLEAD, mo);
-spork~ player     (Global.inmutableMID, mo);
+
+//spork~ player     (Global.inmutableMID, mo);
 //spork~ player     (Global.inmutableMID, sk);
 //spork~ player     (Global.inmutableMID, sit);
 spork~ player     (Global.inmutableMID, lib.tri0env, lib.tri0 );
+
 spork~ player     (Global.inmutableBASS, lib.bass, lib.fat);
 // ---- DRUMS
 spork~ drumPlayer (Global.inmutableBD,   lib.bd);

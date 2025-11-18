@@ -212,7 +212,7 @@ See also: `near-p'"
     (:new  (new-part (random-element *prob-list*)
                      (lambda (x) (change-range
                                   (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                                  -1 1 600 2698)) "lead"))
+                                  -1 1 400 2698)) "lead"))
     (:mute (mute-part "lead"))
     (:selected (send-part-from-selected (write (random-element *selected-bass*)) "lead"))
     (:2f934e3a (send-part-from-selected (write (nth 0 *selected-2f934e3a*)) "lead")))
@@ -220,17 +220,17 @@ See also: `near-p'"
     (:new  (new-part base-prob-dist
                      (lambda (x) (change-range
                                   (expt (cos x) 4)
-                                  -1 1 200 600)) "mid"))
+                                  -1 1 150 400)) "mid"))
     (:mute (mute-part "mid"))
     (:arpeggio  (new-part arpeggio-prob-dist
                      (lambda (x) (change-range
                                   (sin x)
-                                  -1 1 200 600)) "mid")))
+                                  -1 1 150 400)) "mid")))
   (case bass
     (:new (new-part (random-element *prob-list*)
             (lambda (x) (change-range
                          (sin (* (random-from-range 1 10) x))
-                         -1 1 70 350)) "bass"))
+                         -1 1 70 150)) "bass"))
     (:mute (mute-part "bass"))
     (:selected (send-part-from-selected (random-element *selected-bass*) "bass")))
   (case bd
@@ -253,10 +253,10 @@ See also: `near-p'"
     (:mute (mute-part "hh"))
     (:metronome (send-part-from-selected metronome-prob-dist "hh")))
   (case htom
-    (:new  (new-part toms-prob-dist
+    (:new  (new-part toms-prob-dist-2
             (lambda (x) (change-range
                          (sin x)
-                         -1 1 100 300)) "htom"))
+                         -1 1 80 120)) "htom"))
     (:mute (mute-part "htom")))
   (case fill-sd
     (:new  (progn
@@ -272,7 +272,7 @@ See also: `near-p'"
               (new-part (random-list)
                         (lambda (x) (change-range
                                      (- (expt (sin x) (random-from-range 1 3)) 0.4)
-                                     -1 1 100 250)) "htom")
+                                     -1 1 80 150)) "htom")
               (sleep *fill-time*)
               (refresh-parts :htom :mute)))
      (:mute (mute-part "htom")))
@@ -343,7 +343,7 @@ See also: `near-p'"
 
     ;; High tom (htom) part configuration
     (case htom
-      (:new      (create-new-part toms-prob-dist #'sin "htom" 100 300))
+      (:new      (create-new-part toms-prob-dist-2 #'sin "htom" 200 300))
       (:mute     (mute-part "htom")))
 
     ;; Snare drum fill (fill-sd) part configuration
@@ -361,15 +361,18 @@ See also: `near-p'"
       (:base     (send-part gain-base-curve "gain"))
       (:fade-in  (send-part gain-fade-in-curve "gain")))))
 
-;; test live transformations
+;; test live transformations generate new parts
 (refresh-parts :hh :metronome)
-(refresh-parts :htom :new)
+
 (refresh-parts :lead :new)
-(refresh-parts :mid :mute)
+
 (refresh-parts :mid  :new)
 (refresh-parts :mid  :arpeggio)
+(refresh-parts :mid :mute)
+
 (refresh-parts :bass :new)
 (refresh-parts :bass :new)
+
 (refresh-parts :gain :fade-in)
 (refresh-parts :gain :base)
 (refresh-parts :lead :new
@@ -380,6 +383,13 @@ See also: `near-p'"
                :mid  :selected
                :bass :selected
                :bd :new :sd :new :hh :new) ;; selected
+;; --- Indivuduales Drums
+(refresh-parts  :bd :new)
+(refresh-parts  :sd :new)
+(refresh-parts  :hh :new)
+(refresh-parts  :htom :new)
+(refresh-parts-llm :htom :mute)
+
 (refresh-parts :fill-sd :new)
 (refresh-parts :fill-htom :new)
 (refresh-parts :lead :mute :mid :mute :bass :mute :bd :mute :sd :mute :hh :mute :htom :mute) ;; MUTE ALL
